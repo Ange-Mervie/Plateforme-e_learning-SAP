@@ -5,6 +5,7 @@ import ContinueLearning from "@/components/apprenant/continue-learning";
 import MyCourses from "@/components/apprenant/my-courses";
 import ProgressChart from "@/components/apprenant/progress-chart";
 import Recommended from "@/components/apprenant/recommended";
+import UserBadge from "@/components/apprenant/user-badge";
 
 export default function ApprenantDashboard() {
   return (
@@ -17,11 +18,7 @@ export default function ApprenantDashboard() {
             placeholder="Rechercher une formation…"
             className="h-10 w-full max-w-md rounded-lg bg-surface px-4 text-sm text-navy outline-none placeholder:text-slate-400"
           />
-          <div className="flex items-center gap-4">
-            <span className="relative">
-              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary">JD</span>
-            </span>
-          </div>
+          <UserBadge />
         </div>
         <div className="mx-auto max-w-7xl px-8 py-10">
           <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
