@@ -6,6 +6,7 @@ import MyCourses from "@/components/apprenant/my-courses";
 import ProgressChart from "@/components/apprenant/progress-chart";
 import Recommended from "@/components/apprenant/recommended";
 import UserBadge from "@/components/apprenant/user-badge";
+import SubscriptionStatus from "@/components/apprenant/subscription-status";
 
 export default function ApprenantDashboard() {
   return (
@@ -39,6 +40,10 @@ export default function ApprenantDashboard() {
 
           <div className="mt-12">
             <StatsCards />
+          </div>
+
+          <div className="mt-12">
+            <SubscriptionStatus userId={1} />
           </div>
 
           <div className="mt-12">
