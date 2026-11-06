@@ -58,14 +58,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!email || !password) {
       throw new Error("Email et mot de passe requis.");
     }
-    cachedUser = { id: "u-1", name: "Jean Dupont", email, role: "apprenant" };
+    const res = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+    if (!res.ok) throw new Error("Identifiants invalides.");
+    const data = await res.json();
+    cachedUser = { id: String(data.id ?? "u-1"), name: email, email, role: data.role ?? "apprenant" };
     localStorage.setItem(SESSION_KEY, JSON.stringify(cachedUser));
+    document.cookie = "sap_academy_session=1; path=/; max-age=604800";
     rerender();
   };
 
   const logout = () => {
     cachedUser = null;
     localStorage.removeItem(SESSION_KEY);
+    document.cookie = "sap_academy_session=; path=/; max-age=0";
     rerender();
   };
 

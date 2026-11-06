@@ -27,7 +27,7 @@ function isProtected(pathname: string) {
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const isProtectedRoute = isProtected(pathname);
-  const isLoggedIn = request.cookies.get("sap_academy_session")?.value === "1";
+  const isLoggedIn = !!request.cookies.get("sap_academy_session")?.value;
 
   if (isProtectedRoute && !isLoggedIn) {
     const url = request.nextUrl.clone();
