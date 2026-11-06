@@ -5,23 +5,22 @@ import Link from "next/link";
 import { COURSES } from "@/data/courses";
 import { useLanguage } from "@/context/language-context";
 
-const FAMILY_LABELS: Record<string, string> = {
-  finance: "Finance",
-  logistique: "Logistique",
-  production: "Production",
-  rh: "Ressources Humaines",
-  technique: "Technique",
-  donnees: "Data",
-  plateforme: "Plateforme",
-  cloud: "Cloud",
-};
+const FAMILY_OPTIONS = [
+  { id: "consultant-fonctionnel", label: "Consultant fonctionnel" },
+  { id: "data-analytics", label: "Data & Analytics" },
+  { id: "plateforme", label: "Plateforme" },
+  { id: "cloud", label: "Cloud" },
+  { id: "rh", label: "Ressources humaines" },
+  { id: "production", label: "Production" },
+];
 
-const LEVEL_LABELS: Record<string, string> = {
-  decouverte: "Découverte",
-  fondamentaux: "Fondamentaux",
-  consultant: "Consultant",
-  expert: "Expert",
-};
+const LEVEL_OPTIONS = [
+  { id: "decouverte", label: "Découverte" },
+  { id: "debutant", label: "Débutant" },
+  { id: "intermediaire", label: "Intermédiaire" },
+  { id: "avance", label: "Avancé" },
+  { id: "expert", label: "Expert" },
+];
 
 const DURATION_BANDS = [
   { id: "short", label: "Moins de 2 mois" },
@@ -29,12 +28,12 @@ const DURATION_BANDS = [
   { id: "long", label: "Plus de 4 mois" },
 ];
 
-const SORT_LABELS: Record<string, string> = {
-  relevance: "Par pertinence",
-  priceAsc: "Prix croissant",
-  priceDesc: "Prix décroissant",
-  durationDesc: "Durée décroissante",
-};
+const SORT_OPTIONS = [
+  { id: "relevance", label: "Par pertinence" },
+  { id: "priceAsc", label: "Prix croissant" },
+  { id: "priceDesc", label: "Prix décroissant" },
+  { id: "durationDesc", label: "Durée décroissante" },
+];
 
 export default function Catalogue() {
   const { t } = useLanguage();
@@ -66,7 +65,6 @@ export default function Catalogue() {
     });
     return list;
   }, [query, families, levels, duration, labIncluded, certificationPrep, freeOnly]);
-
   const toggleInList = (list: string[], setList: (value: string[]) => void, value: string) => {
     setList(list.includes(value) ? list.filter((item) => item !== value) : [...list, value]);
   };
@@ -84,8 +82,8 @@ export default function Catalogue() {
 
   const activeChips: { key: string; label: string; clear: () => void }[] = [];
   if (query) activeChips.push({ key: "q", label: t("catalogue.searchPlaceholder") + " ✕", clear: () => setQuery("") });
-  families.forEach((family) => activeChips.push({ key: `f-${family}`, label: FAMILY_LABELS[family] || family, clear: () => setFamilies([]) }));
-  levels.forEach((level) => activeChips.push({ key: `l-${level}`, label: LEVEL_LABELS[level] || level, clear: () => setLevels([]) }));
+  families.forEach((family) => activeChips.push({ key: `f-${family}`, label: FAMILY_OPTIONS.find((o) => o.id === family)?.label || family, clear: () => setFamilies([]) }));
+  levels.forEach((level) => activeChips.push({ key: `l-${level}`, label: LEVEL_OPTIONS.find((o) => o.id === level)?.label || level, clear: () => setLevels([]) }));
   if (duration) {
     const band = DURATION_BANDS.find((item) => item.id === duration);
     if (band) activeChips.push({ key: `d-${duration}`, label: band.label, clear: () => setDuration(null) });
@@ -120,10 +118,10 @@ export default function Catalogue() {
               <div>
                 <p className="text-sm font-semibold text-navy">{t("catalogue.family")}</p>
                 <div className="mt-3 space-y-2">
-                  {Object.entries(FAMILY_LABELS).map(([value, label]) => (
-                    <label key={value} className="flex items-center gap-2 text-sm text-slate-700">
-                      <input type="checkbox" checked={families.includes(value)} onChange={() => toggleInList(families, setFamilies, value)} className="h-4 w-4 accent-[#0879d9]" />
-                      {label}
+                  {FAMILY_OPTIONS.map((option) => (
+                    <label key={option.id} className="flex items-center gap-2 text-sm text-slate-700">
+                      <input type="checkbox" checked={families.includes(option.id)} onChange={() => toggleInList(families, setFamilies, option.id)} className="h-4 w-4 accent-[#0879d9]" />
+                      {option.label}
                     </label>
                   ))}
                 </div>
@@ -132,10 +130,10 @@ export default function Catalogue() {
               <div>
                 <p className="text-sm font-semibold text-navy">{t("catalogue.level")}</p>
                 <div className="mt-3 space-y-2">
-                  {Object.entries(LEVEL_LABELS).map(([value, label]) => (
-                    <label key={value} className="flex items-center gap-2 text-sm text-slate-700">
-                      <input type="checkbox" checked={levels.includes(value)} onChange={() => toggleInList(levels, setLevels, value)} className="h-4 w-4 accent-[#0879d9]" />
-                      {label}
+                  {LEVEL_OPTIONS.map((option) => (
+                    <label key={option.id} className="flex items-center gap-2 text-sm text-slate-700">
+                      <input type="checkbox" checked={levels.includes(option.id)} onChange={() => toggleInList(levels, setLevels, option.id)} className="h-4 w-4 accent-[#0879d9]" />
+                      {option.label}
                     </label>
                   ))}
                 </div>
@@ -176,9 +174,9 @@ export default function Catalogue() {
               <label className="text-sm font-medium text-navy">
                 {t("catalogue.sort")} :{" "}
                 <select value={sort} onChange={(e) => setSort(e.target.value)} className="ml-2 rounded-lg border border-slate-200 px-3 py-2 text-sm">
-                  {Object.entries(SORT_LABELS).map(([value, label]) => (
-                    <option key={value} value={value}>
-                      {label}
+                  {SORT_OPTIONS.map((option) => (
+                    <option key={option.id} value={option.id}>
+                      {option.label}
                     </option>
                   ))}
                 </select>
@@ -194,7 +192,6 @@ export default function Catalogue() {
                 className="h-11 w-full rounded-lg bg-white px-4 text-sm text-navy outline-none placeholder:text-slate-400"
               />
             </div>
-
             {filteredCourses.length === 0 ? (
               <div className="mt-16 rounded-2xl border border-dashed border-slate-300 p-12 text-center">
                 <p className="text-lg font-semibold text-navy">{t("catalogue.emptyTitle")}</p>
@@ -212,13 +209,13 @@ export default function Catalogue() {
                     </div>
                     <div className="flex flex-1 flex-col p-6">
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className="rounded-full bg-surface px-3 py-1 text-xs font-semibold text-navy">{FAMILY_LABELS[course.family] || course.family}</span>
+                        <span className="rounded-full bg-surface px-3 py-1 text-xs font-semibold text-navy">{course.family}</span>
                         {course.labIncluded ? <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">Lab inclus</span> : null}
                       </div>
                       <h2 className="mt-3 text-lg font-semibold text-navy">{course.title}</h2>
                       <p className="mt-2 line-clamp-2 text-sm text-slate-600">{course.summary}</p>
                       <p className="mt-4 text-xs text-slate-600">
-                        {LEVEL_LABELS[course.level] || course.level} · {course.durationHours} h · {course.languages.join("/")}
+                        {course.level} · {course.durationHours} h · {course.languages.join("/")}
                       </p>
                       <div className="mt-6 flex items-center justify-between border-t border-slate-200 pt-4">
                         <span className="text-sm font-bold text-navy">{course.price ? `${course.price} €` : "Sur devis"}</span>
