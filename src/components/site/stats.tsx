@@ -1,3 +1,5 @@
+"use client";
+
 const STATS = [
   { value: "120+", label: "Cours SAP disponibles" },
   { value: "45", label: "Formateurs experts" },

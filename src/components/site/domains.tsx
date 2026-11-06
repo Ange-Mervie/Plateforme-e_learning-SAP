@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { Landmark, Code2, Database, Layers } from "lucide-react";
 

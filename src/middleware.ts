@@ -7,10 +7,18 @@ const PROTECTED_PREFIXES = [
   "/entreprise",
   "/universite",
   "/admin",
+  "/cours",
 ];
 
 function isProtected(pathname: string) {
-  if (pathname === "/apprenant" || pathname === "/formateur" || pathname === "/entreprise" || pathname === "/universite" || pathname === "/admin") {
+  if (
+    pathname === "/apprenant" ||
+    pathname === "/formateur" ||
+    pathname === "/entreprise" ||
+    pathname === "/universite" ||
+    pathname === "/admin" ||
+    pathname === "/cours"
+  ) {
     return true;
   }
   return PROTECTED_PREFIXES.some((prefix) => pathname.startsWith(`${prefix}/`));
@@ -43,5 +51,7 @@ export const config = {
     "/universite/:path*",
     "/admin",
     "/admin/:path*",
+    "/cours",
+    "/cours/:path*",
   ],
 };
