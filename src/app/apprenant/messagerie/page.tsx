@@ -1,10 +1,13 @@
-export const metadata = { title: "Messagerie" };
+"use client";
+
+import { useLanguage } from "@/context/language-context";
 
 export default function Messagerie() {
+  const { t } = useLanguage();
   return (
     <main className="mx-auto max-w-7xl px-6 py-20">
-      <h1 className="text-4xl font-bold tracking-tight text-navy">Messagerie</h1>
-      <p className="mt-4 max-w-2xl text-slate-600">Espace de messagerie interne à l’académie.</p>
+      <h1 className="text-4xl font-bold tracking-tight text-navy">{t("nav.messagerie")}</h1>
+      <p className="mt-4 text-slate-600">{t("messagerie.subtitle")}</p>
     </main>
   );
 }

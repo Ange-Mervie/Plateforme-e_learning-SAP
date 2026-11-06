@@ -1,45 +1,19 @@
-import Link from "next/link";
+"use client";
 
-const TRAINERS = [
-  {
-    slug: "consultant-financier",
-    name: "Dr. Claire Moreau",
-    title: "Consultante SAP FI/CO",
-    specialties: ["FI", "CO", "S/4HANA Finance"],
-    yearsExperience: 12,
-    certifications: ["SAP Certified Application Associate"],
-    coursesCount: 6,
-  },
-  {
-    slug: "logisticien",
-    name: "Karim Benali",
-    title: "Consultant SAP MM/SD",
-    specialties: ["MM", "SD", "WM/EWM"],
-    yearsExperience: 9,
-    certifications: ["SAP Certified Specialist"],
-    coursesCount: 5,
-  },
-  {
-    slug: "architecte-btp",
-    name: "Sophie Laurent",
-    title: "Architecte SAP BTP",
-    specialties: ["BTP", "RAP", "Fiori"],
-    yearsExperience: 8,
-    certifications: ["SAP Certified Development Associate"],
-    coursesCount: 4,
-  },
-];
+import Link from "next/link";
+import { TRAINERS } from "@/data/trainers";
+import { useLanguage } from "@/context/language-context";
 
 export default function Formateurs() {
+  const { t } = useLanguage();
+
   return (
     <main className="bg-white">
       <section className="bg-navy">
-        <div className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
-          <p className="text-sm font-semibold uppercase tracking-wide text-blue-100">Nos experts</p>
-          <h1 className="mt-2 text-4xl font-bold tracking-tight text-white">Des experts qui pratiquent SAP chaque jour.</h1>
-          <p className="mt-4 max-w-2xl text-blue-50">
-            Nos formateurs sont des consultants et des enseignants expérimentés. Ils transmettent des cas réels issus de projets.
-          </p>
+        <div className="mx-auto max-w-7xl px-6 py-12 lg:px-8">
+          <p className="text-sm font-semibold uppercase tracking-wide text-blue-100">{t("nav.formateurs")}</p>
+          <h1 className="mt-2 text-4xl font-bold tracking-tight text-white">{t("formateurs.title")}</h1>
+          <p className="mt-4 max-w-2xl text-blue-50">{t("formateurs.subtitle")}</p>
         </div>
       </section>
 
@@ -49,12 +23,7 @@ export default function Formateurs() {
             <article key={trainer.slug} className="rounded-2xl border border-slate-200 bg-white p-6">
               <div className="flex items-center gap-4">
                 <span className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-lg font-bold text-primary">
-                  {trainer.name
-                    .split(" ")
-                    .map((part) => part[0])
-                    .join("")
-                    .slice(0, 2)
-                    .toUpperCase()}
+                  {trainer.name.split(" ").map((part) => part[0]).join("").slice(0, 2).toUpperCase()}
                 </span>
                 <div>
                   <h2 className="text-lg font-semibold text-navy">{trainer.name}</h2>
@@ -75,9 +44,10 @@ export default function Formateurs() {
                 </div>
                 <div>
                   <dt className="text-xs text-slate-600">Cours animés</dt>
-                  <dd className="font-semibold text-navy">{trainer.coursesCount}</dd>
+                  <dd className="font-semibold text-navy">{trainer.courseSlugs.length}</dd>
                 </div>
               </dl>
+              <p className="mt-5 text-sm text-slate-600">{trainer.bio}</p>
             </article>
           ))}
         </div>

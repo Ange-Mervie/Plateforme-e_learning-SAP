@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { useLanguage } from "@/context/language-context";
 
 const MODULES = [
   { code: "FI", title: "SAP FI – Comptabilité générale" },
@@ -14,6 +15,7 @@ const METHODS = [
 ];
 
 export default function Paiement() {
+  const { t } = useLanguage();
   const [method, setMethod] = useState("carte");
   const [cardNumber, setCardNumber] = useState("");
   const [error, setError] = useState("");
@@ -37,7 +39,7 @@ export default function Paiement() {
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-24">
-      <h1 className="text-4xl font-bold tracking-tight text-navy">Paiement</h1>
+      <h1 className="text-4xl font-bold tracking-tight text-navy">{t("paiement.title")}</h1>
       <p className="mt-4 text-slate-600">
         L’accès à plus d’un module nécessite un paiement. Paiement par carte, Orange Money ou MTN Mobile Money.
       </p>
@@ -53,7 +55,7 @@ export default function Paiement() {
           ))}
         </ul>
         <div className="mt-6 flex items-center justify-between border-t border-slate-200 pt-4">
-          <span className="text-sm font-medium text-slate-700">Total</span>
+          <span className="text-sm font-medium text-slate-700">{t("paiement.total")}</span>
           <span className="text-2xl font-bold text-navy">480,00 €</span>
         </div>
 
@@ -69,7 +71,7 @@ export default function Paiement() {
                 onChange={() => setMethod(m.id)}
                 className="h-4 w-4 accent-[#0879d9]"
               />
-              <span className="text-sm font-medium text-navy">{m.label}</span>
+              <span className="text-sm font-medium text-navy">{m.id === "carte" ? t("paiement.card") : m.label}</span>
             </label>
           ))}
         </div>
@@ -95,7 +97,7 @@ export default function Paiement() {
           disabled={loading}
           className="mt-8 h-12 w-full rounded-lg bg-primary text-sm font-semibold text-white transition-colors hover:bg-primary-dark disabled:opacity-60"
         >
-          {loading ? "Paiement en cours…" : "Payer 480,00 €"}
+          {loading ? "Paiement en cours…" : `Payer 480,00 €`}
         </button>
       </form>
     </main>

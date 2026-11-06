@@ -4,9 +4,11 @@ import { useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
+import { useLanguage } from "@/context/language-context";
 
 export default function Connexion() {
   const { login } = useAuth();
+  const { t } = useLanguage();
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -17,13 +19,15 @@ export default function Connexion() {
     e.preventDefault();
     setError("");
     if (!email.trim() || !password) {
-      setError("Veuillez saisir votre email et votre mot de passe.");
+      setError(t("connexion.required"));
       return;
     }
     setLoading(true);
     try {
       await login(email, password);
       router.push("/apprenant");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Une erreur est survenue.");
     } finally {
       setLoading(false);
     }
@@ -31,11 +35,11 @@ export default function Connexion() {
 
   return (
     <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center bg-white px-6 py-24">
-      <h1 className="text-3xl font-bold tracking-tight text-navy">Connexion</h1>
-      <p className="mt-4 text-slate-600">Connectez-vous à votre espace SAP Academy.</p>
+      <h1 className="text-3xl font-bold tracking-tight text-navy">{t("connexion.title")}</h1>
+      <p className="mt-4 text-slate-600">{t("connexion.subtitle")}</p>
       <form onSubmit={handleSubmit} className="mt-8 space-y-4 rounded-2xl border border-slate-200 p-8">
         <div>
-          <label htmlFor="email" className="text-sm font-medium text-navy">Email</label>
+          <label htmlFor="email" className="text-sm font-medium text-navy">{t("connexion.email")}</label>
           <input
             id="email"
             type="email"
@@ -45,7 +49,7 @@ export default function Connexion() {
           />
         </div>
         <div>
-          <label htmlFor="password" className="text-sm font-medium text-navy">Mot de passe</label>
+          <label htmlFor="password" className="text-sm font-medium text-navy">{t("connexion.password")}</label>
           <input
             id="password"
             type="password"
@@ -60,12 +64,12 @@ export default function Connexion() {
           disabled={loading}
           className="h-12 w-full rounded-lg bg-primary text-sm font-semibold text-white transition-colors hover:bg-primary-dark disabled:opacity-60"
         >
-          {loading ? "Connexion…" : "Se connecter"}
+          {loading ? "…" : t("connexion.submit")}
         </button>
       </form>
       <p className="mt-6 text-center text-sm text-slate-600">
-        Pas encore de compte ?{" "}
-          <Link href="/inscription" className="font-semibold text-primary hover:text-primary-dark">S’inscrire</Link>
+        {t("connexion.noAccount")} {" "}
+        <Link href="/inscription" className="font-semibold text-primary hover:text-primary-dark">{t("nav.register")}</Link>
       </p>
     </main>
   );

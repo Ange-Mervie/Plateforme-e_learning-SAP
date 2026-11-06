@@ -1,5 +1,7 @@
 "use client";
 
+import { useLanguage } from "@/context/language-context";
+
 const TESTIMONIALS = [
   {
     quote:
@@ -22,29 +24,23 @@ const TESTIMONIALS = [
 ];
 
 export default function Testimonials() {
+  const { t } = useLanguage();
   return (
     <section className="bg-white">
       <div className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
         <div className="text-center">
-          <p className="text-sm font-semibold uppercase tracking-wide text-primary">
-            Témoignages
-          </p>
-          <h2 className="mt-2 text-3xl font-bold tracking-tight text-navy">
-            Ils ont transformé leur carrière SAP
-          </h2>
+          <p className="text-sm font-semibold uppercase tracking-wide text-primary">{t("testimonials.eyebrow")}</p>
+          <h2 className="mt-2 text-3xl font-bold tracking-tight text-navy">{t("testimonials.title")}</h2>
         </div>
         <div className="mt-14 grid gap-6 md:grid-cols-3">
-          {TESTIMONIALS.map((t) => (
-            <figure
-              key={t.name}
-              className="rounded-2xl border border-slate-200 bg-white p-8"
-            >
+          {TESTIMONIALS.map((tItem) => (
+            <figure key={tItem.name} className="rounded-2xl border border-slate-200 bg-white p-8">
               <blockquote className="text-lg font-medium leading-8 text-navy">
-                « {t.quote} »
+                « {tItem.quote} »
               </blockquote>
               <figcaption className="mt-6">
-                <p className="font-semibold text-navy">{t.name}</p>
-                <p className="mt-1 text-sm text-slate-600">{t.role}</p>
+                <p className="font-semibold text-navy">{tItem.name}</p>
+                <p className="mt-1 text-sm text-slate-600">{tItem.role}</p>
               </figcaption>
             </figure>
           ))}
