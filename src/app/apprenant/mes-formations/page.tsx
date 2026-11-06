@@ -31,7 +31,7 @@ export default function MesFormations() {
                 {course.durationHours} h · {course.languages.join("/")} · {course.labIncluded ? "Lab inclus" : "Sans lab"}
               </p>
               <div className="mt-6 flex items-center justify-between border-t border-slate-200 pt-4">
-                <span className="text-sm font-bold text-navy">{course.price ? `${course.price} €` : "Sur devis"}</span>
+                <span className="text-sm font-bold text-navy">{course.price ? `${course.price} FCMA` : "Sur devis"}</span>
                 <Link href={`/cours/${course.slug}`} className="text-sm font-semibold text-primary hover:text-primary-dark">
                   Continuer →
                 </Link>

@@ -56,7 +56,7 @@ export default function Paiement() {
         </ul>
         <div className="mt-6 flex items-center justify-between border-t border-slate-200 pt-4">
           <span className="text-sm font-medium text-slate-700">{t("paiement.total")}</span>
-          <span className="text-2xl font-bold text-navy">480,00 €</span>
+          <span className="text-2xl font-bold text-navy">480,00 FCMA</span>
         </div>
 
         <div className="mt-8 space-y-3">
@@ -97,7 +97,7 @@ export default function Paiement() {
           disabled={loading}
           className="mt-8 h-12 w-full rounded-lg bg-primary text-sm font-semibold text-white transition-colors hover:bg-primary-dark disabled:opacity-60"
         >
-          {loading ? "Paiement en cours…" : `Payer 480,00 €`}
+          {loading ? "Paiement en cours…" : `Payer 480,00 FCMA`}
         </button>
       </form>
     </main>

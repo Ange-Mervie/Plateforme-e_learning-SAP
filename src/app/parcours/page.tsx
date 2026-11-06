@@ -58,7 +58,7 @@ export default function Parcours() {
                   <span className="font-semibold text-navy">{t("parcours.certificationTarget")} :</span> {parcours.certificationTarget}
                 </p>
                 <p className="mt-1">
-                  <span className="font-semibold text-navy">{t("parcours.price")} :</span> {parcours.price ? `${parcours.price} €` : "Sur devis"}
+                  <span className="font-semibold text-navy">{t("parcours.price")} :</span> {parcours.price ? `${parcours.price} FCMA` : "Sur devis"}
                 </p>
               </div>
 
