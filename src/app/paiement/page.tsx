@@ -30,7 +30,7 @@ export default function Paiement() {
     }
     setLoading(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 800));
+      await fetch("/api/subscriptions", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ userId: 1 }) });
       setLoading(false);
     } finally {
       setLoading(false);
