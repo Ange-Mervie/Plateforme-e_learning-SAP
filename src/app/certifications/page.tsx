@@ -29,7 +29,7 @@ export default function Certifications() {
 
                 <div className="mt-4 flex flex-wrap gap-2">
                   <span className="rounded-full bg-surface px-3 py-1 text-xs font-semibold text-navy">{cert.family}</span>
-                  <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">{cert.mockExams ?? 0} exam(s)</span>
+                  <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">{cert.mockExams ?? 0} {t("certifications.exams")}</span>
                 </div>
 
                 <div className="mt-6 flex-1 border-t border-slate-200 pt-4 text-sm text-slate-600">

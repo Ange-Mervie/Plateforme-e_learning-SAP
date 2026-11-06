@@ -7,7 +7,7 @@ export type Lang = "fr" | "en";
 const fr = {
   nav: {
     home: "Accueil",
-    catalogue: "Catalogue",
+    catalogue: "Catalogues",
     parcours: "Parcours",
     formateurs: "Formateurs",
     certifications: "Certifications",
@@ -65,6 +65,7 @@ const fr = {
     title: "Validez vos compétences SAP",
     subtitle: "Examens blancs originaux, plans de révision et attestations.",
     cta: "Découvrir les certifications →",
+    exams: "exam(s)",
   },
   footer: {
     tagline: "Plateforme e-learning spécialisée SAP : formations pratiques, cas métier et certifications.",
@@ -103,6 +104,12 @@ const fr = {
   formateurs: {
     title: "Des experts qui pratiquent SAP chaque jour.",
     subtitle: "Nos formateurs sont des consultants et des enseignants expérimentés. Ils transmettent des cas réels issus de projets.",
+    experience: "Expérience",
+    years: "ans",
+    coursesTaught: "Cours animés",
+    expertTitle: "Vous êtes expert SAP ?",
+    expertText: "Rejoignez notre équipe de formateurs. Proposez un cours, partagez un cas réel et formez la prochaine génération.",
+    proposeCourse: "Proposer un cours",
   },
   paiement: {
     title: "Paiement",
@@ -201,6 +208,7 @@ const en: typeof fr = {
     title: "Validate your SAP skills",
     subtitle: "Original mock exams, revision plans and success certificates.",
     cta: "Discover certifications →",
+    exams: "exam(s)",
   },
   footer: {
     tagline: "SAP learning platform specialized in SAP: practical training, business cases and certifications.",
@@ -239,6 +247,12 @@ const en: typeof fr = {
   formateurs: {
     title: "Experts who practice SAP every day.",
     subtitle: "Our trainers are experienced consultants and teachers. They share real project cases.",
+    experience: "Experience",
+    years: "yrs",
+    coursesTaught: "Courses taught",
+    expertTitle: "Are you an SAP expert?",
+    expertText: "Join our trainer team. Propose a course, share a real case and train the next generation.",
+    proposeCourse: "Propose a course",
   },
   paiement: {
     title: "Payment",

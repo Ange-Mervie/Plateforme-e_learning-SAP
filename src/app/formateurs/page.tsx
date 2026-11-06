@@ -39,11 +39,11 @@ export default function Formateurs() {
               </div>
               <dl className="mt-6 grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <dt className="text-xs text-slate-600">Expérience</dt>
-                  <dd className="font-semibold text-navy">{trainer.yearsExperience} ans</dd>
+                  <dt className="text-xs text-slate-600">{t("formateurs.experience")}</dt>
+                  <dd className="font-semibold text-navy">{trainer.yearsExperience} {t("formateurs.years")}</dd>
                 </div>
                 <div>
-                  <dt className="text-xs text-slate-600">Cours animés</dt>
+                  <dt className="text-xs text-slate-600">{t("formateurs.coursesTaught")}</dt>
                   <dd className="font-semibold text-navy">{trainer.courseSlugs.length}</dd>
                 </div>
               </dl>
@@ -53,15 +53,15 @@ export default function Formateurs() {
         </div>
 
         <div className="mt-16 rounded-3xl bg-navy p-10 text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-white">Vous êtes expert SAP ?</h2>
+          <h2 className="text-3xl font-bold tracking-tight text-white">{t("formateurs.expertTitle")}</h2>
           <p className="mx-auto mt-4 max-w-2xl text-blue-50">
-            Rejoignez notre équipe de formateurs. Proposez un cours, partagez un cas réel et formez la prochaine génération.
+            {t("formateurs.expertText")}
           </p>
           <Link
             href="/inscription"
             className="mt-8 inline-flex h-12 items-center justify-center rounded-lg bg-primary px-6 text-sm font-semibold text-white transition-colors hover:bg-primary-dark"
           >
-            Proposer un cours
+            {t("formateurs.proposeCourse")}
           </Link>
         </div>
       </section>
