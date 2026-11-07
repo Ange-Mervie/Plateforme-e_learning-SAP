@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { AuthProvider } from "@/context/auth-context";
 import { LanguageProvider } from "@/context/language-context";
+import { ProgressProvider } from "@/context/progress-context";
 import Header from "@/components/site/header";
 import "./globals.css";
 
@@ -33,8 +34,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col">
         <AuthProvider>
           <LanguageProvider>
-            <Header />
-            {children}
+            <ProgressProvider>
+              <Header />
+              {children}
+            </ProgressProvider>
           </LanguageProvider>
         </AuthProvider>
       </body>

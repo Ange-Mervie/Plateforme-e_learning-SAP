@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useProgress } from "@/context/progress-context";
 
 const TABS = [
   { id: "lecons", label: "Leçons" },
@@ -21,12 +22,13 @@ const SAMPLE_VIDEO =
 
 export default function CoursPlayer({ code }: { code: string }) {
   const [tab, setTab] = useState<TabId>("lecons");
-  const [completedLessons, setCompletedLessons] = useState<string[]>([]);
+  const { setLessonCompleted, getProgress } = useProgress();
+  const courseProgress = getProgress(code);
+  const completedLessons = courseProgress?.completedLessons ?? [];
+  const percent = courseProgress?.percent ?? 0;
 
   const toggleLesson = (id: string) => {
-    setCompletedLessons((prev) =>
-      prev.includes(id) ? prev.filter((l) => l !== id) : [...prev, id]
-    );
+    setLessonCompleted(code, id, !completedLessons.includes(id), LESSONS.length);
   };
 
   return (
@@ -52,6 +54,7 @@ export default function CoursPlayer({ code }: { code: string }) {
             className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-navy transition-colors hover:bg-surface"
           >
             {completedLessons.length ? "Leçon terminée ✓" : "Marquer la leçon comme terminée"}
+            <span className="ml-3 text-sm font-semibold text-navy">{percent} %</span>
           </button>
         </div>
 
