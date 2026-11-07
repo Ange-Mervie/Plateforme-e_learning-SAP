@@ -12,7 +12,7 @@ export default function ApprenantDashboard() {
   return (
     <div className="flex min-h-screen bg-white font-sans text-navy">
       <ApprenantSidebar />
-      <main className="min-h-screen flex-1 bg-surface">
+      <main className="relative min-h-screen flex-1 bg-surface">
         <div className="flex h-16 items-center justify-between border-b border-slate-200 bg-white px-8">
           <input
             type="text"
@@ -22,6 +22,7 @@ export default function ApprenantDashboard() {
           <UserBadge />
         </div>
         <div className="mx-auto max-w-7xl px-8 py-10">
+          <div className="absolute inset-0 bg-[url(/courses/hero.svg)] bg-cover bg-center"></div>
           <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
             <div>
               <p className="text-sm font-semibold uppercase tracking-wide text-primary">Espace apprenant</p>
