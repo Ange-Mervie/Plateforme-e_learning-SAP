@@ -24,10 +24,20 @@ export default function Connexion() {
     }
     setLoading(true);
     try {
-      await login(email, password);
-      router.push("/apprenant");
+      const user = await login(email, password);
+      const target =
+        user?.role === "formateur"
+          ? "/formateur"
+          : user?.role === "admin"
+            ? "/admin"
+            : user?.role === "consultant"
+              ? "/entreprise"
+              : user?.role === "expert"
+                ? "/universite"
+                : "/apprenant";
+      router.push(target);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Une erreur est survenue.");
+      setError(err instanceof Error ? err.message : t("connexion.error"));
     } finally {
       setLoading(false);
     }
@@ -70,6 +80,9 @@ export default function Connexion() {
       <p className="mt-6 text-center text-sm text-slate-600">
         {t("connexion.noAccount")} {" "}
         <Link href="/inscription" className="font-semibold text-primary hover:text-primary-dark">{t("nav.register")}</Link>
+      </p>
+      <p className="mt-3 text-center text-sm text-slate-600">
+        <Link href="/mot-de-passe-oublie" className="font-semibold text-primary hover:text-primary-dark">{t("connexion.forgotPassword")}</Link>
       </p>
     </main>
   );

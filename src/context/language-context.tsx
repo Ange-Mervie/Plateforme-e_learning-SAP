@@ -127,6 +127,14 @@ const fr = {
     submit: "Se connecter",
     required: "Veuillez saisir votre email et votre mot de passe.",
     noAccount: "Pas encore de compte ?",
+    forgotPassword: "Mot de passe oublié ?",
+    error: "Une erreur est survenue.",
+  },
+  motDeOublie: {
+    title: "Mot de passe oublié",
+    subtitle: "Saisissez votre adresse email pour recevoir un lien de réinitialisation.",
+    submit: "Envoyer le lien",
+    sent: "Si le compte existe, un lien de réinitialisation a été envoyé.",
   },
   inscription: {
     title: "Inscription",
@@ -270,6 +278,14 @@ const en: typeof fr = {
     submit: "Log in",
     required: "Please enter your email and password.",
     noAccount: "No account yet?",
+    forgotPassword: "Forgot password?",
+    error: "An error occurred.",
+  },
+  motDeOublie: {
+    title: "Forgot password",
+    subtitle: "Enter your email address to receive a reset link.",
+    submit: "Send reset link",
+    sent: "If the account exists, a reset link has been sent.",
   },
   inscription: {
     title: "Sign up",
