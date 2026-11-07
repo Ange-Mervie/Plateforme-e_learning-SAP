@@ -222,7 +222,7 @@ export default function Catalogue() {
                         {course.level} · {course.durationHours} h · {course.languages.join("/")}
                       </p>
                       <div className="mt-6 flex items-center justify-between border-t border-slate-200 pt-4">
-                        <span className="text-sm font-bold text-navy">{course.price ? `${course.price} FCMA` : "Sur devis"}</span>
+                        <span className="text-sm font-bold text-navy">{course.price ? `${course.price} FCFA` : "Sur devis"}</span>
                         <Link href={`/formation/${course.slug}`} className="text-sm font-semibold text-primary hover:text-primary-dark">
                           Voir la formation →
                         </Link>
