@@ -8,7 +8,8 @@ export default function Hero() {
 
   return (
     <section className="relative overflow-hidden bg-navy">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(8,121,217,0.35),rgba(16,43,78,0.9))]"></div>
+      <div className="absolute inset-0 bg-[url('/courses/hero.svg')] bg-cover bg-center"></div>
+      <div className="absolute inset-0 bg-navy/60"></div>
       <div className="relative mx-auto max-w-7xl px-6 py-20 lg:py-28">
         <div className="grid items-center gap-14 lg:grid-cols-2">
           <div>
