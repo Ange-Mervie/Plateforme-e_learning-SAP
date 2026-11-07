@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { COURSES } from "@/data/courses";
 import { useLanguage } from "@/context/language-context";
+import { useAuth } from "@/context/auth-context";
 
 const FAMILY_OPTIONS = [
   { id: "consultant-fonctionnel", label: "Consultant fonctionnel" },
@@ -37,6 +38,8 @@ const SORT_OPTIONS = [
 
 export default function Catalogue() {
   const { t } = useLanguage();
+  const { subscriptionStatus } = useAuth();
+  const isSubscribed = subscriptionStatus === "active";
   const [query, setQuery] = useState("");
   const [families, setFamilies] = useState<string[]>([]);
   const [levels, setLevels] = useState<string[]>([]);
@@ -61,10 +64,11 @@ export default function Catalogue() {
       if (labIncluded && !course.labIncluded) return false;
       if (certificationPrep && !course.certificationPrep) return false;
       if (freeOnly && !course.free) return false;
+      if (course.price && !isSubscribed) return false;
       return true;
     });
     return list;
-  }, [query, families, levels, duration, labIncluded, certificationPrep, freeOnly]);
+  }, [query, families, levels, duration, labIncluded, certificationPrep, freeOnly, isSubscribed]);
   const toggleInList = (list: string[], setList: (value: string[]) => void, value: string) => {
     setList(list.includes(value) ? list.filter((item) => item !== value) : [...list, value]);
   };
