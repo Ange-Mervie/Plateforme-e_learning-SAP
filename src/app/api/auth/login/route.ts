@@ -3,9 +3,16 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { query } from "@/lib/db";
 
+interface UserRow {
+  id: number;
+  email: string;
+  password: string;
+  role: string;
+}
+
 export async function POST(req: Request) {
   const { email, password } = await req.json();
-  const rows = await query<any>("SELECT * FROM users WHERE email = ?", [email]);
+  const rows = await query<UserRow>("SELECT * FROM users WHERE email = ?", [email]);
   if (!rows.length) return NextResponse.json({ error: "invalid" }, { status: 401 });
   const user = rows[0];
   const ok = await bcrypt.compare(password, user.password);

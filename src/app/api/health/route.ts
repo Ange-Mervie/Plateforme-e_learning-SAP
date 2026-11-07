@@ -5,7 +5,8 @@ export async function GET() {
   try {
     const rows = await query("SELECT 1 AS ok");
     return NextResponse.json({ ok: true, db: rows });
-  } catch (e: any) {
-    return NextResponse.json({ ok: false, error: e?.message }, { status: 500 });
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : "unknown";
+    return NextResponse.json({ ok: false, error: message }, { status: 500 });
   }
 }
