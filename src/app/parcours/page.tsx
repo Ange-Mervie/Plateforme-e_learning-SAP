@@ -21,7 +21,8 @@ export default function Parcours() {
       <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
         <div className="grid gap-6 md:grid-cols-3">
           {PARCOURS.map((parcours) => (
-            <article key={parcours.slug} className="flex flex-col rounded-2xl border border-slate-200 bg-white p-6">
+            <article key={parcours.slug} className="relative flex flex-col rounded-2xl border border-slate-200 bg-white p-6">
+              <div className="absolute inset-0 bg-[url(/parcours/data-analyst.svg)] bg-cover bg-center"></div>
               <h2 className="text-xl font-semibold text-navy">{parcours.title}</h2>
               <p className="mt-2 text-sm text-slate-600">{parcours.summary}</p>
 
