@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { AuthProvider } from "@/context/auth-context";
@@ -35,7 +36,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <AuthProvider>
           <LanguageProvider>
             <ProgressProvider>
-              <Header />
+              <Suspense fallback={null}>
+                <Header />
+              </Suspense>
               {children}
             </ProgressProvider>
           </LanguageProvider>

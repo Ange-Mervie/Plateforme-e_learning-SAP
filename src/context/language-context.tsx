@@ -17,7 +17,6 @@ const fr = {
     mesFormations: "Mes formations",
   },
   hero: {
-    badge: "SAP S/4HANA · SAP Fiori · SAP BTP",
     title: "Développez vos compétences SAP. Transformez votre avenir professionnel.",
     subtitle:
       "Cours pratiques, cas métier et exercices guidés pour maîtriser les modules SAP S/4HANA, Fiori et BTP — du fonctionnel au consultant expert.",
@@ -29,6 +28,7 @@ const fr = {
   domains: {
     title: "Explorez les domaines SAP",
     subtitle: "Les modules métier qui pilotent vos processus SAP.",
+    discoverCourses: "Découvrir les formations",
     cards: {
       fonctionnelTitle: "SAP Fonctionnel",
       fonctionnelDesc: "Finance, logistique, production, qualité et RH : les modules métier qui pilotent les processus SAP.",
@@ -118,6 +118,22 @@ const fr = {
     card: "Carte bancaire",
     cash: "Virement / Espèces",
     simulate: "Simuler le paiement",
+    receipt: {
+      title: "Reçu",
+      receiptNo: "Numéro de reçu",
+      date: "Date d'émission",
+      learner: "Apprenant",
+      learnerEmail: "Email",
+      training: "Formation / Service",
+      amount: "Montant",
+      method: "Moyen de paiement",
+      transaction: "Référence transaction",
+      status: "Statut",
+      statusPending: "En attente",
+      statusPaid: "Payé",
+      print: "Imprimer",
+      notAvailable: "—",
+    },
   },
   connexion: {
     title: "Connexion",
@@ -168,7 +184,6 @@ const en: typeof fr = {
     mesFormations: "My courses",
   },
   hero: {
-    badge: "SAP S/4HANA · SAP Fiori · SAP BTP",
     title: "Develop your SAP skills. Transform your professional future.",
     subtitle:
       "Practical courses, business cases and guided exercises to master SAP S/4HANA, Fiori and BTP — from functional to expert consultant.",
@@ -180,6 +195,7 @@ const en: typeof fr = {
   domains: {
     title: "Explore SAP domains",
     subtitle: "The business modules that drive SAP processes.",
+    discoverCourses: "Discover courses",
     cards: {
       fonctionnelTitle: "SAP Functional",
       fonctionnelDesc: "Finance, logistics, production, quality and HR: the business modules that drive SAP processes.",
@@ -269,6 +285,22 @@ const en: typeof fr = {
     card: "Credit card",
     cash: "Bank transfer / Cash",
     simulate: "Simulate payment",
+    receipt: {
+      title: "Receipt",
+      receiptNo: "Receipt number",
+      date: "Issue date",
+      learner: "Learner",
+      learnerEmail: "Email",
+      training: "Course / Service",
+      amount: "Amount",
+      method: "Payment method",
+      transaction: "Transaction reference",
+      status: "Status",
+      statusPending: "Pending",
+      statusPaid: "Paid",
+      print: "Print",
+      notAvailable: "—",
+    },
   },
   connexion: {
     title: "Log in",

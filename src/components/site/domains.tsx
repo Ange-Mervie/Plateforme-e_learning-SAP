@@ -2,32 +2,35 @@
 
 import Link from "next/link";
 import { useLanguage } from "@/context/language-context";
-import { Landmark, Code2, Database, Layers } from "lucide-react";
 
 const DOMAINS = [
   {
-    icon: Landmark,
+    image: "/parcours/functional-consultant.svg",
     titleKey: "domains.cards.fonctionnelTitle",
     descriptionKey: "domains.cards.fonctionnelDesc",
     modules: ["FI", "CO", "MM", "SD", "PP", "QM", "PM", "HCM"],
+    skills: ["Gestion financière", "Comptabilité", "Achats", "Ventes", "RH"],
   },
   {
-    icon: Code2,
+    image: "/parcours/abap-developer.svg",
     titleKey: "domains.cards.techniqueTitle",
     descriptionKey: "domains.cards.techniqueDesc",
     modules: ["ABAP", "Fiori", "BTP", "Basis", "Security"],
+    skills: ["ABAP", "Fiori", "BTP", "Basis", "Sécurité"],
   },
   {
-    icon: Database,
+    image: "/parcours/data-analyst.svg",
     titleKey: "domains.cards.dataTitle",
     descriptionKey: "domains.cards.dataDesc",
     modules: ["HANA", "BW", "SAC", "Datasphere", "AI"],
+    skills: ["HANA", "BW", "SAC", "Datasphere", "Business AI"],
   },
   {
-    icon: Layers,
+    image: "/courses/hero.svg",
     titleKey: "domains.cards.solutionsTitle",
     descriptionKey: "domains.cards.solutionsDesc",
     modules: ["SF", "Ariba", "Concur", "Fieldglass", "Signavio"],
+    skills: ["SuccessFactors", "Ariba", "Concur", "Fieldglass", "Signavio"],
   },
 ];
 
@@ -48,18 +51,29 @@ export default function Domains() {
 
         <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {DOMAINS.map((domain) => (
-            <div key={domain.titleKey} className="rounded-2xl border border-slate-200 bg-white p-6 transition-shadow hover:shadow-lg">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-surface text-primary">
-                <domain.icon className="h-6 w-6" />
-              </div>
-              <h3 className="mt-5 text-lg font-semibold text-navy">{t(domain.titleKey)}</h3>
-              <p className="mt-2 text-sm leading-6 text-slate-600">{t(domain.descriptionKey)}</p>
-              <div className="mt-5 flex flex-wrap gap-2">
-                {domain.modules.map((module) => (
-                  <span key={module} className="rounded-full bg-surface px-3 py-1 text-xs font-semibold text-navy">
-                    {module}
-                  </span>
-                ))}
+            <div key={domain.titleKey} className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white transition-shadow hover:shadow-lg">
+              <div className="h-40 bg-cover bg-center" style={{ backgroundImage: `url(${domain.image})` }} />
+              <div className="absolute inset-0 bg-navy/60" />
+              <div className="relative p-6">
+                <h3 className="text-lg font-semibold text-navy">{t(domain.titleKey)}</h3>
+                <p className="mt-2 text-sm leading-6 text-slate-600">{t(domain.descriptionKey)}</p>
+                <div className="mt-5 flex flex-wrap gap-2">
+                  {domain.modules.map((module) => (
+                    <span key={module} className="rounded-full bg-surface px-3 py-1 text-xs font-semibold text-navy">
+                      {module}
+                    </span>
+                  ))}
+                </div>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {domain.skills.map((skill) => (
+                    <span key={skill} className="rounded-full bg-surface px-3 py-1 text-xs font-semibold text-slate-600">
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+                <Link href="/catalogue" className="mt-6 inline-flex h-11 items-center justify-center rounded-lg bg-primary px-4 text-sm font-semibold text-white transition-colors hover:bg-primary-dark">
+                  {t("domains.discoverCourses")}
+                </Link>
               </div>
             </div>
           ))}

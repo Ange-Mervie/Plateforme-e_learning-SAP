@@ -29,3 +29,19 @@ body {
   color: var(--foreground);
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }
+
+@media print {
+  body {
+    background: #ffffff;
+  }
+  .receipt {
+    border: none;
+    border-radius: 0;
+    background: #ffffff;
+    box-shadow: none;
+    padding: 0;
+  }
+  .no-print {
+    display: none !important;
+  }
+}

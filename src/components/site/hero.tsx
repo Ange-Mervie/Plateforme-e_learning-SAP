@@ -9,15 +9,12 @@ export default function Hero() {
   return (
     <section className="relative overflow-hidden bg-navy">
       <div className="absolute inset-0 bg-[url('/courses/hero.svg')] bg-cover bg-center"></div>
-      <div className="absolute inset-0 bg-navy/60"></div>
+      <div className="absolute inset-0" style={{ backgroundImage: "linear-gradient(to bottom, rgba(16, 43, 78, 0) 0%, rgba(16, 43, 78, 0.45) 55%, rgba(16, 43, 78, 0.75) 100%)" }}></div>
       <div className="relative mx-auto max-w-7xl px-6 py-20 lg:py-28">
         <div className="grid items-center gap-14 lg:grid-cols-2">
           <div>
-            <span className="inline-flex items-center rounded-full bg-white/10 px-4 py-1.5 text-xs font-semibold text-blue-100 ring-1 ring-white/20">
-              {t("hero.badge")}
-            </span>
             <h1 className="mt-6 text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">
-              {t("hero.title")}
+              Bienvenue sur SAP Learning Academy
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-8 text-blue-50">
               {t("hero.subtitle")}

@@ -1,11 +1,13 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { useLanguage } from "@/context/language-context";
+import { useAuth } from "@/context/auth-context";
+import Receipt, { type ReceiptData } from "@/components/paiement/receipt";
 
 const MODULES = [
-  { code: "FI", title: "SAP FI – Comptabilité générale" },
-  { code: "MM", title: "SAP MM – Achats et stocks" },
+  { code: "FI", title: "SAP FI  Comptabilité générale" },
+  { code: "MM", title: "SAP MM  Achats et stocks" },
 ];
 
 const METHODS = [
@@ -16,10 +18,34 @@ const METHODS = [
 
 export default function Paiement() {
   const { t } = useLanguage();
+  const { user } = useAuth();
   const [method, setMethod] = useState("carte");
   const [cardNumber, setCardNumber] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [receiptData, setReceiptData] = useState<ReceiptData | null>(null);
+
+  const selectedMethod = METHODS.find((m) => m.id === method);
+  const methodLabel = selectedMethod ? selectedMethod.label : t("paiement.card");
+  const amount = "480000 FCFA";
+  const status = user?.subscription?.status ?? "free";
+
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => {
+      setReceiptData({
+        receiptNumber: `RCPT-${Date.now()}`,
+        date: new Date(),
+        learnerName: user?.name ?? "",
+        learnerEmail: user?.email ?? "",
+        training: MODULES.map((m) => m.title).join(" + "),
+        amount,
+        method: methodLabel,
+        transactionRef: user?.id ? `TXN-${user.id}` : "",
+        status,
+      });
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [user, method, amount, methodLabel, status]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -56,7 +82,7 @@ export default function Paiement() {
         </ul>
         <div className="mt-6 flex items-center justify-between border-t border-slate-200 pt-4">
           <span className="text-sm font-medium text-slate-700">{t("paiement.total")}</span>
-          <span className="text-2xl font-bold text-navy">480,00 FCFA</span>
+          <span className="text-2xl font-bold text-navy">{amount}</span>
         </div>
 
         <div className="mt-8 space-y-3">
@@ -68,7 +94,7 @@ export default function Paiement() {
                 name="method"
                 value={m.id}
                 checked={method === m.id}
-                onChange={() => setMethod(m.id)}
+                onChange={(e) => setMethod(e.target.value)}
                 className="h-4 w-4 accent-[#0879d9]"
               />
               <span className="text-sm font-medium text-navy">{m.id === "carte" ? t("paiement.card") : m.label}</span>
@@ -97,9 +123,19 @@ export default function Paiement() {
           disabled={loading}
           className="mt-8 h-12 w-full rounded-lg bg-primary text-sm font-semibold text-white transition-colors hover:bg-primary-dark disabled:opacity-60"
         >
-          {loading ? "Paiement en cours…" : `Payer 480,00 FCFA`}
+          {loading ? "Paiement en cours…" : `Payer ${amount}`}
         </button>
       </form>
+
+      {receiptData ? <Receipt data={receiptData} /> : null}
+
+      <button
+        type="button"
+        onClick={() => window.print()}
+        className="no-print mt-8 inline-flex h-12 items-center justify-center rounded-lg bg-navy px-6 text-sm font-semibold text-white transition-colors hover:bg-navy-light"
+      >
+        {t("receipt.print")}
+      </button>
     </main>
   );
 }
