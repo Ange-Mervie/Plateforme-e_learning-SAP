@@ -1,22 +1,56 @@
+import Link from "next/link";
+import { ArrowRight, Sparkles } from "lucide-react";
+
 const COURSES = [
-  { code: "CO", title: "SAP CO – Contrôle de gestion", level: "Intermédiaire", duration: "5 h" },
-  { code: "BTP", title: "SAP BTP : fondamentaux", level: "Débutant", duration: "6 h" },
+  {
+    code: "CO",
+    slug: "co-controle-de-gestion",
+    title: "SAP CO – Contrôle de gestion",
+    level: "Intermédiaire",
+    duration: "5 h",
+  },
+  {
+    code: "ABAP",
+    slug: "abap-fondamentaux",
+    title: "SAP ABAP : fondamentaux",
+    level: "Débutant",
+    duration: "8 h",
+  },
 ];
 
 export default function Recommended() {
   return (
-    <section className="bg-white">
+    <section className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold tracking-tight text-navy">Formations recommandées</h2>
-        <a href="#" className="text-sm font-semibold text-primary hover:text-primary-dark">Voir plus →</a>
+        <h2 className="text-xl font-bold tracking-tight text-navy flex items-center gap-2">
+          <Sparkles className="h-4 w-4 text-primary" />
+          Recommandé pour vous
+        </h2>
+        <Link href="/catalogue" className="text-xs font-bold text-primary hover:text-primary-dark">
+          Catalogue →
+        </Link>
       </div>
-      <div className="mt-8 grid gap-6 sm:grid-cols-2">
+
+      <div className="mt-6 grid gap-4 sm:grid-cols-2">
         {COURSES.map((course) => (
-          <div key={course.code} className="rounded-2xl border border-slate-200 bg-white p-6">
-            <span className="text-sm font-bold text-primary">{course.code}</span>
-            <h3 className="mt-2 text-lg font-semibold text-navy">{course.title}</h3>
-            <p className="mt-2 text-sm text-slate-600">{course.level} · {course.duration}</p>
-            <a href="#" className="mt-4 inline-block text-sm font-semibold text-navy hover:text-primary">Commencer →</a>
+          <div
+            key={course.code}
+            className="flex flex-col justify-between rounded-xl border border-slate-200 bg-surface/50 p-5 hover:border-primary transition-all"
+          >
+            <div>
+              <span className="text-xs font-bold text-primary">SAP {course.code}</span>
+              <h3 className="mt-1 text-sm font-bold text-navy">{course.title}</h3>
+              <p className="mt-1 text-xs text-slate-500">
+                {course.level} · {course.duration}
+              </p>
+            </div>
+            <Link
+              href={`/formation/${course.slug}`}
+              className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-primary hover:text-primary-dark"
+            >
+              <span>Découvrir la formation</span>
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
           </div>
         ))}
       </div>

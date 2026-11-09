@@ -57,7 +57,7 @@ export default function PopularCourses() {
             <h2 className="mt-2 text-3xl font-bold tracking-tight text-navy">{t("popular.title")}</h2>
           </div>
           <Link href="/catalogue" className="hidden text-sm font-semibold text-primary hover:text-primary-dark sm:block">
-            {t("catalogue.resetFilters")}
+            Voir tout le catalogue →
           </Link>
         </div>
 

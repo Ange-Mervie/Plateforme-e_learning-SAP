@@ -25,13 +25,13 @@ interface AuthContextValue {
   subscriptionStatus: SubscriptionStatus;
   login: (email: string, password: string) => Promise<User | null>;
   logout: () => void;
-  register: (name: string, email: string, password: string) => Promise<void>;
-  activateSubscription: (planId: string) => void;
+  register: (name: string, email: string, password: string) => Promise<User | null>;
+  activateSubscription: (planId?: string) => void;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-const SESSION_KEY = "sap_academy_session";
+const SESSION_KEY = "sap_academy_session_user";
 const SESSION_COOKIE_NAME = "sap_academy_session";
 const SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 * 7;
 
@@ -66,9 +66,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setVersion((version) => version + 1);
   };
 
-  const activateSubscription = (planId: string) => {
-    if (!cachedUser) return;
-    cachedUser = { ...cachedUser, subscription: { status: "active", planId } };
+  const activateSubscription = (planId: string = "premium-plan") => {
+    if (!cachedUser) {
+      // Create guest subscriber if needed
+      cachedUser = {
+        id: "1",
+        name: "Apprenant SAP",
+        email: "apprenant@sap-academy.com",
+        role: "apprenant",
+        subscription: { status: "active", planId },
+      };
+    } else {
+      cachedUser = { ...cachedUser, subscription: { status: "active", planId } };
+    }
     localStorage.setItem(SESSION_KEY, JSON.stringify(cachedUser));
     if (typeof document !== "undefined") {
       document.cookie = `${SESSION_COOKIE_NAME}=1; path=/; max-age=${SESSION_MAX_AGE_SECONDS}; samesite=lax`;
@@ -86,23 +96,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       body: JSON.stringify({ email, password }),
     });
     const data = await res.json();
-    if (!res.ok || !data.token) {
-      throw new Error("Email ou mot de passe incorrect.");
+    if (!res.ok || (!data.token && !data.id)) {
+      throw new Error(data.error === "invalid" ? "Email ou mot de passe incorrect." : (data.error || "Échec de connexion"));
     }
-    const user: User = {
+    const userObj: User = {
       id: String(data.id),
-      name: data.name ?? email,
+      name: data.name || email.split("@")[0],
       email,
       role: (data.role as UserRole) ?? "apprenant",
-      subscription: { status: "free", planId: null },
+      subscription: {
+        status: data.subscription_status === "active" ? "active" : "free",
+        planId: null,
+      },
     };
-    cachedUser = user;
-    localStorage.setItem(SESSION_KEY, JSON.stringify(user));
+    cachedUser = userObj;
+    localStorage.setItem(SESSION_KEY, JSON.stringify(userObj));
     if (typeof document !== "undefined") {
-      document.cookie = `${SESSION_COOKIE_NAME}=1; path=/; max-age=${SESSION_MAX_AGE_SECONDS}; samesite=lax`;
+      document.cookie = `${SESSION_COOKIE_NAME}=${data.token || 1}; path=/; max-age=${SESSION_MAX_AGE_SECONDS}; samesite=lax`;
     }
     rerender();
-    return user;
+    return userObj;
   };
 
   const logout = () => {
@@ -114,22 +127,68 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     rerender();
   };
 
-  const register = async (name: string, email: string, password: string) => {
+  const register = async (name: string, email: string, password: string): Promise<User | null> => {
     if (!name || !email || !password) {
       throw new Error("Tous les champs sont requis.");
     }
     if (password.length < 6) {
       throw new Error("Le mot de passe doit contenir au moins 6 caractères.");
     }
-    cachedUser = { id: `u-${Date.now()}`, name, email, role: "apprenant", subscription: { status: "free", planId: null } };
-    localStorage.setItem(SESSION_KEY, JSON.stringify(cachedUser));
-    rerender();
+
+    try {
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        if (data.error === "exists") {
+          throw new Error("Un compte avec cet email existe déjà.");
+        }
+      }
+    } catch (e: unknown) {
+      if (e instanceof Error && e.message.includes("existe déjà")) {
+        throw e;
+      }
+      // If network/offline, proceed with client account creation
+    }
+
+    // Auto-login or set cached user
+    try {
+      return await login(email, password);
+    } catch {
+      const userObj: User = {
+        id: `u-${Date.now()}`,
+        name,
+        email,
+        role: "apprenant",
+        subscription: { status: "free", planId: null },
+      };
+      cachedUser = userObj;
+      localStorage.setItem(SESSION_KEY, JSON.stringify(userObj));
+      if (typeof document !== "undefined") {
+        document.cookie = `${SESSION_COOKIE_NAME}=1; path=/; max-age=${SESSION_MAX_AGE_SECONDS}; samesite=lax`;
+      }
+      rerender();
+      return userObj;
+    }
   };
 
-  const subscriptionStatus = user?.subscription.status ?? "free";
+  const subscriptionStatus = user?.subscription?.status ?? "free";
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, subscriptionStatus, activateSubscription, login, logout, register }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        isAuthenticated: !!user,
+        subscriptionStatus,
+        activateSubscription,
+        login,
+        logout,
+        register,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

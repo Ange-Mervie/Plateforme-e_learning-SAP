@@ -1,9 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useLanguage } from "@/context/language-context";
+import { useAuth } from "@/context/auth-context";
 import LanguageSwitcher from "@/components/site/language-switcher";
+import { Menu, X, User as UserIcon, LogOut, LayoutDashboard } from "lucide-react";
 
 const NAV_ITEMS = [
   { key: "nav.home", href: "/" },
@@ -11,50 +14,173 @@ const NAV_ITEMS = [
   { key: "nav.parcours", href: "/parcours" },
   { key: "nav.formateurs", href: "/formateurs" },
   { key: "nav.certifications", href: "/certifications" },
+  { label: "IBN Group", href: "/ibn-group" },
 ];
 
 export default function Header() {
   const { t } = useLanguage();
+  const { user, isAuthenticated, logout } = useAuth();
   const pathname = usePathname();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   const isActive = (href: string) => pathname === href;
 
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/90 backdrop-blur">
+    <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-8">
         <Link href="/" className="flex items-center gap-2.5">
-          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-navy text-sm font-bold text-white">
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-navy text-sm font-bold text-white shadow-sm">
             SAP
           </span>
-          <span className="text-lg font-semibold tracking-tight text-navy">Academy</span>
+          <span className="text-lg font-bold tracking-tight text-navy">
+            Academy <span className="text-xs font-medium text-primary">by IBN</span>
+          </span>
         </Link>
 
-        <nav className="hidden items-center gap-8 lg:flex">
-          {NAV_ITEMS.map((item) => (
-            <Link
-              key={item.key}
-              href={item.href}
-              aria-current={isActive(item.href) ? "page" : undefined}
-              className={
-                isActive(item.href)
-                  ? "text-sm font-semibold text-primary underline decoration-2 underline-offset-4 decoration-primary"
-                  : "text-sm font-medium text-slate-600 transition-colors hover:text-navy"
-              }
-            >
-              {t(item.key)}
-            </Link>
-          ))}
+        {/* Desktop Navigation */}
+        <nav className="hidden items-center gap-7 lg:flex">
+          {NAV_ITEMS.map((item) => {
+            const active = isActive(item.href);
+            const label = item.key ? t(item.key) : item.label;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={active ? "page" : undefined}
+                className={
+                  active
+                    ? "text-sm font-semibold text-primary underline decoration-2 underline-offset-4 decoration-primary"
+                    : "text-sm font-medium text-slate-600 transition-colors hover:text-navy"
+                }
+              >
+                {label}
+              </Link>
+            );
+          })}
         </nav>
 
+        {/* Right side actions */}
         <div className="flex items-center gap-3">
           <LanguageSwitcher />
-          <Link href="/connexion" className="hidden text-sm font-medium text-slate-700 transition-colors hover:text-navy sm:block">
-            {t("nav.login")}
-          </Link>
-          <Link href="/inscription" className="inline-flex h-10 items-center justify-center rounded-lg bg-primary px-5 text-sm font-semibold text-white transition-colors hover:bg-primary-dark">
-            {t("nav.register")}
-          </Link>
+
+          {isAuthenticated && user ? (
+            <div className="hidden items-center gap-3 sm:flex">
+              <Link
+                href="/apprenant"
+                className="flex items-center gap-2 rounded-lg bg-surface px-3 py-2 text-sm font-semibold text-navy transition-colors hover:bg-slate-200"
+              >
+                <LayoutDashboard className="h-4 w-4 text-primary" />
+                <span>Mon Espace</span>
+              </Link>
+              <div className="flex items-center gap-2 pl-1 border-l border-slate-200">
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
+                  {user.name ? user.name.slice(0, 2).toUpperCase() : "U"}
+                </span>
+                <button
+                  type="button"
+                  onClick={logout}
+                  title="Déconnexion"
+                  className="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 hover:text-red-600 transition-colors"
+                >
+                  <LogOut className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="hidden items-center gap-3 sm:flex">
+              <Link
+                href="/connexion"
+                className="text-sm font-medium text-slate-700 transition-colors hover:text-navy"
+              >
+                {t("nav.login")}
+              </Link>
+              <Link
+                href="/inscription"
+                className="inline-flex h-10 items-center justify-center rounded-lg bg-primary px-5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary-dark"
+              >
+                {t("nav.register")}
+              </Link>
+            </div>
+          )}
+
+          {/* Mobile hamburger menu toggle */}
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-100 lg:hidden"
+            aria-label="Menu"
+          >
+            {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
         </div>
       </div>
+
+      {/* Mobile Drawer */}
+      {mobileMenuOpen && (
+        <div className="border-b border-slate-200 bg-white px-6 py-4 lg:hidden">
+          <nav className="flex flex-col space-y-3">
+            {NAV_ITEMS.map((item) => {
+              const active = isActive(item.href);
+              const label = item.key ? t(item.key) : item.label;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`text-sm font-medium py-2 ${
+                    active ? "font-semibold text-primary" : "text-slate-700 hover:text-navy"
+                  }`}
+                >
+                  {label}
+                </Link>
+              );
+            })}
+
+            <div className="border-t border-slate-200 pt-3">
+              {isAuthenticated && user ? (
+                <div className="flex flex-col gap-2">
+                  <Link
+                    href="/apprenant"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-2 rounded-lg bg-surface px-4 py-2.5 text-sm font-semibold text-navy"
+                  >
+                    <LayoutDashboard className="h-4 w-4 text-primary" />
+                    Mon Espace ({user.name})
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      logout();
+                      setMobileMenuOpen(false);
+                    }}
+                    className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    Déconnexion
+                  </button>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-2">
+                  <Link
+                    href="/connexion"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center justify-center rounded-lg border border-slate-200 py-2.5 text-sm font-medium text-navy"
+                  >
+                    {t("nav.login")}
+                  </Link>
+                  <Link
+                    href="/inscription"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center justify-center rounded-lg bg-primary py-2.5 text-sm font-semibold text-white"
+                  >
+                    {t("nav.register")}
+                  </Link>
+                </div>
+              )}
+            </div>
+          </nav>
+        </div>
+      )}
     </header>
   );
 }

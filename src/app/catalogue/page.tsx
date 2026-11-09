@@ -4,28 +4,28 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { COURSES } from "@/data/courses";
 import { useLanguage } from "@/context/language-context";
+import { Search, SlidersHorizontal, BookOpen, Clock, ArrowRight } from "lucide-react";
 
 const FAMILY_OPTIONS = [
-  { id: "consultant-fonctionnel", label: "Consultant fonctionnel" },
-  { id: "data-analytics", label: "Data & Analytics" },
-  { id: "plateforme", label: "Plateforme" },
-  { id: "cloud", label: "Cloud" },
-  { id: "rh", label: "Ressources humaines" },
-  { id: "production", label: "Production" },
+  { id: "finance", label: "Finance (FI / CO)" },
+  { id: "logistique", label: "Logistique & Supply (MM / SD)" },
+  { id: "technique", label: "Technique & Dev (ABAP / Fiori)" },
+  { id: "donnees", label: "Data & Analytics (BW / HANA)" },
+  { id: "plateforme", label: "SAP BTP & Plateforme" },
+  { id: "cloud", label: "Cloud ERP & S/4HANA" },
 ];
 
 const LEVEL_OPTIONS = [
-  { id: "decouverte", label: "Découverte" },
-  { id: "debutant", label: "Débutant" },
-  { id: "intermediaire", label: "Intermédiaire" },
-  { id: "avance", label: "Avancé" },
-  { id: "expert", label: "Expert" },
+  { id: "decouverte", label: "Découverte & Initiation" },
+  { id: "fondamentaux", label: "Fondamentaux métier" },
+  { id: "consultant", label: "Consultant confirmé" },
+  { id: "expert", label: "Expert & Architecture" },
 ];
 
 const DURATION_BANDS = [
-  { id: "short", label: "Moins de 2 mois" },
-  { id: "medium", label: "2 à 4 mois" },
-  { id: "long", label: "Plus de 4 mois" },
+  { id: "short", label: "Moins de 6 heures", min: 0, max: 6 },
+  { id: "medium", label: "6 à 8 heures", min: 6, max: 8 },
+  { id: "long", label: "Plus de 8 heures", min: 8, max: 999 },
 ];
 
 const SORT_OPTIONS = [
@@ -46,25 +46,36 @@ export default function Catalogue() {
   const [freeOnly, setFreeOnly] = useState(false);
   const [sort, setSort] = useState<string>("relevance");
 
-  const filtered = useMemo(() => {
+  const filteredCourses = useMemo(() => {
     const q = query.trim().toLowerCase();
     const list = COURSES.filter((course) => {
-      if (q && !`${course.title} ${course.summary}`.toLowerCase().includes(q)) return false;
+      if (q && !`${course.title} ${course.summary} ${course.module}`.toLowerCase().includes(q)) return false;
       if (families.length > 0 && !families.includes(course.family)) return false;
       if (levels.length > 0 && !levels.includes(course.level)) return false;
       if (duration) {
         const band = DURATION_BANDS.find((b) => b.id === duration);
-        const hours = course.durationHours;
-        const ok = band?.id === "short" ? hours < 60 : band?.id === "medium" ? hours >= 60 && hours < 120 : hours >= 120;
-        if (!ok) return false;
+        if (band) {
+          const hours = course.durationHours;
+          if (hours < band.min || hours > band.max) return false;
+        }
       }
       if (labIncluded && !course.labIncluded) return false;
       if (certificationPrep && !course.certificationPrep) return false;
       if (freeOnly && !course.free) return false;
       return true;
     });
+
+    if (sort === "priceAsc") {
+      list.sort((a, b) => (a.price || 0) - (b.price || 0));
+    } else if (sort === "priceDesc") {
+      list.sort((a, b) => (b.price || 0) - (a.price || 0));
+    } else if (sort === "durationDesc") {
+      list.sort((a, b) => b.durationHours - a.durationHours);
+    }
+
     return list;
-  }, [query, families, levels, duration, labIncluded, certificationPrep, freeOnly]);
+  }, [query, families, levels, duration, labIncluded, certificationPrep, freeOnly, sort]);
+
   const toggleInList = (list: string[], setList: (value: string[]) => void, value: string) => {
     setList(list.includes(value) ? list.filter((item) => item !== value) : [...list, value]);
   };
@@ -81,148 +92,255 @@ export default function Catalogue() {
   };
 
   const activeChips: { key: string; label: string; clear: () => void }[] = [];
-  if (query) activeChips.push({ key: "q", label: t("catalogue.searchPlaceholder") + " ✕", clear: () => setQuery("") });
-  families.forEach((family) => activeChips.push({ key: `f-${family}`, label: FAMILY_OPTIONS.find((o) => o.id === family)?.label || family, clear: () => setFamilies([]) }));
-  levels.forEach((level) => activeChips.push({ key: `l-${level}`, label: LEVEL_OPTIONS.find((o) => o.id === level)?.label || level, clear: () => setLevels([]) }));
+  if (query) activeChips.push({ key: "q", label: `"${query}" ✕`, clear: () => setQuery("") });
+  families.forEach((family) => {
+    const opt = FAMILY_OPTIONS.find((o) => o.id === family);
+    activeChips.push({ key: `f-${family}`, label: opt ? opt.label : family, clear: () => toggleInList(families, setFamilies, family) });
+  });
+  levels.forEach((level) => {
+    const opt = LEVEL_OPTIONS.find((o) => o.id === level);
+    activeChips.push({ key: `l-${level}`, label: opt ? opt.label : level, clear: () => toggleInList(levels, setLevels, level) });
+  });
   if (duration) {
     const band = DURATION_BANDS.find((item) => item.id === duration);
     if (band) activeChips.push({ key: `d-${duration}`, label: band.label, clear: () => setDuration(null) });
   }
-  if (labIncluded) activeChips.push({ key: "lab", label: t("catalogue.labIncluded"), clear: () => setLabIncluded(false) });
-  if (certificationPrep) activeChips.push({ key: "cert", label: t("catalogue.certificationPrep"), clear: () => setCertificationPrep(false) });
-  if (freeOnly) activeChips.push({ key: "free", label: t("catalogue.free"), clear: () => setFreeOnly(false) });
-
-  const filteredCourses = filtered;
+  if (labIncluded) activeChips.push({ key: "lab", label: "Lab inclus", clear: () => setLabIncluded(false) });
+  if (certificationPrep) activeChips.push({ key: "cert", label: "Prépa certification", clear: () => setCertificationPrep(false) });
 
   return (
-    <main className="bg-white">
+    <main className="bg-white min-h-screen">
       <section className="relative overflow-hidden bg-navy">
-        <div className="absolute inset-0" style={{ backgroundImage: "url(/courses/hero.svg)" }}></div>
-        <div className="absolute inset-0" style={{ backgroundImage: "linear-gradient(to bottom, rgba(16, 43, 78, 0) 0%, rgba(16, 43, 78, 0.45) 55%, rgba(16, 43, 78, 0.75) 100%)" }}></div>
-        <div className="relative mx-auto max-w-7xl px-6 py-12 lg:px-8">
-          <p className="text-sm font-semibold uppercase tracking-wide text-blue-100">{t("nav.catalogue")}</p>
-          <h1 className="mt-2 text-4xl font-bold tracking-tight text-white">{t("catalogue.title")}</h1>
-          <p className="mt-4 max-w-2xl text-blue-50">{t("catalogue.subtitle")}</p>
+        <div
+          className="absolute inset-0 bg-cover bg-center opacity-25"
+          style={{ backgroundImage: "url(/courses/hero.svg)" }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-navy/60 via-navy/85 to-navy" />
+        <div className="relative mx-auto max-w-7xl px-6 py-16 lg:px-8">
+          <p className="text-sm font-semibold uppercase tracking-wide text-blue-200">{t("nav.catalogue")}</p>
+          <h1 className="mt-2 text-4xl font-extrabold tracking-tight text-white sm:text-5xl">{t("catalogue.title")}</h1>
+          <p className="mt-4 max-w-2xl text-lg text-blue-100">{t("catalogue.subtitle")}</p>
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
+      <section className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
         <div className="grid gap-10 lg:grid-cols-[280px_1fr]">
-          <aside className="rounded-2xl border border-slate-200 p-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-navy">{t("catalogue.filters")}</h2>
-              <button type="button" onClick={resetFilters} className="text-sm font-semibold text-primary hover:text-primary-dark">
+          {/* Filters Sidebar */}
+          <aside className="h-fit rounded-2xl border border-slate-200 bg-surface/50 p-6 shadow-sm">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-4">
+              <h2 className="text-base font-bold text-navy flex items-center gap-2">
+                <SlidersHorizontal className="h-4 w-4 text-primary" />
+                <span>{t("catalogue.filters")}</span>
+              </h2>
+              <button
+                type="button"
+                onClick={resetFilters}
+                className="text-xs font-bold text-primary hover:text-primary-dark"
+              >
                 {t("catalogue.reset")}
               </button>
             </div>
 
             <div className="mt-6 space-y-6">
+              {/* Domaines SAP */}
               <div>
-                <p className="text-sm font-semibold text-navy">{t("catalogue.family")}</p>
+                <p className="text-xs font-bold uppercase tracking-wider text-navy">Domaines SAP</p>
                 <div className="mt-3 space-y-2">
                   {FAMILY_OPTIONS.map((option) => (
-                    <label key={option.id} className="flex items-center gap-2 text-sm text-slate-700">
-                      <input type="checkbox" checked={families.includes(option.id)} onChange={() => toggleInList(families, setFamilies, option.id)} className="h-4 w-4 accent-[#0879d9]" />
-                      {option.label}
+                    <label key={option.id} className="flex items-center gap-2.5 text-xs font-medium text-slate-700 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={families.includes(option.id)}
+                        onChange={() => toggleInList(families, setFamilies, option.id)}
+                        className="h-4 w-4 rounded accent-primary"
+                      />
+                      <span>{option.label}</span>
                     </label>
                   ))}
                 </div>
               </div>
 
-              <div>
-                <p className="text-sm font-semibold text-navy">{t("catalogue.level")}</p>
+              {/* Niveaux */}
+              <div className="border-t border-slate-200 pt-5">
+                <p className="text-xs font-bold uppercase tracking-wider text-navy">Niveau d&apos;expertise</p>
                 <div className="mt-3 space-y-2">
                   {LEVEL_OPTIONS.map((option) => (
-                    <label key={option.id} className="flex items-center gap-2 text-sm text-slate-700">
-                      <input type="checkbox" checked={levels.includes(option.id)} onChange={() => toggleInList(levels, setLevels, option.id)} className="h-4 w-4 accent-[#0879d9]" />
-                      {option.label}
+                    <label key={option.id} className="flex items-center gap-2.5 text-xs font-medium text-slate-700 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={levels.includes(option.id)}
+                        onChange={() => toggleInList(levels, setLevels, option.id)}
+                        className="h-4 w-4 rounded accent-primary"
+                      />
+                      <span>{option.label}</span>
                     </label>
                   ))}
                 </div>
               </div>
 
-              <div>
-                <p className="text-sm font-semibold text-navy">{t("catalogue.duration")}</p>
+              {/* Durées */}
+              <div className="border-t border-slate-200 pt-5">
+                <p className="text-xs font-bold uppercase tracking-wider text-navy">Volume horaire</p>
                 <div className="mt-3 space-y-2">
                   {DURATION_BANDS.map((band) => (
-                    <label key={band.id} className="flex items-center gap-2 text-sm text-slate-700">
-                      <input type="radio" name="duration" checked={duration === band.id} onChange={() => setDuration(band.id)} className="h-4 w-4 accent-[#0879d9]" />
-                      {band.label}
+                    <label key={band.id} className="flex items-center gap-2.5 text-xs font-medium text-slate-700 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="duration"
+                        checked={duration === band.id}
+                        onChange={() => setDuration(band.id)}
+                        className="h-4 w-4 accent-primary"
+                      />
+                      <span>{band.label}</span>
                     </label>
                   ))}
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="flex items-center gap-2 text-sm text-slate-700">
-                  <input type="checkbox" checked={labIncluded} onChange={() => setLabIncluded(!labIncluded)} className="h-4 w-4 accent-[#0879d9]" />
-                  {t("catalogue.labIncluded")}
+              {/* Options complémentaires */}
+              <div className="border-t border-slate-200 pt-5 space-y-2.5">
+                <label className="flex items-center gap-2.5 text-xs font-medium text-slate-700 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={labIncluded}
+                    onChange={() => setLabIncluded(!labIncluded)}
+                    className="h-4 w-4 rounded accent-primary"
+                  />
+                  <span>Environnement Lab inclus</span>
                 </label>
-                <label className="flex items-center gap-2 text-sm text-slate-700">
-                  <input type="checkbox" checked={certificationPrep} onChange={() => setCertificationPrep(!certificationPrep)} className="h-4 w-4 accent-[#0879d9]" />
-                  {t("catalogue.certificationPrep")}
-                </label>
-                <label className="flex items-center gap-2 text-sm text-slate-700">
-                  <input type="checkbox" checked={freeOnly} onChange={() => setFreeOnly(!freeOnly)} className="h-4 w-4 accent-[#0879d9]" />
-                  {t("catalogue.free")}
+                <label className="flex items-center gap-2.5 text-xs font-medium text-slate-700 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={certificationPrep}
+                    onChange={() => setCertificationPrep(!certificationPrep)}
+                    className="h-4 w-4 rounded accent-primary"
+                  />
+                  <span>Préparation certification officielle</span>
                 </label>
               </div>
             </div>
           </aside>
 
+          {/* Courses Grid Area */}
           <div>
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <p className="text-sm text-slate-600">{filteredCourses.length} {t("catalogue.results")}</p>
-              <label className="text-sm font-medium text-navy">
-                {t("catalogue.sort")} :{" "}
-                <select value={sort} onChange={(e) => setSort(e.target.value)} className="ml-2 rounded-lg border border-slate-200 px-3 py-2 text-sm">
+            {/* Search Bar & Sort */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="relative flex-1">
+                <Search className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
+                <input
+                  type="search"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Rechercher par mot-clé (FI, MM, ABAP, S/4HANA)..."
+                  className="h-11 w-full rounded-xl border border-slate-300 pl-10 pr-4 text-sm text-navy outline-none placeholder:text-slate-400 focus:border-primary focus:ring-1 focus:ring-primary shadow-sm"
+                />
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0">
+                <span className="text-xs font-semibold text-slate-500">Trier par :</span>
+                <select
+                  value={sort}
+                  onChange={(e) => setSort(e.target.value)}
+                  className="h-11 rounded-xl border border-slate-300 bg-white px-3 text-xs font-semibold text-navy outline-none focus:border-primary shadow-sm"
+                >
                   {SORT_OPTIONS.map((option) => (
                     <option key={option.id} value={option.id}>
                       {option.label}
                     </option>
                   ))}
                 </select>
-              </label>
+              </div>
             </div>
 
-            <div className="mt-6 flex items-center gap-3 rounded-xl border border-slate-200 bg-surface p-3">
-              <input
-                type="search"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder={t("catalogue.searchPlaceholder")}
-                className="h-11 w-full rounded-lg bg-white px-4 text-sm text-navy outline-none placeholder:text-slate-400"
-              />
-            </div>
+            {/* Active filter chips */}
+            {activeChips.length > 0 && (
+              <div className="mt-4 flex flex-wrap items-center gap-2">
+                <span className="text-xs text-slate-400">Filtres actifs :</span>
+                {activeChips.map((chip) => (
+                  <button
+                    key={chip.key}
+                    type="button"
+                    onClick={chip.clear}
+                    className="rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary hover:bg-primary/20 transition-colors"
+                  >
+                    {chip.label}
+                  </button>
+                ))}
+                <button
+                  type="button"
+                  onClick={resetFilters}
+                  className="text-xs font-semibold text-slate-500 underline ml-2 hover:text-navy"
+                >
+                  Tout effacer
+                </button>
+              </div>
+            )}
+
+            {/* Courses List */}
             {filteredCourses.length === 0 ? (
-              <div className="mt-16 rounded-2xl border border-dashed border-slate-300 p-12 text-center">
-                <p className="text-lg font-semibold text-navy">{t("catalogue.emptyTitle")}</p>
-                <p className="mt-2 text-sm text-slate-600">{t("catalogue.emptyText")}</p>
-                <button type="button" onClick={resetFilters} className="mt-6 rounded-lg bg-primary px-5 py-2 text-sm font-semibold text-white">
-                  {t("catalogue.resetFilters")}
+              <div className="mt-12 rounded-3xl border border-dashed border-slate-300 p-12 text-center">
+                <p className="text-lg font-bold text-navy">Aucune formation ne correspond à vos critères</p>
+                <p className="mt-2 text-xs text-slate-500">
+                  Essayez d&apos;élargir vos filtres ou de modifier votre mot-clé de recherche.
+                </p>
+                <button
+                  type="button"
+                  onClick={resetFilters}
+                  className="mt-6 rounded-xl bg-primary px-6 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-primary-dark transition-colors"
+                >
+                  Réinitialiser tous les filtres
                 </button>
               </div>
             ) : (
               <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {filteredCourses.map((course) => (
-                  <article key={course.slug} className="flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-shadow hover:shadow-lg">
-                    <div className="flex h-36 items-center justify-center bg-navy">
-                      <span className="text-4xl font-bold text-white">{course.module}</span>
+                  <article
+                    key={course.slug}
+                    className="group flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                  >
+                    {/* Header Banner */}
+                    <div className="h-28 bg-gradient-to-br from-navy to-navy-light flex items-center justify-between px-6 text-white">
+                      <div>
+                        <span className="text-xs font-bold uppercase tracking-wider text-blue-200">
+                          Module SAP
+                        </span>
+                        <p className="text-3xl font-black">{course.module}</p>
+                      </div>
+                      <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-white backdrop-blur">
+                        {course.durationHours} h
+                      </span>
                     </div>
+
                     <div className="flex flex-1 flex-col p-6">
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className="rounded-full bg-surface px-3 py-1 text-xs font-semibold text-navy">{course.family}</span>
-                        {course.labIncluded ? <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">Lab inclus</span> : null}
+                        <span className="rounded-full bg-surface px-2.5 py-0.5 text-[11px] font-bold text-navy capitalize">
+                          {course.family}
+                        </span>
+                        <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-[11px] font-bold text-primary capitalize">
+                          {course.level}
+                        </span>
                       </div>
-                      <h2 className="mt-3 text-lg font-semibold text-navy">{course.title}</h2>
-                      <p className="mt-2 line-clamp-2 text-sm text-slate-600">{course.summary}</p>
-                      <p className="mt-4 text-xs text-slate-600">
-                        {course.level} · {course.durationHours} h · {course.languages.join("/")}
+
+                      <h3 className="mt-3 text-base font-bold text-navy group-hover:text-primary transition-colors">
+                        {course.title}
+                      </h3>
+                      <p className="mt-2 line-clamp-2 text-xs text-slate-500 leading-relaxed">
+                        {course.summary}
                       </p>
-                      <div className="mt-6 flex items-center justify-between border-t border-slate-200 pt-4">
-                        <span className="text-sm font-bold text-navy">{course.price ? `${course.price} FCFA` : "Sur devis"}</span>
-                        <Link href={`/formation/${course.slug}`} className="text-sm font-semibold text-primary hover:text-primary-dark">
-                          Voir la formation →
+
+                      <div className="mt-6 border-t border-slate-100 pt-4 flex items-center justify-between">
+                        <div>
+                          <p className="text-[10px] text-slate-400">Tarif formation</p>
+                          <span className="text-base font-extrabold text-navy">
+                            {course.price ? `${course.price.toLocaleString("fr-FR")} FCFA` : "Gratuit"}
+                          </span>
+                        </div>
+                        <Link
+                          href={`/formation/${course.slug}`}
+                          className="inline-flex items-center gap-1 text-xs font-bold text-primary group-hover:translate-x-1 transition-transform"
+                        >
+                          <span>Découvrir</span>
+                          <ArrowRight className="h-3.5 w-3.5" />
                         </Link>
                       </div>
                     </div>
@@ -230,16 +348,6 @@ export default function Catalogue() {
                 ))}
               </div>
             )}
-
-            {activeChips.length > 0 ? (
-              <div className="mt-8 flex flex-wrap gap-2">
-                {activeChips.map((chip) => (
-                  <button key={chip.key} type="button" onClick={chip.clear} className="rounded-full bg-surface px-3 py-1 text-xs font-semibold text-navy">
-                    {chip.label} ✕
-                  </button>
-                ))}
-              </div>
-            ) : null}
           </div>
         </div>
       </section>
