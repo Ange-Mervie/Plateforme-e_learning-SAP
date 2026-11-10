@@ -1,13 +1,21 @@
-import { BookOpen, CheckCircle2, Clock3, Award } from "lucide-react";
+"use client";
 
-const STATS = [
-  { label: "Formations suivies", value: "3", icon: BookOpen, hint: "+1 cette semaine" },
-  { label: "Formations terminées", value: "1", icon: CheckCircle2, hint: "FI – Comptabilité générale" },
-  { label: "Heures d&apos;apprentissage", value: "18,5 h", icon: Clock3, hint: "Objectif : 24 h ce trimestre" },
-  { label: "Certificats obtenus", value: "1", icon: Award, hint: "SAP FI – Gestion financière" },
-];
+import { BookOpen, CheckCircle2, Award } from "lucide-react";
+import { useProgress } from "@/context/progress-context";
 
 export default function StatsCards() {
+  const { progress } = useProgress();
+
+  const followed = progress.length;
+  const completed = progress.filter((entry) => entry.percent >= 100).length;
+  const inProgress = progress.filter((entry) => entry.percent > 0 && entry.percent < 100).length;
+
+  const STATS = [
+    { label: "Formations suivies", value: String(followed), icon: BookOpen, hint: `${inProgress} en cours` },
+    { label: "Formations terminées", value: String(completed), icon: CheckCircle2, hint: "Modules validés" },
+    { label: "Certificats obtenus", value: String(completed), icon: Award, hint: "Délivrés après validation" },
+  ];
+
   return (
     <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
       {STATS.map((stat) => (

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useAuth } from "@/context/auth-context";
 import { COURSES } from "@/data/courses";
 import Link from "next/link";
 import {
@@ -18,31 +17,43 @@ import {
 } from "lucide-react";
 
 export default function ProjetPage() {
-  const { user } = useAuth();
   const [courseSlug, setCourseSlug] = useState("fi-comptabilite-generale");
   const [projectTitle, setProjectTitle] = useState("Core Model S/4HANA : Implémentation Comptable et Clôture Périodique");
   const [repositoryUrl, setRepositoryUrl] = useState("https://github.com/mon-projet-sap");
   const [comments, setComments] = useState("Mise en place des structures organisationnelles, paramétrage des groupes de statuts de zones et simulation d'une clôture mensuelle.");
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const checkAssessment = async (): Promise<boolean> => {
+    const response = await fetch("/api/assessments", { credentials: "same-origin" });
+    const data: { rows?: unknown } = await response.json().catch(() => ({}));
+    const rows = Array.isArray(data.rows) ? (data.rows as { course_slug?: string; passed?: number }[]) : [];
+    const latest = rows.find((row) => row.course_slug === courseSlug) ?? rows[0];
+    return !!latest && Number(latest.passed) === 1;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError("");
 
     try {
-      await fetch("/api/projects", {
+      const passed = await checkAssessment();
+      if (!passed) {
+        setError("Évaluation non validée — le projet ne peut pas être soumis.");
+        return;
+      }
+      const response = await fetch("/api/projects", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId: user?.id ? Number(user.id) || 1 : 1,
-          courseSlug,
-        }),
+        body: JSON.stringify({ courseSlug }),
       });
+      if (!response.ok) throw new Error("Impossible d’enregistrer le projet.");
       setSubmitted(true);
-    } catch {
-      // offline support
-      setSubmitted(true);
+    } catch (error) {
+      console.error("[Project] Unable to submit project:", error);
+      setError("Impossible d’enregistrer votre projet. Vérifiez votre connexion et réessayez.");
     } finally {
       setLoading(false);
     }
@@ -138,6 +149,7 @@ export default function ProjetPage() {
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="mt-6 space-y-5">
+                  {error ? <p role="alert" className="rounded-lg bg-red-50 p-3 text-sm font-semibold text-red-700">{error}</p> : null}
                   <div>
                     <label htmlFor="course" className="block text-xs font-semibold text-navy">
                       Module SAP concerné

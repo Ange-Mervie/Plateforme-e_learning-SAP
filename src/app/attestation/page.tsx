@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, Suspense, useRef } from "react";
+import { useEffect, useState, Suspense, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
 import { COURSES } from "@/data/courses";
@@ -23,6 +23,26 @@ function AttestationContent() {
   const [courseSlug, setCourseSlug] = useState(initialCourse);
   const [copied, setCopied] = useState(false);
   const certRef = useRef<HTMLDivElement>(null);
+  const [assessmentPassed, setAssessmentPassed] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    const loadAssessment = async () => {
+      try {
+        const response = await fetch("/api/assessments", { credentials: "same-origin" });
+        const data: { rows?: unknown } = await response.json().catch(() => ({}));
+        const rows = Array.isArray(data.rows) ? (data.rows as { course_slug?: string; passed?: number }[]) : [];
+        const latest = rows.find((row) => row.course_slug === courseSlug) ?? rows[0];
+        if (active) setAssessmentPassed(!!latest && Number(latest.passed) === 1);
+      } catch {
+        if (active) setAssessmentPassed(false);
+      }
+    };
+    void loadAssessment();
+    return () => {
+      active = false;
+    };
+  }, [courseSlug]);
 
   const course =
     COURSES.find((c) => c.slug === courseSlug) ||
@@ -124,6 +144,8 @@ function AttestationContent() {
 
       {/* Printable Certificate Stage */}
       <div className="mx-auto max-w-4xl">
+        {assessmentPassed === true ? (
+          <>
         <div
           ref={certRef}
           className="receipt relative overflow-hidden rounded-3xl border-8 border-double border-slate-300 bg-white p-8 sm:p-14 text-center shadow-2xl"
@@ -226,6 +248,16 @@ function AttestationContent() {
             <span>Vérification d&apos;authenticité : <strong>sap-academy.ibngroup.com/verify/{certId}</strong></span>
           </div>
         </div>
+          </>
+        ) : (
+          <div className="rounded-3xl border border-amber-200 bg-gradient-to-b from-amber-50/60 to-white p-8 text-center shadow-sm sm:p-10">
+            <Award className="mx-auto h-10 w-10 text-amber-500" />
+            <h2 className="mt-4 text-2xl font-extrabold text-navy">Attestation non disponible</h2>
+            <p className="mx-auto mt-2 max-w-xl text-sm text-slate-600">
+              L&apos;attestation est delivree apres la reussite de l&apos;examen d&apos;evaluation. Passez l&apos;examen officiel (seuil de 70%) apres avoir valide le module.
+            </p>
+          </div>
+        )}
       </div>
     </main>
   );

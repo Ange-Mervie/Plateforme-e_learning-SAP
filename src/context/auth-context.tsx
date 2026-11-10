@@ -1,8 +1,17 @@
 "use client";
 
-import { createContext, useContext, useState, useSyncExternalStore, type ReactNode } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
+import type { UserRole } from "@/lib/auth/types";
 
-export type UserRole = "apprenant" | "formateur" | "consultant" | "expert" | "admin";
+export type { UserRole } from "@/lib/auth/types";
 
 export type SubscriptionStatus = "free" | "active";
 
@@ -19,185 +28,153 @@ export interface User {
   subscription: Subscription;
 }
 
+function isUserRole(role: unknown): role is UserRole {
+  return ["apprenant", "formateur", "consultant", "expert", "admin"].includes(String(role));
+}
+
 interface AuthContextValue {
   user: User | null;
   isAuthenticated: boolean;
+  loading: boolean;
   subscriptionStatus: SubscriptionStatus;
-  login: (email: string, password: string) => Promise<User | null>;
-  logout: () => void;
-  register: (name: string, email: string, password: string) => Promise<User | null>;
-  activateSubscription: (planId?: string) => void;
+  login: (email: string, password: string) => Promise<User>;
+  logout: () => Promise<void>;
+  register: (name: string, email: string, password: string) => Promise<User>;
+  refreshSession: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-const SESSION_KEY = "sap_academy_session_user";
-const SESSION_COOKIE_NAME = "sap_academy_session";
-const SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 * 7;
-
-function subscribeToSession() {
-  return () => {};
-}
-
-let cachedUser: User | null = null;
-
-function getSessionSnapshot(): User | null {
-  if (typeof window === "undefined") return null;
-  if (cachedUser) return cachedUser;
-  const stored = localStorage.getItem(SESSION_KEY);
-  if (!stored) return null;
-  try {
-    cachedUser = JSON.parse(stored) as User;
-  } catch {
-    cachedUser = null;
+function toUser(value: unknown): User | null {
+  if (!value || typeof value !== "object") return null;
+  const candidate = value as Partial<User>;
+  if (
+    (typeof candidate.id !== "number" && typeof candidate.id !== "string") ||
+    typeof candidate.name !== "string" ||
+    typeof candidate.email !== "string" ||
+    !isUserRole(candidate.role)
+  ) {
+    return null;
   }
-  return cachedUser;
+  return {
+    id: String(candidate.id),
+    name: candidate.name,
+    email: candidate.email,
+    role: candidate.role,
+    subscription: {
+      status: candidate.subscription?.status === "active" ? "active" : "free",
+      planId: candidate.subscription?.planId ?? null,
+    },
+  };
 }
 
-function getServerSessionSnapshot(): User | null {
-  return null;
+async function readJsonResponse(response: Response): Promise<Record<string, unknown>> {
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    const error = typeof data.error === "string" ? data.error : "internal_error";
+    if (error === "invalid") throw new Error("Email ou mot de passe incorrect.");
+    if (error === "exists") throw new Error("Un compte avec cet email existe déjà.");
+    if (error === "unauthorized") throw new Error("Votre session a expiré. Reconnectez-vous.");
+    if (error === "forbidden") throw new Error("Accès refusé.");
+    if (error === "missing") throw new Error("Email et mot de passe requis.");
+    throw new Error(error);
+  }
+  return data as Record<string, unknown>;
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const user = useSyncExternalStore(subscribeToSession, getSessionSnapshot, getServerSessionSnapshot);
-  const [, setVersion] = useState(0);
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const rerender = () => {
-    setVersion((version) => version + 1);
-  };
+  const refreshSession = useCallback(async () => {
+    const response = await fetch("/api/auth/session", { credentials: "same-origin" });
+    const data = await readJsonResponse(response);
+    setUser(toUser(data.user));
+  }, []);
 
-  const activateSubscription = (planId: string = "premium-plan") => {
-    if (!cachedUser) {
-      // Create guest subscriber if needed
-      cachedUser = {
-        id: "1",
-        name: "Apprenant SAP",
-        email: "apprenant@sap-academy.com",
-        role: "apprenant",
-        subscription: { status: "active", planId },
-      };
-    } else {
-      cachedUser = { ...cachedUser, subscription: { status: "active", planId } };
-    }
-    localStorage.setItem(SESSION_KEY, JSON.stringify(cachedUser));
-    if (typeof document !== "undefined") {
-      document.cookie = `${SESSION_COOKIE_NAME}=1; path=/; max-age=${SESSION_MAX_AGE_SECONDS}; samesite=lax`;
-    }
-    rerender();
-  };
+  useEffect(() => {
+    let active = true;
+    fetch("/api/auth/session", { credentials: "same-origin" })
+      .then(readJsonResponse)
+      .then((data) => {
+        if (active) setUser(toUser(data.user));
+      })
+      .catch((error: unknown) => {
+        console.error("[Auth] Unable to resolve the current session:", error);
+        if (active) setUser(null);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
-  const login = async (email: string, password: string): Promise<User | null> => {
-    if (!email || !password) {
+  const login = useCallback(async (email: string, password: string): Promise<User> => {
+    if (!email.trim() || !password) {
       throw new Error("Email et mot de passe requis.");
     }
-    const res = await fetch("/api/auth/login", {
+    const response = await fetch("/api/auth/login", {
       method: "POST",
+      credentials: "same-origin",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
     });
-    const data = await res.json();
-    if (!res.ok || (!data.token && !data.id)) {
-      throw new Error(data.error === "invalid" ? "Email ou mot de passe incorrect." : (data.error || "Échec de connexion"));
-    }
-    const userObj: User = {
-      id: String(data.id),
-      name: data.name || email.split("@")[0],
-      email,
-      role: (data.role as UserRole) ?? "apprenant",
-      subscription: {
-        status: data.subscription_status === "active" ? "active" : "free",
-        planId: null,
-      },
-    };
-    cachedUser = userObj;
-    localStorage.setItem(SESSION_KEY, JSON.stringify(userObj));
-    if (typeof document !== "undefined") {
-      document.cookie = `${SESSION_COOKIE_NAME}=${data.token || 1}; path=/; max-age=${SESSION_MAX_AGE_SECONDS}; samesite=lax`;
-    }
-    rerender();
-    return userObj;
-  };
+    const data = await readJsonResponse(response);
+    const nextUser = toUser(data.user);
+    if (!nextUser) throw new Error("Réponse de connexion invalide.");
+    setUser(nextUser);
+    return nextUser;
+  }, []);
 
-  const logout = () => {
-    cachedUser = null;
-    localStorage.removeItem(SESSION_KEY);
-    if (typeof document !== "undefined") {
-      document.cookie = `${SESSION_COOKIE_NAME}=; path=/; max-age=0; samesite=lax`;
-    }
-    rerender();
-  };
-
-  const register = async (name: string, email: string, password: string): Promise<User | null> => {
-    if (!name || !email || !password) {
+  const register = useCallback(async (name: string, email: string, password: string): Promise<User> => {
+    if (!name.trim() || !email.trim() || !password) {
       throw new Error("Tous les champs sont requis.");
     }
     if (password.length < 6) {
       throw new Error("Le mot de passe doit contenir au moins 6 caractères.");
     }
+    const response = await fetch("/api/auth/register", {
+      method: "POST",
+      credentials: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, password }),
+    });
+    const data = await readJsonResponse(response);
+    const nextUser = toUser(data.user);
+    if (!nextUser) throw new Error("Réponse d’inscription invalide.");
+    setUser(nextUser);
+    return nextUser;
+  }, []);
 
-    try {
-      const res = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password }),
-      });
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        if (data.error === "exists") {
-          throw new Error("Un compte avec cet email existe déjà.");
-        }
-      }
-    } catch (e: unknown) {
-      if (e instanceof Error && e.message.includes("existe déjà")) {
-        throw e;
-      }
-      // If network/offline, proceed with client account creation
-    }
+  const logout = useCallback(async () => {
+    const response = await fetch("/api/auth/logout", {
+      method: "POST",
+      credentials: "same-origin",
+    });
+    await readJsonResponse(response);
+    setUser(null);
+  }, []);
 
-    // Auto-login or set cached user
-    try {
-      return await login(email, password);
-    } catch {
-      const userObj: User = {
-        id: `u-${Date.now()}`,
-        name,
-        email,
-        role: "apprenant",
-        subscription: { status: "free", planId: null },
-      };
-      cachedUser = userObj;
-      localStorage.setItem(SESSION_KEY, JSON.stringify(userObj));
-      if (typeof document !== "undefined") {
-        document.cookie = `${SESSION_COOKIE_NAME}=1; path=/; max-age=${SESSION_MAX_AGE_SECONDS}; samesite=lax`;
-      }
-      rerender();
-      return userObj;
-    }
-  };
+  const value = useMemo<AuthContextValue>(() => ({
+    user,
+    isAuthenticated: !!user,
+    loading,
+    subscriptionStatus: user?.subscription.status ?? "free",
+    login,
+    logout,
+    register,
+    refreshSession,
+  }), [user, loading, login, logout, register, refreshSession]);
 
-  const subscriptionStatus = user?.subscription?.status ?? "free";
-
-  return (
-    <AuthContext.Provider
-      value={{
-        user,
-        isAuthenticated: !!user,
-        subscriptionStatus,
-        activateSubscription,
-        login,
-        logout,
-        register,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
-  const ctx = useContext(AuthContext);
-  if (!ctx) {
+  const context = useContext(AuthContext);
+  if (!context) {
     throw new Error("useAuth must be used within an AuthProvider");
   }
-  return ctx;
+  return context;
 }
