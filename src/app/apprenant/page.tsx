@@ -1,6 +1,6 @@
-"use client";
-
+import { Suspense } from "react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import ApprenantSidebar from "@/components/apprenant/sidebar";
 import StatsCards from "@/components/apprenant/stats-cards";
 import ContinueLearning from "@/components/apprenant/continue-learning";
@@ -9,12 +9,30 @@ import ProgressChart from "@/components/apprenant/progress-chart";
 import Recommended from "@/components/apprenant/recommended";
 import UserBadge from "@/components/apprenant/user-badge";
 import SubscriptionStatus from "@/components/apprenant/subscription-status";
-import { useAuth } from "@/context/auth-context";
 import { Play, Search, Sparkles, BookOpen } from "lucide-react";
+import { requireUser } from "@/lib/auth/authorization";
+import { AuthenticationError } from "@/lib/auth/types";
 
-export default function ApprenantDashboard() {
-  const { user } = useAuth();
-  const userName = user?.name ? user.name.split(" ")[0] : "Jean";
+
+export default function ApprenantPage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-center text-slate-500">Chargement de votre espace…</div>}>
+      <ApprenantDashboard />
+    </Suspense>
+  );
+}
+
+async function ApprenantDashboard() {
+  let user;
+  try {
+    user = await requireUser();
+  } catch (error) {
+    if (error instanceof AuthenticationError && error.status === 401) {
+      redirect("/connexion");
+    }
+    throw error;
+  }
+  const userName = user.name.split(" ")[0];
 
   return (
     <div className="flex min-h-screen bg-slate-50 font-sans text-navy">
@@ -75,7 +93,7 @@ export default function ApprenantDashboard() {
 
           {/* Subscription Status Bar */}
           <div>
-            <SubscriptionStatus userId={user?.id || 1} />
+            <SubscriptionStatus />
           </div>
 
           {/* Continue Learning Course Cards */}

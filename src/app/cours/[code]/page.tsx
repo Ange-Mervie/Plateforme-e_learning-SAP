@@ -3,6 +3,9 @@ import CoursPlayer from "@/components/cours/cours-player";
 import { COURSES } from "@/data/courses";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
+import { redirect } from "next/navigation";
+import { requireUser } from "@/lib/auth/authorization";
+import { AuthenticationError } from "@/lib/auth/types";
 
 interface Props {
   params: Promise<{ code: string }>;
@@ -17,6 +20,15 @@ function CoursFallback() {
 }
 
 async function CoursContent({ params }: Props) {
+  try {
+    await requireUser();
+  } catch (error) {
+    if (error instanceof AuthenticationError && error.status === 401) {
+      redirect("/connexion");
+    }
+    throw error;
+  }
+
   const { code } = await params;
 
   // Resolve course by slug or by module uppercase (e.g. "FI")

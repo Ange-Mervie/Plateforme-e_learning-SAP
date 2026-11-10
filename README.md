@@ -1,36 +1,37 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SAP Learning Academy
 
-## Getting Started
-
-First, run the development server:
+## Development
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Database setup
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The application uses MySQL via `mysql2`. Configure `DATABASE_URL` in the local `.env` file. Never commit or share the connection URL.
 
-## Learn More
+Apply the SQL migrations once, in this order, to the database selected by `DATABASE_URL`:
 
-To learn more about Next.js, take a look at the following resources:
+1. `sql/001_init.sql`
+2. `sql/002_features.sql`
+3. `sql/003_auth_sessions.sql`
+4. `sql/004_local_store_import.sql`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+In production, also configure `APP_ORIGIN` to the canonical HTTPS origin of the application. Do not use a development fallback for database credentials, session secrets, or origins.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Import existing local data
 
-## Deploy on Vercel
+If `src/data/local-database.json` exists, keep it as a backup and run `npm run db:import-local` from an interactive terminal after applying the migrations. The importer is transactional and idempotent for the same file contents. It does not overwrite existing accounts, and it asks for new masked passwords for any seeded `demo123` or `admin123` credentials. A changed snapshot after import requires manual reconciliation; the source file is never deleted or edited by the importer.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+MySQL is the application's only persistent source of truth. If the database is unavailable, authenticated operations fail explicitly instead of switching to temporary in-memory or browser-owned records.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Checks
+
+```bash
+npm test
+npx tsc --noEmit
+npm run lint
+npm run build
+```

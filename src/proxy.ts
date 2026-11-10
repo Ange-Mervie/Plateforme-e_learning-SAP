@@ -24,7 +24,7 @@ function isProtected(pathname: string) {
   return PROTECTED_PREFIXES.some((prefix) => pathname.startsWith(`${prefix}/`));
 }
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const isProtectedRoute = isProtected(pathname);
   const isLoggedIn = !!request.cookies.get("sap_academy_session")?.value;

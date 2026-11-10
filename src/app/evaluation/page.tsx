@@ -2,15 +2,14 @@
 
 import { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { useAuth } from "@/context/auth-context";
 import Link from "next/link";
 import {
-  Award,
   CheckCircle2,
   XCircle,
   Clock,
   RotateCcw,
   BookOpen,
+  Award,
 } from "lucide-react";
 
 interface Question {
@@ -183,7 +182,6 @@ const EVALUATION_BANKS: Record<string, Question[]> = {
 function EvaluationContent() {
   const searchParams = useSearchParams();
   const initialCourse = searchParams.get("course") || "fi-comptabilite-generale";
-  const { user } = useAuth();
 
   const [selectedCourseSlug, setSelectedCourseSlug] = useState(initialCourse);
   const questions =
@@ -194,6 +192,7 @@ function EvaluationContent() {
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState<number | null>(null);
   const [passed, setPassed] = useState(false);
+  const [saveError, setSaveError] = useState("");
 
   const handleCourseChange = (slug: string) => {
     setSelectedCourseSlug(slug);
@@ -201,6 +200,7 @@ function EvaluationContent() {
     setCurrentIdx(0);
     setSubmitted(false);
     setScore(null);
+    setSaveError("");
   };
 
   const handleSelectOption = (qId: number, optIdx: number) => {
@@ -223,19 +223,21 @@ function EvaluationContent() {
     setScore(calculatedScore);
     setPassed(isPassed);
     setSubmitted(true);
+    setSaveError("");
 
     try {
-      await fetch("/api/assessments", {
+      const response = await fetch("/api/assessments", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          userId: user?.id ? Number(user.id) || 1 : 1,
           courseSlug: selectedCourseSlug,
           score: calculatedScore,
         }),
       });
-    } catch {
-      console.warn("Could not save to server, local score computed.");
+      if (!response.ok) throw new Error("Assessment save was rejected.");
+    } catch (error) {
+      console.error("[Assessment] Unable to save assessment:", error);
+      setSaveError("Votre score est calculé dans cette session, mais n’a pas pu être enregistré sur le serveur.");
     }
   };
 
@@ -277,9 +279,9 @@ function EvaluationContent() {
               disabled={submitted}
               className="h-10 rounded-xl border border-slate-300 bg-white px-3 text-sm font-semibold text-navy shadow-sm focus:border-primary outline-none"
             >
-              <option value="fi-comptabilite-generale">SAP FI – Comptabilité générale</option>
-              <option value="mm-achats-stocks">SAP MM – Achats et stocks</option>
-              <option value="abap-fondamentaux">SAP ABAP – Fondamentaux développement</option>
+              <option value="fi-comptabilite-generale">SAP FI  Comptabilité générale</option>
+              <option value="mm-achats-stocks">SAP MM  Achats et stocks</option>
+              <option value="abap-fondamentaux">SAP ABAP  Fondamentaux développement</option>
             </select>
           </div>
         </div>
@@ -403,6 +405,7 @@ function EvaluationContent() {
         ) : (
           /* Results Stage */
           <div className="mt-8 space-y-8">
+            {saveError ? <p role="alert" className="rounded-lg bg-amber-50 p-3 text-sm font-semibold text-amber-800">{saveError}</p> : null}
             <div
               className={`rounded-3xl border p-8 text-center sm:p-10 shadow-lg ${
                 passed
@@ -424,7 +427,7 @@ function EvaluationContent() {
 
               <p className="mt-2 text-sm text-slate-600 max-w-lg mx-auto">
                 {passed
-                  ? "Vous avez atteint avec succès le seuil d'exigence requis. Votre score est consigné et votre attestation officielle est désormais débloquée."
+                  ? "Vous avez atteint le seuil de cette évaluation. La délivrance d’attestations sera disponible après la mise en place d’une validation officielle."
                   : "Le seuil minimal requis est de 70%. Nous vous encourageons à reprendre les modules pratiques avant une nouvelle tentative."}
               </p>
 
@@ -437,13 +440,9 @@ function EvaluationContent() {
 
               <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
                 {passed ? (
-                  <Link
-                    href={`/attestation?course=${selectedCourseSlug}`}
-                    className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-primary px-7 text-sm font-bold text-white shadow-md hover:bg-primary-dark transition-all"
-                  >
-                    <Award className="h-4 w-4" />
-                    <span>Délivrer mon attestation officielle</span>
-                  </Link>
+                  <p className="rounded-xl bg-slate-100 px-6 py-3 text-sm font-semibold text-slate-600">
+                    Attestations non disponibles pour le moment
+                  </p>
                 ) : (
                   <button
                     type="button"

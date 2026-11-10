@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { type Course, COURSES } from "@/data/courses";
 import { useProgress } from "@/context/progress-context";
-import { useAuth } from "@/context/auth-context";
 import Link from "next/link";
 import {
   Play,
@@ -40,8 +39,7 @@ export default function CoursPlayer({ course: propCourse, code }: Props) {
     (code ? COURSES.find((c) => c.slug === code || c.module === code) : null) ||
     COURSES[0];
 
-  const { user } = useAuth();
-  const { setLessonCompleted, getProgress } = useProgress();
+  const { setLessonCompleted, getProgress, error: progressLoadError } = useProgress();
   const courseProgress = getProgress(course.slug);
   const completedLessons = courseProgress?.completedLessons ?? [];
 
@@ -110,16 +108,30 @@ export default function CoursPlayer({ course: propCourse, code }: Props) {
   const [quizAnswers, setQuizAnswers] = useState<Record<number, number>>({});
   const [quizSubmitted, setQuizSubmitted] = useState(false);
   const [quizScore, setQuizScore] = useState<number | null>(null);
+  const [progressError, setProgressError] = useState("");
+  const [assessmentError, setAssessmentError] = useState("");
 
   const isCurrentCompleted = completedLessons.includes(activeLesson.id);
 
-  const toggleCurrentLesson = () => {
-    setLessonCompleted(course.slug, activeLesson.id, !isCurrentCompleted, allLessons.length);
+  const toggleCurrentLesson = async () => {
+    setProgressError("");
+    try {
+      await setLessonCompleted(course.slug, activeLesson.id, !isCurrentCompleted, allLessons.length);
+    } catch (error) {
+      console.error("[Progress] Unable to update lesson:", error);
+      setProgressError("Impossible d’enregistrer votre progression. Réessayez.");
+    }
   };
 
-  const handleNextLesson = () => {
+  const handleNextLesson = async () => {
     if (!isCurrentCompleted) {
-      setLessonCompleted(course.slug, activeLesson.id, true, allLessons.length);
+      try {
+        await setLessonCompleted(course.slug, activeLesson.id, true, allLessons.length);
+      } catch (error) {
+        console.error("[Progress] Unable to save lesson before continuing:", error);
+        setProgressError("Impossible d’enregistrer votre progression. Réessayez.");
+        return;
+      }
     }
     if (activeLessonIndex < allLessons.length - 1) {
       setActiveLessonIndex(activeLessonIndex + 1);
@@ -134,19 +146,21 @@ export default function CoursPlayer({ course: propCourse, code }: Props) {
     const score = Math.round((correct / QUIZ_QUESTIONS.length) * 100);
     setQuizScore(score);
     setQuizSubmitted(true);
+    setAssessmentError("");
 
     try {
-      await fetch("/api/assessments", {
+      const response = await fetch("/api/assessments", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          userId: user?.id || 1,
           courseSlug: course.slug,
           score,
         }),
       });
-    } catch {
-      // offline support
+      if (!response.ok) throw new Error("Assessment save was rejected.");
+    } catch (error) {
+      console.error("[Assessment] Unable to save assessment:", error);
+      setAssessmentError("Votre résultat n’a pas pu être enregistré sur le serveur.");
     }
   };
 
@@ -156,6 +170,11 @@ export default function CoursPlayer({ course: propCourse, code }: Props) {
     <div className="grid gap-8 lg:grid-cols-3">
       {/* Video & Player Stage */}
       <div className="lg:col-span-2 space-y-6">
+        {progressError || progressLoadError ? (
+          <p role="alert" className="rounded-lg bg-red-50 p-3 text-sm font-semibold text-red-700">
+            {progressError || progressLoadError}
+          </p>
+        ) : null}
         {/* Video Simulation Canvas */}
         <div className="relative overflow-hidden rounded-2xl bg-slate-950 aspect-video shadow-lg border border-slate-800 flex flex-col justify-between p-6 text-white">
           <div className="flex items-center justify-between">
@@ -395,6 +414,7 @@ export default function CoursPlayer({ course: propCourse, code }: Props) {
                 </button>
               ) : (
                 <div className="rounded-xl bg-surface p-6 border border-slate-200 text-center">
+                  {assessmentError ? <p role="alert" className="mb-4 rounded-lg bg-amber-50 p-3 text-sm font-semibold text-amber-800">{assessmentError}</p> : null}
                   <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Résultat du Quiz</p>
                   <p className="mt-2 text-3xl font-extrabold text-navy">{quizScore} %</p>
                   <p className="mt-1 text-sm text-slate-600">

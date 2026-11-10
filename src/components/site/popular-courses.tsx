@@ -6,7 +6,7 @@ import { useLanguage } from "@/context/language-context";
 const COURSES = [
   {
     code: "FI",
-    title: "SAP FI – Comptabilité générale",
+    title: "SAP FI : Comptabilité générale",
     description:
       "Plan comptable, écritures, clôture mensuelle et annuelle, reporting légal.",
     level: "Intermédiaire",
@@ -16,7 +16,7 @@ const COURSES = [
   },
   {
     code: "MM",
-    title: "SAP MM – Achats et stocks",
+    title: "SAP MM : Achats et stocks",
     description:
       "Demandes d'achat, commandes, réception, factures fournisseurs, gestion des stocks.",
     level: "Intermédiaire",
@@ -26,7 +26,7 @@ const COURSES = [
   },
   {
     code: "SD",
-    title: "SAP SD – Ventes et distribution",
+    title: "SAP SD : Ventes et distribution",
     description:
       "Commandes clients, livraison, facturation, tarification et partenaires.",
     level: "Intermédiaire",

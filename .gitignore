@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+/src/data/local-database.json
 /.pnp
 .pnp.*
 .yarn/*

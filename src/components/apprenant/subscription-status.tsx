@@ -5,21 +5,34 @@ import { useAuth } from "@/context/auth-context";
 import Link from "next/link";
 import { ShieldCheck, Sparkles, ArrowRight } from "lucide-react";
 
-export default function SubscriptionStatus({ userId }: { userId?: number | string }) {
+export default function SubscriptionStatus() {
   const { user } = useAuth();
-  const [dbStatus, setDbStatus] = useState<string>("active");
+  const [dbStatus, setDbStatus] = useState<string>("free");
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
-    if (!user?.subscription?.status) {
-      const id = userId || user?.id || 1;
-      fetch(`/api/subscriptions?userId=${id}`)
-        .then((r) => r.json())
-        .then((d) => setDbStatus(d.subscription?.status || "active"))
-        .catch(() => setDbStatus("active"));
-    }
-  }, [userId, user]);
+    if (!user) return;
+    let active = true;
+    fetch("/api/subscriptions", { credentials: "same-origin" })
+      .then(async (response) => {
+        if (!response.ok) throw new Error("Unable to load subscription.");
+        return response.json();
+      })
+      .then((data) => {
+        if (active) {
+          setDbStatus(data.subscription?.status === "active" ? "active" : "free");
+          setLoadError(false);
+        }
+      })
+      .catch(() => {
+        if (active) setLoadError(true);
+      });
+    return () => {
+      active = false;
+    };
+  }, [user]);
 
-  const status = user?.subscription?.status || dbStatus;
+  const status = loadError ? "unknown" : dbStatus;
   const isActive = status === "active";
 
   return (
@@ -37,14 +50,18 @@ export default function SubscriptionStatus({ userId }: { userId?: number | strin
             <h3 className="text-base font-bold text-navy">Statut de votre abonnement</h3>
             <span
               className={`rounded-full px-2.5 py-0.5 text-xs font-bold ${
-                isActive ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"
+                isActive
+                  ? "bg-emerald-100 text-emerald-800"
+                  : loadError ? "bg-red-100 text-red-800" : "bg-amber-100 text-amber-800"
               }`}
             >
-              {isActive ? "Actif (Accès Complet)" : "Période d'évaluation"}
+              {loadError ? "Vérification indisponible" : isActive ? "Actif" : "Aucun abonnement actif"}
             </span>
           </div>
           <p className="mt-1 text-xs text-slate-500">
-            {isActive
+            {loadError
+              ? "Impossible de vérifier votre abonnement pour le moment."
+              : isActive
               ? "Accès illimité aux modules SAP, environnements Labs et examens d'attestation."
               : "Souscrivez au pack complet pour débloquer l'ensemble des modules certifiants."}
           </p>

@@ -6,11 +6,12 @@
     "dev": "next dev -p 3000",
     "build": "next build",
     "start": "next start -p 3000",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "vitest run",
+    "db:import-local": "tsx scripts/import-local-database.ts"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
-    "jsonwebtoken": "^9.0.3",
     "lucide-react": "^1.69.0",
     "mysql2": "^3.24.6",
     "next": "16.4.5",
@@ -18,14 +19,18 @@
     "react-dom": "19.3.0"
   },
   "devDependencies": {
+    "@inquirer/prompts": "^8.7.5",
     "@tailwindcss/turbopack": "^4",
-    "@types/jsonwebtoken": "^9.0.10",
+    "@testing-library/react": "^16.3.3",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.4.5",
+    "jsdom": "^29.1.1",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "tsx": "^4.23.15",
+    "typescript": "^5",
+    "vitest": "^3.2.4"
   }
 }

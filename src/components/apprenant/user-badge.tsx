@@ -25,7 +25,7 @@ export default function UserBadge() {
       </div>
       <button
         type="button"
-        onClick={logout}
+        onClick={() => void logout().catch((error: unknown) => console.error("[Auth] Logout failed:", error))}
         className="ml-2 text-sm font-medium text-slate-600 underline-offset-4 hover:underline"
       >
         Déconnexion

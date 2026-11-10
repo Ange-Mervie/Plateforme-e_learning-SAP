@@ -5,14 +5,14 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
 import { useLanguage } from "@/context/language-context";
-import { Lock, Mail, ArrowRight, ShieldCheck } from "lucide-react";
+import { Lock, Mail, ArrowRight } from "lucide-react";
 
 export default function Connexion() {
   const { login } = useAuth();
   const { t } = useLanguage();
   const router = useRouter();
-  const [email, setEmail] = useState("jean.dupont@example.com");
-  const [password, setPassword] = useState("demo123");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -106,11 +106,6 @@ export default function Connexion() {
           <ArrowRight className="h-4 w-4" />
         </button>
 
-        {/* Quick Demo credentials info */}
-        <div className="rounded-xl bg-surface p-3 border border-slate-100 text-[11px] text-slate-600 text-center">
-          <p className="font-semibold text-navy">Compte démo pré-rempli :</p>
-          <p className="font-mono text-slate-500">jean.dupont@example.com · mot de passe : demo123</p>
-        </div>
       </form>
 
       <p className="mt-6 text-center text-sm text-slate-600">
