@@ -4,7 +4,7 @@ import { COURSES } from "@/data/courses";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { redirect } from "next/navigation";
-import { requireUser } from "@/lib/auth/authorization";
+import { requireUser, requireActiveSubscription } from "@/lib/auth/authorization";
 import { AuthenticationError } from "@/lib/auth/types";
 
 interface Props {
@@ -22,9 +22,13 @@ function CoursFallback() {
 async function CoursContent({ params }: Props) {
   try {
     await requireUser();
+    await requireActiveSubscription();
   } catch (error) {
     if (error instanceof AuthenticationError && error.status === 401) {
       redirect("/connexion");
+    }
+    if (error instanceof AuthenticationError && error.status === 403) {
+      redirect("/paiement");
     }
     throw error;
   }

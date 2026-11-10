@@ -22,3 +22,11 @@ export async function requireRole(roles: readonly UserRole[]): Promise<Authentic
   }
   return user;
 }
+
+export async function requireActiveSubscription(): Promise<AuthenticatedUser> {
+  const user = await requireUser();
+  if (user.subscription?.status !== "active") {
+    throw new AuthenticationError(403, "Abonnement requis pour accéder à ce contenu.");
+  }
+  return user;
+}

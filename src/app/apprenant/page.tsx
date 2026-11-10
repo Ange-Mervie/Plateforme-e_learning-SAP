@@ -9,8 +9,11 @@ import ProgressChart from "@/components/apprenant/progress-chart";
 import Recommended from "@/components/apprenant/recommended";
 import UserBadge from "@/components/apprenant/user-badge";
 import SubscriptionStatus from "@/components/apprenant/subscription-status";
+import MyAssessments from "@/components/apprenant/my-assessments";
+import MyProjects from "@/components/apprenant/my-projects";
+import MyCertificates from "@/components/apprenant/my-certificates";
 import { Play, Search, Sparkles, BookOpen } from "lucide-react";
-import { requireUser } from "@/lib/auth/authorization";
+import { requireUser, requireActiveSubscription } from "@/lib/auth/authorization";
 import { AuthenticationError } from "@/lib/auth/types";
 
 
@@ -26,9 +29,13 @@ async function ApprenantDashboard() {
   let user;
   try {
     user = await requireUser();
+    await requireActiveSubscription();
   } catch (error) {
     if (error instanceof AuthenticationError && error.status === 401) {
       redirect("/connexion");
+    }
+    if (error instanceof AuthenticationError && error.status === 403) {
+      redirect("/paiement");
     }
     throw error;
   }
@@ -101,21 +108,36 @@ async function ApprenantDashboard() {
             <ContinueLearning />
           </div>
 
-          {/* My Courses List */}
-          <div>
-            <MyCourses />
-          </div>
+  {/* My Courses List */}
+  <div>
+    <MyCourses />
+  </div>
 
-          {/* Bottom Grid: Progress & Recommendations */}
-          <div className="grid gap-8 lg:grid-cols-3">
-            <div className="lg:col-span-1">
-              <ProgressChart />
-            </div>
-            <div className="lg:col-span-2">
-              <Recommended />
-            </div>
-          </div>
-        </div>
+  {/* My Evaluations */}
+  <div>
+    <MyAssessments />
+  </div>
+
+  {/* My Projects */}
+  <div>
+    <MyProjects />
+  </div>
+
+  {/* My Certificates */}
+  <div>
+    <MyCertificates />
+  </div>
+
+  {/* Bottom Grid: Progress & Recommendations */}
+  <div className="grid gap-8 lg:grid-cols-3">
+    <div className="lg:col-span-1">
+      <ProgressChart />
+    </div>
+    <div className="lg:col-span-2">
+      <Recommended />
+    </div>
+  </div>
+</div>
       </main>
     </div>
   );
