@@ -38,14 +38,22 @@ export async function query<T extends RowDataPacket = RowDataPacket>(
   sql: string,
   params: SqlParameter[] = [],
 ): Promise<T[]> {
-  const [rows] = await getPool().execute<T[]>(sql, params);
-  return rows;
+  try {
+    const [rows] = await getPool().execute<T[]>(sql, params);
+    return rows;
+  } catch (error: any) {
+    throw new Error(`Database query failed: ${error?.message ?? String(error)}`);
+  }
 }
 
 export async function execute(
   sql: string,
   params: SqlParameter[] = [],
 ): Promise<ResultSetHeader> {
-  const [result] = await getPool().execute<ResultSetHeader>(sql, params);
-  return result;
+  try {
+    const [result] = await getPool().execute<ResultSetHeader>(sql, params);
+    return result;
+  } catch (error: any) {
+    throw new Error(`Database execute failed: ${error?.message ?? String(error)}`);
+  }
 }
