@@ -30,7 +30,9 @@ export default function Header() {
     <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-8">
         <Link href="/" className="flex items-center gap-2.5">
-          {/* Logo officiel IBN Group */}
+          {/* Logo SAP */}
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-navy text-sm font-bold text-white shadow-sm">SAP</span>
+          {/* Logo IBN Group */}
           <Image
             src="/images/ibn-logo.png"
             alt="IBN Group"
@@ -41,15 +43,6 @@ export default function Header() {
           <span className="text-lg font-bold tracking-tight text-navy">
             ELEVATE <span className="text-xs font-medium text-primary">By IBN Group</span>
           </span>
-          {/* Silhouette du continent africain */}
-          <svg
-            aria-hidden="true"
-            viewBox="0 0 64 44"
-            className="h-8 w-14 text-primary/30"
-            fill="currentColor"
-          >
-            <path d="M12 38 C14 33 16 27 19 22 C22 17 25 12 29 9 C32 6 36 6 39 8 C42 10 44 14 46 18 C48 22 50 26 51 30 C52 34 53 37 55 38 L12 38 Z" />
-          </svg>
         </Link>
 
         {/* Desktop Navigation */}

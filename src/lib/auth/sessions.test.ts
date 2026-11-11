@@ -53,6 +53,7 @@ describe("session storage", () => {
       email: "alex@example.com",
       role: "apprenant",
       subscription: { status: "free", planId: null },
+      emailVerified: true,
     });
 
     expect(query).toHaveBeenCalledWith(

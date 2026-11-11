@@ -39,7 +39,7 @@ const IBN_SECTIONS = [
     icon: Building2,
     color: "text-navy",
     description:
-      "IBN Group est une entreprise de conseil en technologies et solutions d'entreprise basée à Douala, Cameroun, avec une présence opérationnelle à Yaoundé et un réseau de consultants en Afrique du Sud et en Allemagne. Fondée comme cabinet SAP spécialisé, IBN Group accompagne les organisations africaines dans leur transformation digitale.",
+      "IBN Group est une entreprise de conseil en technologies et solutions d&apos;entreprise basée à Douala, Cameroun, avec une présence opérationnelle à Yaoundé et un réseau de consultants en Afrique du Sud et en Allemagne. Fondée comme cabinet SAP spécialisé, IBN Group accompagne les organisations africaines dans leur transformation digitale.",
     details: [
       { label: "Siège social", value: "Bonamoussadi, Douala, Cameroun" },
       { label: "Présence", value: "Douala · Yaoundé · Afrique du Sud · Allemagne" },
@@ -121,8 +121,12 @@ const CONTACT = {
 export default function IBNGroup() {
   return (
     <main className="bg-white">
-      <section className="bg-navy">
-        <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8 text-center">
+      <section className="relative bg-navy overflow-hidden">
+        <div
+          className="absolute inset-0 bg-cover bg-center opacity-30"
+          style={{ backgroundImage: `url("/images/WhatsApp Image 2026-11-11 at 15.56.36.jpeg")` }}
+        />
+        <div className="relative mx-auto max-w-7xl px-6 py-16 lg:px-8 text-center">
           <span className="inline-flex items-center gap-2 rounded-full bg-primary/20 px-4 py-1.5 text-xs font-semibold tracking-normal text-blue-200 backdrop-blur-sm mb-6">
             <Building2 className="h-3.5 w-3.5 text-primary" />
             IBN Group
@@ -133,6 +137,33 @@ export default function IBNGroup() {
           <p className="mt-4 max-w-2xl mx-auto text-lg text-blue-100 leading-relaxed">
             Services, solutions et formations SAP pour accompagner votre transformation digitale en Afrique.
           </p>
+        </div>
+      </section>
+
+      <section className="py-20 border-b border-slate-200">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="grid gap-8 md:grid-cols-2 items-center">
+            <div>
+              <h2 className="text-3xl font-bold text-navy mb-4">IBN Group  Expert SAP en Afrique</h2>
+              <p className="mb-6 text-slate-600 leading-relaxed">
+                IBN Group est une entreprise de conseil en technologies et solutions d&apos;entreprise basée à Douala,
+                Cameroun, avec une présence opérationnelle à Yaoundé et un réseau de consultants en Afrique du Sud et
+                en Allemagne. Fondée comme cabinet SAP spécialisé, IBN Group accompagne les organisations africaines
+                dans leur transformation digitale, de la stratégie à l&apos;implémentation.
+              </p>
+              <p className="mb-6 text-slate-600 leading-relaxed">
+                Nous intervenons sur les modules SAP FI, CO, MM, SD, ABAP, BTP, Fiori et S/4HANA, avec des
+                certifications officielles et un partenariat avec IICFIP et Canopus pour les licences SAP.
+              </p>
+            </div>
+            <div className="relative h-64 rounded-2xl overflow-hidden border border-slate-200 shadow-sm">
+              <img
+                src="/images/WhatsApp Image 2026-11-11 at 15.55.54.jpeg"
+                alt="IBN Group"
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </div>
         </div>
       </section>
 

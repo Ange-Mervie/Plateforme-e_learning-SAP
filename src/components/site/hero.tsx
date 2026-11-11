@@ -23,10 +23,9 @@ export default function Hero() {
   return (
     <section className="relative overflow-hidden bg-navy text-white">
       <div
-        className="absolute inset-0 bg-cover bg-center opacity-25"
-        style={{ backgroundImage: "url('/courses/hero.svg')" }}
+        className="absolute inset-0 bg-cover bg-center opacity-30"
+        style={{ backgroundImage: `url("/images/WhatsApp Image 2026-11-11 at 15.56.36.jpeg")` }}
       />
-      <div className="absolute inset-0 bg-gradient-to-b from-navy/60 via-navy/90 to-navy" />
 
       <div className="relative mx-auto max-w-7xl px-6 py-20 lg:py-28">
         <div className="grid items-center gap-14 lg:grid-cols-2">
