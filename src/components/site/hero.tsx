@@ -31,7 +31,7 @@ export default function Hero() {
       <div className="relative mx-auto max-w-7xl px-6 py-20 lg:py-28">
         <div className="grid items-center gap-14 lg:grid-cols-2">
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full bg-primary/20 px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-blue-200 backdrop-blur">
+            <div className="inline-flex items-center gap-2 rounded-full bg-primary/20 px-3.5 py-1.5 text-xs font-semibold tracking-normal text-blue-200 backdrop-blur">
               <Sparkles className="h-3.5 w-3.5 text-primary" />
               <span>Plateforme Officielle · IBN Group</span>
             </div>
@@ -83,7 +83,7 @@ export default function Hero() {
 
           {/* Interactive Feature Card / Visual Preview */}
           <div className="relative hidden lg:block">
-            <div className="rounded-3xl border border-white/15 bg-white/10 p-8 shadow-2xl backdrop-blur-md space-y-6">
+            <div className="rounded-2xl border border-white/15 bg-white/10 p-8 shadow-2xl backdrop-blur-md space-y-6">
               <div className="flex items-center justify-between border-b border-white/10 pb-4">
                 <div className="flex items-center gap-3">
                   <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-sm font-bold text-white">
