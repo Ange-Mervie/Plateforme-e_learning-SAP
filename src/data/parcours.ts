@@ -31,7 +31,7 @@ export const PARCOURS: Parcours[] = [
     ],
     totalHours: 11,
     certificationTarget: "S/4HANA Finance",
-    price: 395,
+    price: 891,
     featured: true,
   },
   {
@@ -47,7 +47,7 @@ export const PARCOURS: Parcours[] = [
     ],
     totalHours: 10,
     certificationTarget: "Logistique",
-    price: 370,
+    price: 891,
     featured: true,
   },
   {
@@ -63,7 +63,7 @@ export const PARCOURS: Parcours[] = [
     ],
     totalHours: 15,
     certificationTarget: "ABAP / Fiori",
-    price: 460,
+    price: 213,
     featured: true,
   },
 ];
