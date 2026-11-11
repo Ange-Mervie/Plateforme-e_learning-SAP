@@ -12,6 +12,7 @@ import SubscriptionStatus from "@/components/apprenant/subscription-status";
 import MyAssessments from "@/components/apprenant/my-assessments";
 import MyProjects from "@/components/apprenant/my-projects";
 import MyCertificates from "@/components/apprenant/my-certificates";
+import CourseDocumentDownload from "@/components/apprenant/course-document-download";
 import { Play, Search, Sparkles, BookOpen } from "lucide-react";
 import { requireUser, requireActiveSubscription } from "@/lib/auth/authorization";
 import { AuthenticationError } from "@/lib/auth/types";
@@ -126,6 +127,11 @@ async function ApprenantDashboard() {
   {/* My Certificates */}
   <div>
     <MyCertificates />
+  </div>
+
+  {/* Course Document Download */}
+  <div>
+    <CourseDocumentDownload courseSlug="fi-comptabilite-generale" />
   </div>
 
   {/* Bottom Grid: Progress & Recommendations */}
