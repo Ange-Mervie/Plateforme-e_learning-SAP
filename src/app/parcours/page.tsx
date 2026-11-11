@@ -5,6 +5,7 @@ import { PARCOURS } from "@/data/parcours";
 import { getCourseBySlug } from "@/data/courses";
 import { useLanguage } from "@/context/language-context";
 import { CheckCircle2, Clock, Award, ArrowRight } from "lucide-react";
+import { eurToXaf, formatXaf } from "@/lib/currency";
 
 export default function Parcours() {
   const { t } = useLanguage();
@@ -98,7 +99,7 @@ export default function Parcours() {
                     <div className="mt-3 flex items-baseline justify-between">
                       <span className="text-xs text-slate-500">Tarif parcours</span>
                       <span className="text-xl font-bold text-navy">
-                        {parcours.price ? `${parcours.price.toLocaleString("fr-FR")} FCFA` : "Sur devis"}
+                        {parcours.price ? formatXaf(eurToXaf(parcours.price)) : "Sur devis"}
                       </span>
                     </div>
                   </div>
