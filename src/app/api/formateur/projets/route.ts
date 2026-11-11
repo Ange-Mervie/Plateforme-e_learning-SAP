@@ -13,7 +13,7 @@ export async function GET() {
     return NextResponse.json({ error: "Interdit" }, { status: 403 });
   }
 
-  const rows = await query<any>(
+  const rows = await query(
     `SELECT p.id, p.user_id, p.course_slug, p.status, p.grade, p.comments, p.created_at,
             u.name AS user_name, u.email AS user_email
      FROM projects p

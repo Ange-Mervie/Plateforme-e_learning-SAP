@@ -11,7 +11,7 @@ export async function GET() {
   const user = await getUserForSession(token);
   if (!user || user.role !== "admin") return NextResponse.json({ error: "Interdit" }, { status: 403 });
 
-  const rows = await query<any>(
+  const rows = await query(
     `SELECT s.id, s.user_id, s.status, s.expires_at, s.created_at, u.email, u.name
      FROM subscriptions s
      JOIN users u ON u.id = s.user_id

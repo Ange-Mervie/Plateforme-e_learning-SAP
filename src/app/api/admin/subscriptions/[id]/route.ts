@@ -21,7 +21,7 @@ export async function PATCH(
   await execute("UPDATE subscriptions SET status = ? WHERE id = ?", [status, Number(id)]);
 
   // Mettre à jour aussi le statut dans users pour cohérence
-  const subRows = await query<any>("SELECT user_id FROM subscriptions WHERE id = ?", [Number(id)]);
+  const subRows = await query("SELECT user_id FROM subscriptions WHERE id = ?", [Number(id)]);
   if (subRows.length) {
     await execute("UPDATE users SET subscription_status = ? WHERE id = ?", [status, subRows[0].user_id]);
   }

@@ -24,7 +24,7 @@ export async function GET(req: Request) {
   }
 
   // Vérifier que l'utilisateur a une attestation pour ce cours
-  const rows = await query<any>(
+  const rows = await query(
     "SELECT c.id FROM certificates c WHERE c.user_id = ? AND c.course_slug = ?",
     [user.id, courseSlug]
   );

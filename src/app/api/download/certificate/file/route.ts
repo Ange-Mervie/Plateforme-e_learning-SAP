@@ -23,7 +23,7 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "Accès non autorisé" }, { status: 403 });
   }
 
-  const rows = await query<any>(
+  const rows = await query(
     "SELECT c.id FROM certificates c WHERE c.user_id = ? AND c.course_slug = ?",
     [userId, courseSlug]
   );

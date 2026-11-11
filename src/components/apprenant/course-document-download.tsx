@@ -54,7 +54,7 @@ export default function CourseDocumentDownload({ courseSlug }: { courseSlug: str
     return () => { active = false; };
   }, [courseSlug]);
 
-  if (loading) return <div className="text-sm text-slate-500">Vérification des conditions d'accès…</div>;
+  if (loading) return <div className="text-sm text-slate-500">Vérification des conditions d&apos;accès…</div>;
 
   if (conditions && !conditions.ok) {
     return (

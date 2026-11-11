@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { query } from "@/lib/db";
 
 export async function GET() {
-  const rows = await query<any>(
+  const rows = await query(
     "SELECT section, key_name, value_long, value_short, sort_order FROM ibn_group_contents WHERE is_published = 1 ORDER BY section, sort_order"
   );
 

@@ -153,9 +153,9 @@ export default function IBNGroup() {
       <section className="bg-surface py-20 border-y border-slate-200">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-navy">Offres d'accompagnement</h2>
+            <h2 className="text-3xl font-bold text-navy">Offres d&apos;accompagnement</h2>
             <p className="mt-4 text-slate-600">
-              IBN Group propose des offres d'accompagnement adaptées aux besoins des entreprises et des universités.
+              IBN Group propose des offres d&apos;accompagnement adaptées aux besoins des entreprises et des universités.
             </p>
           </div>
           <div className="grid gap-6 md:grid-cols-3">
@@ -186,7 +186,7 @@ export default function IBNGroup() {
               <div>
                 <h2 className="text-3xl font-bold mb-6">Contactez IBN Group</h2>
                 <p className="text-blue-100 mb-8">
-                  Pour toute demande d'information sur les services, les formations ou les partenariats avec IBN Group.
+                  Pour toute demande d&apos;information sur les services, les formations ou les partenariats avec IBN Group.
                 </p>
                 <div className="space-y-4 text-sm">
                   <div className="flex items-start gap-3">
@@ -237,8 +237,8 @@ export default function IBNGroup() {
           <div className="rounded-lg border border-amber-100 bg-amber-50 p-4">
             <p className="text-sm text-amber-800">
               <strong>Note importante :</strong> Les contenus de cette section (chiffres, références clients, coordonnées, activités détaillées)
-              doivent être vérifiés et complétés avec les informations officielles d'IBN Group avant publication.
-              Aucune donnée n'a été inventée.
+              doivent être vérifiés et complétés avec les informations officielles d&apos;IBN Group avant publication.
+              Aucune donnée n&apos;a été inventée.
             </p>
           </div>
         </div>

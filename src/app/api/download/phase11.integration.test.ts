@@ -1,10 +1,10 @@
-// @ts-nocheck
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { connection } from "next/server";
 import { query, execute } from "@/lib/db";
 import { getUserForSession } from "@/lib/auth/sessions";
 import { requireUser, requireRole, requireActiveSubscription } from "@/lib/auth/authorization";
-import { AuthenticationError } from "@/lib/auth/types";
+import { AuthenticationError, type AuthenticatedUser } from "@/lib/auth/types";
+import type { RowDataPacket, ResultSetHeader } from "mysql2/promise";
 
 vi.mock("next/server", () => ({
   connection: vi.fn(async () => ({})),
@@ -18,7 +18,7 @@ vi.mock("next/headers", () => ({
 
 // Mock de la base de données
 vi.mock("@/lib/db", () => ({
-  query: vi.fn<any, any[]>(),
+  query: vi.fn(),
   execute: vi.fn(),
 }));
 
@@ -67,7 +67,7 @@ describe("MISSION 06 / PHASE 11 — Tests d'intégration obligatoires", () => {
 
   // Scénario 1 : Visiteur sans abonnement tente d'accéder à un cours protégé
   it("Scénario 1 : Refus d'accès aux cours protégés sans abonnement actif", async () => {
-    vi.mocked(getUserForSession).mockResolvedValue(learnerExpired);
+    vi.mocked(getUserForSession).mockResolvedValue(learnerExpired as unknown as AuthenticatedUser);
     await expect(requireActiveSubscription()).rejects.toMatchObject({
       status: 403,
       message: "Abonnement requis pour accéder à ce contenu.",
@@ -84,23 +84,21 @@ describe("MISSION 06 / PHASE 11 — Tests d'intégration obligatoires", () => {
 
   // Scénario 3 : Utilisateur dont l'abonnement a expiré
   it("Scénario 3 : Refus d'accès quand abonnement expiré", async () => {
-    vi.mocked(getUserForSession).mockResolvedValue(learnerExpired);
+    vi.mocked(getUserForSession).mockResolvedValue(learnerExpired as unknown as AuthenticatedUser);
     await expect(requireActiveSubscription()).rejects.toMatchObject({ status: 403 });
   });
 
   // Scénario 4 : Paiement non confirmé (statut pending)
   it("Scénario 4 : Paiement non confirmé = statut pending, accès refusé", async () => {
-    vi.mocked(query).mockResolvedValue([
-      { id: 1, user_id: 1, status: "pending", expires_at: null },
-    ]);
-    const rows = await query<any>("SELECT * FROM subscriptions WHERE user_id = ?", [1]);
+    vi.mocked(query).mockResolvedValue([{ id: 1, user_id: 1, status: "pending", expires_at: null }] as unknown as RowDataPacket[]);
+    const rows = await query("SELECT * FROM subscriptions WHERE user_id = ?", [1]);
     expect(rows[0].status).toBe("pending");
     expect(rows[0].status).not.toBe("active");
   });
 
   // Scénario 5 : Sauvegarde de progression après déconnexion (persistance DB)
   it("Scénario 5 : Progression sauvegardée en base (persistance après déconnexion)", async () => {
-    vi.mocked(execute).mockResolvedValue({ affectedRows: 1, insertId: 1, warningStatus: 0 });
+    vi.mocked(execute).mockResolvedValue({ affectedRows: 1, insertId: 1, warningStatus: 0 } as unknown as ResultSetHeader);
     await execute(
       "INSERT INTO progress (user_id, course_slug, lesson_title, completed) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE completed = VALUES(completed)",
       [1, "fi-comptabilite-generale", "Principes de base", 1]
@@ -113,7 +111,7 @@ describe("MISSION 06 / PHASE 11 — Tests d'intégration obligatoires", () => {
 
   // Scénario 6 : Enregistrement des notes d'évaluation
   it("Scénario 6 : Enregistrement des notes d'évaluation", async () => {
-    vi.mocked(execute).mockResolvedValue({ affectedRows: 1, insertId: 1, warningStatus: 0 });
+    vi.mocked(execute).mockResolvedValue({ affectedRows: 1, insertId: 1, warningStatus: 0 } as unknown as ResultSetHeader);
     await execute(
       "INSERT INTO assessments (user_id, course_slug, score, passed) VALUES (?, ?, ?, ?)",
       [1, "fi-comptabilite-generale", 85, 1]
@@ -127,7 +125,7 @@ describe("MISSION 06 / PHASE 11 — Tests d'intégration obligatoires", () => {
   // Scénario 7 : Obligation de passer les évaluations (condition téléchargement)
   it("Scénario 7 : Téléchargement refusé si évaluation non validée", async () => {
     vi.mocked(query).mockResolvedValue([]); // Pas d'évaluation
-    const assessments = await query<any>(
+    const assessments = await query(
       "SELECT passed FROM assessments WHERE user_id = ? AND course_slug = ? ORDER BY created_at DESC LIMIT 1",
       [1, "fi-comptabilite-generale"]
     );
@@ -137,10 +135,8 @@ describe("MISSION 06 / PHASE 11 — Tests d'intégration obligatoires", () => {
 
   // Scénario 8 : Impossibilité de valider un parcours sans projet final
   it("Scénario 8 : Téléchargement refusé si projet non validé", async () => {
-    vi.mocked(query).mockResolvedValue([
-      { status: "submitted", grade: null },
-    ]);
-    const projects = await query<any>(
+    vi.mocked(query).mockResolvedValue([{ status: "submitted", grade: null }] as unknown as RowDataPacket[]);
+    const projects = await query(
       "SELECT status, grade FROM projects WHERE user_id = ? AND course_slug = ? ORDER BY created_at DESC LIMIT 1",
       [1, "fi-comptabilite-generale"]
     );
@@ -150,7 +146,7 @@ describe("MISSION 06 / PHASE 11 — Tests d'intégration obligatoires", () => {
 
   // Scénario 9 : Validation de la soutenance
   it("Scénario 9 : Décision de soutenance enregistrée (admis/ajourne)", async () => {
-    vi.mocked(execute).mockResolvedValue({ affectedRows: 1, insertId: 1, warningStatus: 0 });
+    vi.mocked(execute).mockResolvedValue({ affectedRows: 1, insertId: 1, warningStatus: 0 } as unknown as ResultSetHeader);
     await execute(
       "UPDATE defenses SET decision = ?, evaluator_comment = ?, decided_by = ?, decided_at = CURRENT_TIMESTAMP WHERE id = ?",
       ["admis", "Soutenance réussie", 3, 42]
@@ -164,15 +160,15 @@ describe("MISSION 06 / PHASE 11 — Tests d'intégration obligatoires", () => {
   // Scénario 10 : Téléchargement autorisé après délivrance de l'attestation
   it("Scénario 10 : Téléchargement autorisé quand toutes conditions remplies", async () => {
     vi.mocked(query)
-      .mockResolvedValueOnce([{ passed: 1 }]) // assessment
-      .mockResolvedValueOnce([{ status: "validated", grade: 15 }]) // project
-      .mockResolvedValueOnce([{ decision: "admis" }]) // defense
-      .mockResolvedValueOnce([{ id: 100 }]); // certificate
+      .mockResolvedValueOnce([{ passed: 1 }] as unknown as RowDataPacket[]) // assessment
+      .mockResolvedValueOnce([{ status: "validated", grade: 15 }] as unknown as RowDataPacket[]) // project
+      .mockResolvedValueOnce([{ decision: "admis" }] as unknown as RowDataPacket[]) // defense
+      .mockResolvedValueOnce([{ id: 100 }] as unknown as RowDataPacket[]); // certificate
 
-    const assessments = await query<any>("SELECT passed FROM assessments WHERE user_id = ? AND course_slug = ?", [1, "fi"]);
-    const projects = await query<any>("SELECT status FROM projects WHERE user_id = ? AND course_slug = ?", [1, "fi"]);
-    const defenses = await query<any>("SELECT decision FROM defenses WHERE user_id = ? AND course_slug = ?", [1, "fi"]);
-    const certificates = await query<any>("SELECT id FROM certificates WHERE user_id = ? AND course_slug = ?", [1, "fi"]);
+    const assessments = await query("SELECT passed FROM assessments WHERE user_id = ? AND course_slug = ?", [1, "fi"]);
+    const projects = await query("SELECT status FROM projects WHERE user_id = ? AND course_slug = ?", [1, "fi"]);
+    const defenses = await query("SELECT decision FROM defenses WHERE user_id = ? AND course_slug = ?", [1, "fi"]);
+    const certificates = await query("SELECT id FROM certificates WHERE user_id = ? AND course_slug = ?", [1, "fi"]);
 
     expect(assessments[0].passed).toBe(1);
     expect(projects[0].status).toBe("validated");
@@ -183,10 +179,10 @@ describe("MISSION 06 / PHASE 11 — Tests d'intégration obligatoires", () => {
   // Scénario 11 : Refus de téléchargement avant validation
   it("Scénario 11 : Refus de téléchargement si conditions manquantes", async () => {
     vi.mocked(query).mockResolvedValue([]); // Aucune condition remplie
-    const assessments = await query<any>("SELECT passed FROM assessments WHERE user_id = ? AND course_slug = ?", [1, "fi"]);
-    const projects = await query<any>("SELECT status FROM projects WHERE user_id = ? AND course_slug = ?", [1, "fi"]);
-    const defenses = await query<any>("SELECT decision FROM defenses WHERE user_id = ? AND course_slug = ?", [1, "fi"]);
-    const certificates = await query<any>("SELECT id FROM certificates WHERE user_id = ? AND course_slug = ?", [1, "fi"]);
+    const assessments = await query("SELECT passed FROM assessments WHERE user_id = ? AND course_slug = ?", [1, "fi"]);
+    const projects = await query("SELECT status FROM projects WHERE user_id = ? AND course_slug = ?", [1, "fi"]);
+    const defenses = await query("SELECT decision FROM defenses WHERE user_id = ? AND course_slug = ?", [1, "fi"]);
+    const certificates = await query("SELECT id FROM certificates WHERE user_id = ? AND course_slug = ?", [1, "fi"]);
 
     const missing = [];
     if (!assessments.length || !assessments[0].passed) missing.push("assessment_passed");

@@ -41,8 +41,8 @@ export async function query<T extends RowDataPacket = RowDataPacket>(
   try {
     const [rows] = await getPool().execute<T[]>(sql, params);
     return rows;
-  } catch (error: any) {
-    console.error("[db] query failed:", error?.message ?? String(error));
+  } catch (error: unknown) {
+    console.error("[db] query failed:", error instanceof Error ? error.message : String(error));
     return [] as T[];
   }
 }
@@ -54,8 +54,8 @@ export async function execute(
   try {
     const [result] = await getPool().execute<ResultSetHeader>(sql, params);
     return result;
-  } catch (error: any) {
-    console.error("[db] execute failed:", error?.message ?? String(error));
+  } catch (error: unknown) {
+    console.error("[db] execute failed:", error instanceof Error ? error.message : String(error));
     return { affectedRows: 0, insertId: 0, warningStatus: 0 } as unknown as ResultSetHeader;
   }
 }

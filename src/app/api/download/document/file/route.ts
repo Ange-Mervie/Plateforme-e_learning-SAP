@@ -7,7 +7,7 @@ import { getUserForSession } from "@/lib/auth/sessions";
 async function checkDownloadConditions(userId: number, courseSlug: string): Promise<{ ok: boolean; missing: string[] }> {
   const missing: string[] = [];
 
-  const assessments = await query<any>(
+  const assessments = await query(
     "SELECT passed FROM assessments WHERE user_id = ? AND course_slug = ? ORDER BY created_at DESC LIMIT 1",
     [userId, courseSlug]
   );
@@ -15,7 +15,7 @@ async function checkDownloadConditions(userId: number, courseSlug: string): Prom
     missing.push("assessment_passed");
   }
 
-  const projects = await query<any>(
+  const projects = await query(
     "SELECT status FROM projects WHERE user_id = ? AND course_slug = ? ORDER BY created_at DESC LIMIT 1",
     [userId, courseSlug]
   );
@@ -23,7 +23,7 @@ async function checkDownloadConditions(userId: number, courseSlug: string): Prom
     missing.push("project_validated");
   }
 
-  const defenses = await query<any>(
+  const defenses = await query(
     "SELECT decision FROM defenses WHERE user_id = ? AND course_slug = ? ORDER BY created_at DESC LIMIT 1",
     [userId, courseSlug]
   );
@@ -31,7 +31,7 @@ async function checkDownloadConditions(userId: number, courseSlug: string): Prom
     missing.push("defense_admitted");
   }
 
-  const certificates = await query<any>(
+  const certificates = await query(
     "SELECT id FROM certificates WHERE user_id = ? AND course_slug = ? ORDER BY created_at DESC LIMIT 1",
     [userId, courseSlug]
   );
@@ -69,7 +69,7 @@ export async function GET(req: Request) {
     }, { status: 403 });
   }
 
-  const docs = await query<any>(
+  const docs = await query(
     "SELECT * FROM course_documents WHERE id = ? AND course_slug = ? AND is_private = 1",
     [Number(documentId), courseSlug]
   );

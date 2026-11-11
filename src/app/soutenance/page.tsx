@@ -25,7 +25,7 @@ export default function DefensePage() {
       </div>
       {status && <p className="mt-4 text-emerald-700">{status}</p>}
       <p className="mt-8 text-sm text-slate-500">
-        <Link href="/apprenant" className="text-primary hover:text-primary-dark">← Retour à l'espace apprenant</Link>
+        <Link href="/apprenant" className="text-primary hover:text-primary-dark">← Retour à l&apos;espace apprenant</Link>
       </p>
     </main>
   );

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { connection } from "next/server";
-import { execute, query } from "@/lib/db";
+import { execute, query, type SqlParameter } from "@/lib/db";
 import { getUserForSession } from "@/lib/auth/sessions";
 
 export async function PATCH(
@@ -23,7 +23,7 @@ export async function PATCH(
   }
 
   const fields: string[] = [];
-  const values: any[] = [];
+  const values: SqlParameter[] = [];
   if (grade != null) { fields.push("grade = ?"); values.push(grade); }
   if (comments !== undefined) { fields.push("comments = ?"); values.push(comments); }
   if (status) { fields.push("status = ?"); values.push(status); }
@@ -31,6 +31,6 @@ export async function PATCH(
 
   await execute(`UPDATE projects SET ${fields.join(", ")} WHERE id = ?`, values);
 
-  const updated = await query<any>("SELECT * FROM projects WHERE id = ?", [Number(id)]);
+  const updated = await query("SELECT * FROM projects WHERE id = ?", [Number(id)]);
   return NextResponse.json({ ok: true, project: updated[0] || null });
 }
