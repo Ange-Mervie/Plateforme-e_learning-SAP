@@ -178,7 +178,7 @@ export default function CoursPlayer({ course: propCourse, code }: Props) {
         {/* Video Simulation Canvas */}
         <div className="relative overflow-hidden rounded-2xl bg-slate-950 aspect-video shadow-lg border border-slate-800 flex flex-col justify-between p-6 text-white">
           <div className="flex items-center justify-between">
-            <span className="rounded-md bg-primary/80 px-2.5 py-1 text-xs font-bold uppercase tracking-wider backdrop-blur-sm">
+            <span className="rounded-md bg-primary/80 px-2.5 py-1 text-xs font-semibold tracking-normal backdrop-blur-sm">
               SAP S/4HANA · Démo Interactive
             </span>
             <span className="text-xs text-slate-400">
@@ -280,7 +280,7 @@ export default function CoursPlayer({ course: propCourse, code }: Props) {
               </p>
 
               <div className="rounded-xl bg-surface p-5 border border-slate-200 space-y-3">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-primary">
+                <h4 className="text-xs font-semibold tracking-normal text-primary">
                   Transactions & Écrans clés abordés
                 </h4>
                 <div className="grid gap-2 sm:grid-cols-2 text-sm">
@@ -415,7 +415,7 @@ export default function CoursPlayer({ course: propCourse, code }: Props) {
               ) : (
                 <div className="rounded-xl bg-surface p-6 border border-slate-200 text-center">
                   {assessmentError ? <p role="alert" className="mb-4 rounded-lg bg-amber-50 p-3 text-sm font-semibold text-amber-800">{assessmentError}</p> : null}
-                  <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Résultat du Quiz</p>
+                  <p className="text-xs font-semibold tracking-normal text-slate-500">Résultat du Quiz</p>
                   <p className="mt-2 text-3xl font-extrabold text-navy">{quizScore} %</p>
                   <p className="mt-1 text-sm text-slate-600">
                     {quizScore! >= 70
@@ -498,7 +498,7 @@ export default function CoursPlayer({ course: propCourse, code }: Props) {
       <div className="space-y-6">
         <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
           <div className="bg-navy p-5 text-white">
-            <p className="text-xs font-bold uppercase tracking-wider text-blue-200">Sommaire interactif</p>
+            <p className="text-xs font-semibold tracking-normal text-blue-200">Sommaire interactif</p>
             <h3 className="mt-1 text-base font-bold text-white">Programme détaillé ({allLessons.length} leçons)</h3>
           </div>
 

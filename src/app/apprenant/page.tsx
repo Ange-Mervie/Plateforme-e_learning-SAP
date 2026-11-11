@@ -72,7 +72,7 @@ async function ApprenantDashboard() {
 
             <div className="relative z-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
               <div className="max-w-2xl">
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/20 px-3 py-1 text-xs font-bold uppercase tracking-wider text-blue-200 backdrop-blur">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/20 px-3 py-1 text-xs font-semibold tracking-normal text-blue-200 backdrop-blur">
                   <Sparkles className="h-3.5 w-3.5 text-primary" />
                   Espace Personnel Apprenant
                 </span>

@@ -50,7 +50,7 @@ export default function Connexion() {
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-4 rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
         <div>
-          <label htmlFor="email" className="block text-xs font-bold uppercase tracking-wider text-navy">
+          <label htmlFor="email" className="block text-xs font-semibold tracking-normal text-navy">
             {t("connexion.email")}
           </label>
           <div className="relative mt-1">
@@ -68,7 +68,7 @@ export default function Connexion() {
 
         <div>
           <div className="flex items-center justify-between">
-            <label htmlFor="password" className="block text-xs font-bold uppercase tracking-wider text-navy">
+            <label htmlFor="password" className="block text-xs font-semibold tracking-normal text-navy">
               {t("connexion.password")}
             </label>
             <Link

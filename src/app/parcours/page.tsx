@@ -37,7 +37,7 @@ export default function Parcours() {
 
                 <div className="p-7 flex flex-col flex-1">
                   <div className="flex items-center justify-between">
-                    <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-primary">
+                    <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold tracking-normal text-primary">
                       {parcours.family}
                     </span>
                     <span className="flex items-center gap-1 text-xs font-semibold text-slate-500">
@@ -63,7 +63,7 @@ export default function Parcours() {
                   </div>
 
                   <div className="mt-6 border-t border-slate-100 pt-5">
-                    <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                    <p className="text-xs font-semibold tracking-normal text-slate-400">
                       Modules inclus dans ce parcours
                     </p>
                     <ol className="mt-3 flex-1 space-y-2.5">

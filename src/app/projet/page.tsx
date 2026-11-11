@@ -66,7 +66,7 @@ export default function ProjetPage() {
       <div className="mx-auto max-w-5xl">
         {/* Header */}
         <div className="border-b border-slate-200 pb-6">
-          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-primary">
+          <div className="flex items-center gap-2 text-xs font-semibold tracking-normal text-primary">
             <span className="flex h-6 w-6 items-center justify-center rounded bg-primary text-white text-[10px]">
               SAP
             </span>
@@ -99,7 +99,7 @@ export default function ProjetPage() {
               </div>
 
               <div className="mt-6 space-y-3">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                <h3 className="text-xs font-semibold tracking-normal text-slate-400">
                   Livrables exigés pour la soutenance
                 </h3>
                 <ul className="space-y-2 text-sm text-slate-700">

@@ -35,7 +35,7 @@ export default function Certifications() {
               >
                 <div>
                   <div className="flex items-center justify-between">
-                    <span className="rounded-full bg-surface px-3 py-1 text-xs font-bold uppercase tracking-wider text-navy">
+                    <span className="rounded-full bg-surface px-3 py-1 text-xs font-semibold tracking-normal text-navy">
                       {cert.family}
                     </span>
                     <span className="flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">

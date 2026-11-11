@@ -60,7 +60,7 @@ export default function Paiement() {
       <div className="mx-auto max-w-4xl">
           <div>
             <div className="text-center max-w-2xl mx-auto">
-              <span className="rounded-full bg-primary/10 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-primary">
+              <span className="rounded-full bg-primary/10 px-3.5 py-1 text-xs font-semibold tracking-normal text-primary">
                 Paiement Sécurisé SSL 256-bit
               </span>
               <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-navy sm:text-4xl">

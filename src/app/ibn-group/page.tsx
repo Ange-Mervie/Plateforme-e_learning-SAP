@@ -111,7 +111,7 @@ export default function IBNGroup() {
     <main className="bg-white">
       <section className="bg-navy">
         <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8 text-center">
-          <span className="inline-flex items-center gap-2 rounded-full bg-primary/20 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-blue-200 backdrop-blur-sm mb-6">
+          <span className="inline-flex items-center gap-2 rounded-full bg-primary/20 px-4 py-1.5 text-xs font-semibold tracking-normal text-blue-200 backdrop-blur-sm mb-6">
             <Building2 className="h-3.5 w-3.5 text-primary" />
             IBN Group
           </span>

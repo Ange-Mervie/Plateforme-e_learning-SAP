@@ -145,7 +145,7 @@ export default function Catalogue() {
             <div className="mt-6 space-y-6">
               {/* Domaines SAP */}
               <div>
-                <p className="text-xs font-bold uppercase tracking-wider text-navy">Domaines SAP</p>
+                <p className="text-xs font-semibold tracking-normal text-navy">Domaines SAP</p>
                 <div className="mt-3 space-y-2">
                   {FAMILY_OPTIONS.map((option) => (
                     <label key={option.id} className="flex items-center gap-2.5 text-xs font-medium text-slate-700 cursor-pointer">
@@ -163,7 +163,7 @@ export default function Catalogue() {
 
               {/* Niveaux */}
               <div className="border-t border-slate-200 pt-5">
-                <p className="text-xs font-bold uppercase tracking-wider text-navy">Niveau d&apos;expertise</p>
+                <p className="text-xs font-semibold tracking-normal text-navy">Niveau d&apos;expertise</p>
                 <div className="mt-3 space-y-2">
                   {LEVEL_OPTIONS.map((option) => (
                     <label key={option.id} className="flex items-center gap-2.5 text-xs font-medium text-slate-700 cursor-pointer">
@@ -181,7 +181,7 @@ export default function Catalogue() {
 
               {/* Durées */}
               <div className="border-t border-slate-200 pt-5">
-                <p className="text-xs font-bold uppercase tracking-wider text-navy">Volume horaire</p>
+                <p className="text-xs font-semibold tracking-normal text-navy">Volume horaire</p>
                 <div className="mt-3 space-y-2">
                   {DURATION_BANDS.map((band) => (
                     <label key={band.id} className="flex items-center gap-2.5 text-xs font-medium text-slate-700 cursor-pointer">
@@ -302,7 +302,7 @@ export default function Catalogue() {
                     {/* Header Banner */}
                     <div className="h-28 bg-gradient-to-br from-navy to-navy-light flex items-center justify-between px-6 text-white">
                       <div>
-                        <span className="text-xs font-bold uppercase tracking-wider text-blue-200">
+                        <span className="text-xs font-semibold tracking-normal text-blue-200">
                           Module SAP
                         </span>
                         <p className="text-3xl font-black">{course.module}</p>

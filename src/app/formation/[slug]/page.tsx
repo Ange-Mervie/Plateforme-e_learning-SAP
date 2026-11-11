@@ -62,7 +62,7 @@ async function FormationContent({ params }: Props) {
           <div className="mt-6 grid gap-10 lg:grid-cols-3 lg:items-start">
             <div className="lg:col-span-2">
               <div className="flex flex-wrap items-center gap-3">
-                <span className="rounded-lg bg-primary px-3 py-1 text-xs font-bold uppercase tracking-wider text-white">
+                <span className="rounded-lg bg-primary px-3 py-1 text-xs font-semibold tracking-normal text-white">
                   SAP {currentCourse.module}
                 </span>
                 <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-blue-100">
@@ -257,7 +257,7 @@ async function FormationContent({ params }: Props) {
 
             {/* Trainer Profile Card */}
             <div className="rounded-2xl border border-slate-200 bg-surface p-8">
-              <h2 className="text-xs font-bold uppercase tracking-wider text-primary">Votre formateur référent</h2>
+              <h2 className="text-xs font-semibold tracking-normal text-primary">Votre formateur référent</h2>
               <div className="mt-4 flex flex-col sm:flex-row items-start sm:items-center gap-5">
                 <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-navy text-xl font-bold text-white shadow-md">
                   {trainer.name.split(" ").map((n) => n[0]).join("").slice(0, 2)}

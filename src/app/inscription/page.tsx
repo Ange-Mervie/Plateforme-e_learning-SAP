@@ -55,7 +55,7 @@ export default function Inscription() {
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-4 rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
         <div>
-          <label htmlFor="name" className="block text-xs font-bold uppercase tracking-wider text-navy">
+          <label htmlFor="name" className="block text-xs font-semibold tracking-normal text-navy">
             {t("inscription.name")}
           </label>
           <div className="relative mt-1">
@@ -72,7 +72,7 @@ export default function Inscription() {
         </div>
 
         <div>
-          <label htmlFor="email" className="block text-xs font-bold uppercase tracking-wider text-navy">
+          <label htmlFor="email" className="block text-xs font-semibold tracking-normal text-navy">
             {t("inscription.email")}
           </label>
           <div className="relative mt-1">
@@ -89,7 +89,7 @@ export default function Inscription() {
         </div>
 
         <div>
-          <label htmlFor="password" className="block text-xs font-bold uppercase tracking-wider text-navy">
+          <label htmlFor="password" className="block text-xs font-semibold tracking-normal text-navy">
             {t("inscription.password")}
           </label>
           <div className="relative mt-1">

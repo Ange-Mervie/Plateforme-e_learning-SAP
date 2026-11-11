@@ -255,7 +255,7 @@ function EvaluationContent() {
               <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary text-xs font-bold text-white">
                 SAP
               </span>
-              <p className="text-xs font-bold uppercase tracking-wider text-primary">
+              <p className="text-xs font-semibold tracking-normal text-primary">
                 Centre d&apos;Évaluation Officiel
               </p>
             </div>
@@ -334,7 +334,7 @@ function EvaluationContent() {
             {/* Current Question Card */}
             {currentQ && (
               <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
-                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-primary">
+                <div className="flex items-center gap-2 text-xs font-semibold tracking-normal text-primary">
                   <span>Question n° {currentIdx + 1}</span>
                 </div>
                 <h2 className="mt-3 text-lg font-bold text-navy sm:text-xl">
@@ -432,7 +432,7 @@ function EvaluationContent() {
               </p>
 
               <div className="mt-6 inline-flex items-baseline gap-2 rounded-2xl bg-white px-6 py-3 border border-slate-200 shadow-sm">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Votre score :</span>
+                <span className="text-xs font-semibold tracking-normal text-slate-500">Votre score :</span>
                 <span className={`text-4xl font-extrabold ${passed ? "text-emerald-600" : "text-amber-600"}`}>
                   {score} %
                 </span>
