@@ -169,6 +169,19 @@ const fr = {
   mesFormations: {
     subtitle: "Suivi des formations suivies par l’apprenant.",
   },
+  chatbot: {
+    title: "Assistant SAP",
+    subtitle: "En ligne · Aide plateforme",
+    welcome: "Bonjour ! Je suis votre assistant SAP Learning Academy. Comment puis-je vous aider aujourd’hui ?",
+    quick1: "Comment me connecter ?",
+    quick2: "Comment souscrire un abonnement ?",
+    quick3: "Comment passer un examen ?",
+    quick4: "Comment obtenir mon attestation ?",
+    quick5: "Contacter un formateur ?",
+    placeholder: "Écrivez votre question…",
+    ariaLabel: "Ouvrir l’assistant",
+    close: "Fermer",
+  },
   ibnGroup: {
     heroTitle: "Partenaire de confiance pour vos projets SAP",
     heroSubtitle:
@@ -196,8 +209,7 @@ const fr = {
   },
 };
 
-const en: typeof fr = {
-  nav: {
+const en: typeof fr = {  nav: {
     home: "Home",
     catalogue: "Catalog",
     parcours: "Learning paths",
@@ -361,6 +373,19 @@ const en: typeof fr = {
   mesFormations: {
     subtitle: "Tracking of the courses followed by the learner.",
   },
+  chatbot: {
+    title: "SAP Assistant",
+    subtitle: "Online · Platform help",
+    welcome: "Hello! I am your SAP Learning Academy assistant. How can I help you today?",
+    quick1: "How do I log in?",
+    quick2: "How do I subscribe?",
+    quick3: "How do I take an exam?",
+    quick4: "How do I get my certificate?",
+    quick5: "Contact a trainer?",
+    placeholder: "Write your question…",
+    ariaLabel: "Open assistant",
+    close: "Close",
+  },
   ibnGroup: {
     heroTitle: "Trusted partner for your SAP projects",
     heroSubtitle:
@@ -394,7 +419,7 @@ interface LanguageContextValue {
   t: (key: string) => string;
 }
 
-const LanguageContext = createContext<LanguageContextValue | null>(null);
+export const LanguageContext = createContext<LanguageContextValue | null>(null);
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [lang, setLang] = useState<Lang>("fr");
@@ -424,3 +449,5 @@ export function useLanguage() {
   }
   return ctx;
 }
+
+export { fr, en };

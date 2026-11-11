@@ -58,8 +58,7 @@ export default function Domains() {
             >
               <div className="relative h-40 overflow-hidden bg-navy">
                 <div
-                  className="h-full w-full bg-cover bg-center transition-transform duration-300 group-hover:scale-105"
-                  style={{ backgroundImage: `url(${domain.image})` }}
+                  className="h-full w-full bg-gradient-to-br from-primary/30 to-primary/60 transition-transform duration-300 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-navy via-navy/40 to-transparent" />
               </div>

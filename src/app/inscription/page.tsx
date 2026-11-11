@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, useEffect, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
@@ -8,7 +8,7 @@ import { useLanguage } from "@/context/language-context";
 import { Lock, Mail, User, ArrowRight, CheckCircle2 } from "lucide-react";
 
 export default function Inscription() {
-  const { register } = useAuth();
+  const { register, user } = useAuth();
   const { t } = useLanguage();
   const router = useRouter();
   const [name, setName] = useState("");
@@ -16,10 +16,16 @@ export default function Inscription() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [verification, setVerification] = useState<{ required: boolean; code: string; message: string } | null>(null);
+
+  useEffect(() => {
+    if (user && !verification?.required) router.push("/apprenant");
+  }, [user, router, verification]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError("");
+    setVerification(null);
     if (!name.trim() || !email.trim() || !password) {
       setError(t("inscription.required"));
       return;
@@ -30,8 +36,12 @@ export default function Inscription() {
     }
     setLoading(true);
     try {
-      await register(name, email, password);
-      router.push("/apprenant");
+      const result = await register(name, email, password);
+      if (result.emailVerification?.required) {
+        setVerification(result.emailVerification);
+      } else {
+        router.push("/apprenant");
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Une erreur est survenue.");
     } finally {
@@ -53,84 +63,105 @@ export default function Inscription() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="mt-8 space-y-4 rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
-        <div>
-          <label htmlFor="name" className="block text-xs font-semibold tracking-normal text-navy">
-            {t("inscription.name")}
-          </label>
-          <div className="relative mt-1">
-            <User className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
-            <input
-              id="name"
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Jean Dupont"
-              className="h-11 w-full rounded-xl border border-slate-300 pl-9 pr-3 text-sm text-navy outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-            />
+      {verification ? (
+        <div className="mt-8 space-y-4 rounded-2xl border border-emerald-200 bg-emerald-50 p-8 shadow-sm text-center">
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 mx-auto mb-4">
+            <CheckCircle2 className="h-6 w-6 text-emerald-600" />
           </div>
+          <h2 className="text-lg font-bold text-navy">Compte créé</h2>
+          <p className="mt-2 text-sm text-slate-600">
+            {verification.message}
+          </p>
+          <a
+            href={`/api/auth/verify-email?code=${encodeURIComponent(verification.code)}`}
+            className="mt-4 inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-6 py-2.5 text-sm font-bold text-white shadow-md hover:bg-emerald-700 transition-colors"
+          >
+            Vérifier mon email <ArrowRight className="h-4 w-4" />
+          </a>
+          <p className="mt-4 text-xs text-slate-500">
+            Une fois votre email confirmé, vous pourrez vous connecter.
+          </p>
         </div>
-
-        <div>
-          <label htmlFor="email" className="block text-xs font-semibold tracking-normal text-navy">
-            {t("inscription.email")}
-          </label>
-          <div className="relative mt-1">
-            <Mail className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="jean.dupont@example.com"
-              className="h-11 w-full rounded-xl border border-slate-300 pl-9 pr-3 text-sm text-navy outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-            />
+      ) : (
+        <form onSubmit={handleSubmit} className="mt-8 space-y-4 rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+          <div>
+            <label htmlFor="name" className="block text-xs font-semibold tracking-normal text-navy">
+              {t("inscription.name")}
+            </label>
+            <div className="relative mt-1">
+              <User className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+              <input
+                id="name"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Jean Dupont"
+                className="h-11 w-full rounded-xl border border-slate-300 pl-9 pr-3 text-sm text-navy outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+              />
+            </div>
           </div>
-        </div>
 
-        <div>
-          <label htmlFor="password" className="block text-xs font-semibold tracking-normal text-navy">
-            {t("inscription.password")}
-          </label>
-          <div className="relative mt-1">
-            <Lock className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Au moins 6 caractères"
-              className="h-11 w-full rounded-xl border border-slate-300 pl-9 pr-3 text-sm text-navy outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-            />
+          <div>
+            <label htmlFor="email" className="block text-xs font-semibold tracking-normal text-navy">
+              {t("inscription.email")}
+            </label>
+            <div className="relative mt-1">
+              <Mail className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+              <input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="jean.dupont@example.com"
+                className="h-11 w-full rounded-xl border border-slate-300 pl-9 pr-3 text-sm text-navy outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+              />
+            </div>
           </div>
-        </div>
 
-        {error ? (
-          <div className="rounded-lg bg-red-50 p-3 text-xs font-semibold text-red-600">
-            {error}
+          <div>
+            <label htmlFor="password" className="block text-xs font-semibold tracking-normal text-navy">
+              {t("inscription.password")}
+            </label>
+            <div className="relative mt-1">
+              <Lock className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+              <input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Au moins 6 caractères"
+                className="h-11 w-full rounded-xl border border-slate-300 pl-9 pr-3 text-sm text-navy outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+              />
+            </div>
           </div>
-        ) : null}
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary text-sm font-bold text-white shadow-md hover:bg-primary-dark transition-all disabled:opacity-60"
-        >
-          <span>{loading ? "Création du compte..." : t("inscription.submit")}</span>
-          <ArrowRight className="h-4 w-4" />
-        </button>
+          {error ? (
+            <div className="rounded-lg bg-red-50 p-3 text-xs font-semibold text-red-600">
+              {error}
+            </div>
+          ) : null}
 
-        <div className="space-y-1.5 pt-2 text-[11px] text-slate-500">
-          <div className="flex items-center gap-2">
-            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
-            <span>Accès immédiat aux cours de découverte gratuits</span>
+          <button
+            type="submit"
+            disabled={loading}
+            className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary text-sm font-bold text-white shadow-md hover:bg-primary-dark transition-all disabled:opacity-60"
+          >
+            <span>{loading ? "Création du compte..." : t("inscription.submit")}</span>
+            <ArrowRight className="h-4 w-4" />
+          </button>
+
+          <div className="space-y-1.5 pt-2 text-[11px] text-slate-500">
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+              <span>Accès immédiat aux cours de découverte gratuits</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+              <span>Accès à la communauté d&apos;apprenants et mentorat</span>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
-            <span>Accès à la communauté d&apos;apprenants et mentorat</span>
-          </div>
-        </div>
-      </form>
+        </form>
+      )}
 
       <p className="mt-6 text-center text-sm text-slate-600">
         {t("inscription.hasAccount")}{" "}

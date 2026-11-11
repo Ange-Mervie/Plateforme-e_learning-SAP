@@ -213,10 +213,10 @@ function AttestationContent() {
             {/* Signature 1 */}
             <div className="text-center sm:text-left">
               <div className="h-10 flex items-center justify-center sm:justify-start">
-                <span className="font-serif italic text-base text-navy font-bold">Claire Moreau</span>
+                <span className="font-serif italic text-base text-navy font-bold">Mr. Chami</span>
               </div>
               <div className="mt-1 h-0.5 w-32 bg-slate-300 mx-auto sm:mx-0"></div>
-              <p className="mt-1 text-xs font-bold text-navy">Dr. Claire Moreau</p>
+              <p className="mt-1 text-xs font-bold text-navy">Mr. Legima </p>
               <p className="text-[11px] text-slate-500">Directrice Pédagogique SAP</p>
             </div>
 

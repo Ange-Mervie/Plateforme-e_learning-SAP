@@ -1,23 +1,16 @@
 import { NextResponse } from "next/server";
-import bcrypt from "bcryptjs";
-import type { RowDataPacket } from "mysql2/promise";
-import { query } from "@/lib/db";
 import { assertSameOrigin } from "@/lib/auth/csrf";
-import { createSession } from "@/lib/auth/sessions";
+import { createSessionWithFallback } from "@/lib/auth/persistent-store";
+import { loginUserWithFallback } from "@/lib/auth/persistent-store";
 import { authErrorResponse, getSessionCookieOptions } from "@/lib/auth/http";
-
-interface LoginUserRow extends RowDataPacket {
-  id: number;
-  name: string;
-  email: string;
-  password: string;
-  role: string;
-  subscription_status: string;
-}
+import { checkRateLimit, getClientIp } from "@/lib/security/rate-limit";
 
 export async function POST(req: Request) {
   try {
     assertSameOrigin(req);
+
+    const clientIp = getClientIp(req);
+
     let body: unknown;
     try {
       body = await req.json();
@@ -32,19 +25,22 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "missing" }, { status: 400 });
     }
 
-    const normalizedEmail = email.trim().toLowerCase();
-    const rows = await query<LoginUserRow>(
-      `SELECT id, name, email, password, role, subscription_status
-       FROM users WHERE email = ? LIMIT 1`,
-      [normalizedEmail],
-    );
-    const user = rows[0];
+    const rateLimitId = `login:${clientIp}:${email.trim().toLowerCase()}`;
+    const rateLimit = checkRateLimit(rateLimitId);
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { error: "rate_limited", resetTime: rateLimit.resetTime },
+        { status: 429 },
+      );
+    }
 
-    if (!user || !(await bcrypt.compare(password, user.password))) {
+    const user = await loginUserWithFallback(email, password);
+
+    if (!user) {
       return NextResponse.json({ error: "invalid" }, { status: 401 });
     }
 
-    const token = await createSession(user.id);
+    const token = await createSessionWithFallback(user.id);
     const response = NextResponse.json({
       user: {
         id: user.id,
@@ -52,7 +48,9 @@ export async function POST(req: Request) {
         email: user.email,
         role: user.role === "learner" ? "apprenant" : user.role,
         subscription: { status: user.subscription_status === "active" ? "active" : "free", planId: null },
+        emailVerified: user.email_verified,
       },
+      emailVerificationRequired: !user.email_verified,
     });
     response.cookies.set("sap_academy_session", token, getSessionCookieOptions());
 

@@ -9,6 +9,7 @@ export interface AuthenticatedUser {
     status: "free" | "active";
     planId: string | null;
   };
+  emailVerified?: boolean;
 }
 
 export class AuthenticationError extends Error {

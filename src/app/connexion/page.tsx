@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, useEffect, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
@@ -8,13 +8,17 @@ import { useLanguage } from "@/context/language-context";
 import { Lock, Mail, ArrowRight } from "lucide-react";
 
 export default function Connexion() {
-  const { login } = useAuth();
+  const { login, user } = useAuth();
   const { t } = useLanguage();
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (user) router.push("/apprenant");
+  }, [user, router]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -44,7 +48,7 @@ export default function Connexion() {
           {t("connexion.title")}
         </h1>
         <p className="mt-2 text-sm text-slate-600">
-          Accédez à votre espace de formation ELEVATE By IBN
+          Accédez à votre espace de formation ELEVATE By IBN  Group
         </p>
       </div>
 

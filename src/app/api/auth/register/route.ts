@@ -1,14 +1,17 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import { execute, query } from "@/lib/db";
 import { assertSameOrigin } from "@/lib/auth/csrf";
 import { createSession } from "@/lib/auth/sessions";
 import { authErrorResponse, getSessionCookieOptions } from "@/lib/auth/http";
-import type { RowDataPacket } from "mysql2/promise";
+import { registerUserWithFallback } from "@/lib/auth/persistent-store";
+import { checkRateLimit, getClientIp } from "@/lib/security/rate-limit";
 
 export async function POST(req: Request) {
   try {
     assertSameOrigin(req);
+
+    const clientIp = getClientIp(req);
+
     let body: unknown;
     try {
       body = await req.json();
@@ -29,8 +32,17 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "missing" }, { status: 400 });
     }
 
-    const displayName = name.trim();
     const normalizedEmail = email.trim().toLowerCase();
+    const rateLimitId = `register:${clientIp}:${normalizedEmail}`;
+    const rateLimit = checkRateLimit(rateLimitId);
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { error: "rate_limited", resetTime: rateLimit.resetTime },
+        { status: 429 },
+      );
+    }
+
+    const displayName = name.trim();
     if (
       !displayName ||
       displayName.length > 120 ||
@@ -42,41 +54,35 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "invalid_request" }, { status: 400 });
     }
 
-    const existing = await query<RowDataPacket>(
-      "SELECT id FROM users WHERE email = ? LIMIT 1",
-      [normalizedEmail],
-    );
-    if (existing.length > 0) {
+    const hash = await bcrypt.hash(password, 12);
+    const result = await registerUserWithFallback(displayName, normalizedEmail, hash);
+
+    if (!result) {
       return NextResponse.json({ error: "exists" }, { status: 409 });
     }
 
-    const hash = await bcrypt.hash(password, 12);
-    const result = await execute(
-      "INSERT INTO users (name, email, password, role, subscription_status) VALUES (?, ?, ?, 'apprenant', 'free')",
-      [displayName, normalizedEmail, hash],
-    );
-    const token = await createSession(result.insertId);
+    const token = await createSession(result.id);
     const response = NextResponse.json({
       user: {
-        id: result.insertId,
+        id: result.id,
         name: displayName,
         email: normalizedEmail,
         role: "apprenant",
         subscription: { status: "free", planId: null },
+        emailVerified: result.emailVerified,
+      },
+      emailVerification: {
+        required: !result.emailVerified,
+        code: result.verificationCode,
+        message: !result.emailVerified
+          ? "Un email de confirmation a été envoyé. Vérifiez votre boîte de réception pour activer votre compte."
+          : null,
       },
     }, { status: 201 });
     response.cookies.set("sap_academy_session", token, getSessionCookieOptions());
 
     return response;
   } catch (err: unknown) {
-    if (
-      typeof err === "object" &&
-      err !== null &&
-      "code" in err &&
-      err.code === "ER_DUP_ENTRY"
-    ) {
-      return NextResponse.json({ error: "exists" }, { status: 409 });
-    }
     return authErrorResponse(err);
   }
 }

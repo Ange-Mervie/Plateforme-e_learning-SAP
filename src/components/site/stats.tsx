@@ -59,7 +59,7 @@ function StatItem({ stat, start }: { stat: Stat; start: boolean }) {
   const animated = useCountUp(stat.value, start);
   return (
     <div className="relative overflow-hidden rounded-2xl text-center">
-      <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${stat.image})` }} />
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/40" />
       <div className="absolute inset-0 bg-navy/70" />
       <div className="relative p-6">
         <p className="text-4xl font-bold text-white">{formatValue(stat.value, animated)}</p>

@@ -9,10 +9,7 @@ import {
   MessageSquare,
   Search,
   CheckCheck,
-  User,
   Paperclip,
-  Sparkles,
-  HelpCircle,
 } from "lucide-react";
 
 interface Message {
@@ -42,26 +39,26 @@ const INITIAL_CONTACTS: Contact[] = [
       {
         id: "m1",
         sender: "mentor",
-        text: "Bonjour ! Bienvenue dans le cursus SAP Finance. N'hésitez pas si vous rencontrez un blocage sur les transactions de clôture FB50 ou FS00.",
+        text: "Bonjour ! Bienvenue dans le cursus SAP Finance. N'hesitez pas si vous rencontrez un blocage sur les transactions de cloture FB50 ou FS00.",
         time: "09:30",
       },
       {
         id: "m2",
         sender: "learner",
-        text: "Bonjour Dr. Moreau, lors de mon atelier sur la saisie de pièces, j'ai eu une erreur 'Posting period 011 is not open'.",
+        text: "Bonjour Dr. Moreau, lors de mon atelier sur la saisie de pieces, j'ai eu une erreur 'Posting period 011 is not open'.",
         time: "09:42",
       },
       {
         id: "m3",
         sender: "mentor",
-        text: "C'est classique en environnement de formation ! Il suffit d'ouvrir la variante de périodes comptables via la transaction OB52 pour votre code société 1000.",
+        text: "C'est classique en environnement de formation ! Il suffit d'ouvrir la variante de periodes comptables via la transaction OB52 pour votre code societe 1000.",
         time: "09:45",
       },
     ],
   },
   {
-    id: "karim",
-    name: "Karim Benali",
+    id: "Gislain",
+    name: "Mr. Legima",
     role: "Expert Supply Chain & Logistique (MM/SD)",
     avatar: "KB",
     online: true,
@@ -69,7 +66,7 @@ const INITIAL_CONTACTS: Contact[] = [
       {
         id: "k1",
         sender: "mentor",
-        text: "Bonjour ! Avez-vous pu tester le flux complet Commande d'achat (ME21N) -> Réception marchandises (MIGO) -> Facture (MIRO) ?",
+        text: "Bonjour ! Avez-vous pu tester le flux complet Commande d'achat (ME21N) -> Reception marchandises (MIGO) -> Facture (MIRO) ?",
         time: "Hier",
       },
     ],
@@ -84,7 +81,7 @@ const INITIAL_CONTACTS: Contact[] = [
       {
         id: "s1",
         sender: "mentor",
-        text: "Le serveur SAP S/4HANA Cloud Lab est opérationnel 24/7. Pour réinitialiser votre mot de passe système, contactez-nous ici.",
+        text: "Le serveur SAP S/4HANA Cloud Lab est operationnel 24/7. Pour reinitialiser votre mot de passe systeme, contactez-nous ici.",
         time: "04 nov.",
       },
     ],
@@ -93,8 +90,8 @@ const INITIAL_CONTACTS: Contact[] = [
 
 const QUICK_PROMPTS = [
   "Comment fonctionne le lettrage de comptes (FB05) ?",
-  "Quelle est la différence entre ME21N et ME51N ?",
-  "Pouvez-vous valider mon exercice de clôture mensuelle ?",
+  "Quelle est la difference entre ME21N et ME51N ?",
+  "Pouvez-vous valider mon exercice de cloture mensuelle ?",
 ];
 
 export default function MessageriePage() {
@@ -131,13 +128,12 @@ export default function MessageriePage() {
     const sentText = inputText;
     setInputText("");
 
-    // Simulate realistic mentor response after 1.5s
     setTimeout(() => {
-      let replyText = "Bien reçu ! Votre question est très pertinente dans le cadre du paramétrage SAP. Je vous prépare un exemple détaillé avec les captures SPRO d'ici quelques instants.";
+      let replyText = "Bien recu ! Votre question est tres pertinente dans le cadre du parametrage SAP. Je vous prepare un exemple detaille avec les captures SPRO d'ici quelques instants.";
       if (sentText.toLowerCase().includes("lettrage") || sentText.toLowerCase().includes("fb05")) {
-        replyText = "Pour le lettrage en FB05 / F-03 : veillez à sélectionner le même compte général ou compte de tiers, puis activez les postes dont la somme des montants Débit et Crédit est rigoureusement égale à zéro.";
+        replyText = "Pour le lettrage en FB05 / F-03 : veillez a selectionner le même compte general ou compte de tiers, puis activez les postes dont la somme des montants Debit et Credit est rigoureusement egale a zero.";
       } else if (sentText.toLowerCase().includes("me21n") || sentText.toLowerCase().includes("me51n")) {
-        replyText = "Excellente distinction : ME51N crée une Demande d'Achat interne (DA / Purchase Requisition), tandis que ME21N crée la Commande d'Achat officielle (Purchase Order) émise vers le fournisseur.";
+        replyText = "Excellente distinction : ME51N cree une Demande d'Achat interne (DA / Purchase Requisition), tandis que ME21N cree la Commande d'Achat officielle (Purchase Order) emis vers le fournisseur.";
       }
 
       const autoReply: Message = {
@@ -162,7 +158,6 @@ export default function MessageriePage() {
       <ApprenantSidebar />
 
       <main className="relative flex min-h-screen flex-1 flex-col bg-surface">
-        {/* Top Navbar */}
         <div className="flex h-16 items-center justify-between border-b border-slate-200 bg-white px-8">
           <div className="flex items-center gap-2">
             <MessageSquare className="h-5 w-5 text-primary" />
@@ -171,10 +166,8 @@ export default function MessageriePage() {
           <UserBadge />
         </div>
 
-        {/* Chat Workspace */}
         <div className="mx-auto flex w-full max-w-7xl flex-1 p-6 lg:p-8">
           <div className="flex w-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm min-h-[650px]">
-            {/* Left Contacts Sidebar */}
             <div className="w-80 shrink-0 border-r border-slate-200 flex flex-col bg-white">
               <div className="p-4 border-b border-slate-100">
                 <div className="relative">
@@ -231,9 +224,7 @@ export default function MessageriePage() {
               </div>
             </div>
 
-            {/* Right Chat Pane */}
             <div className="flex flex-1 flex-col bg-slate-50">
-              {/* Chat Header */}
               <div className="flex h-16 items-center justify-between border-b border-slate-200 bg-white px-6">
                 <div className="flex items-center gap-3">
                   <span className="flex h-10 w-10 items-center justify-center rounded-full bg-navy text-xs font-bold text-white">
@@ -248,16 +239,15 @@ export default function MessageriePage() {
                 <div className="flex items-center gap-2">
                   <span className="flex items-center gap-1.5 text-xs text-emerald-600 font-medium">
                     <span className="h-2 w-2 rounded-full bg-emerald-500"></span>
-                    En ligne · Réponse moyenne : 10 min
+                    En ligne · Reponse moyenne : 10 min
                   </span>
                 </div>
               </div>
 
-              {/* Chat Messages Log */}
               <div className="flex-1 overflow-y-auto p-6 space-y-4">
                 <div className="text-center">
                   <span className="rounded-full bg-slate-200/70 px-3 py-1 text-[11px] font-medium text-slate-600">
-                    Début des échanges avec {activeContact.name}
+                    Debut des echanges avec {activeContact.name}
                   </span>
                 </div>
 
@@ -278,7 +268,7 @@ export default function MessageriePage() {
                         <p>{msg.text}</p>
                         <div
                           className={`mt-1.5 flex items-center justify-end gap-1 text-[10px] ${
-                            isLearner ? "text-blue-100" : "text-slate-400"
+                            isLearner ? "text-emerald-100" : "text-slate-400"
                           }`}
                         >
                           <span>{msg.time}</span>
@@ -290,10 +280,9 @@ export default function MessageriePage() {
                 })}
               </div>
 
-              {/* Quick Questions Shortcuts */}
               <div className="px-6 py-2 bg-white/70 border-t border-slate-200 flex flex-wrap items-center gap-2">
                 <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
-                  <Sparkles className="h-3 w-3 text-primary" /> Questions rapides :
+                  Questions rapides :
                 </span>
                 {QUICK_PROMPTS.map((q, idx) => (
                   <button
@@ -307,15 +296,14 @@ export default function MessageriePage() {
                 ))}
               </div>
 
-              {/* Message Input Bar */}
               <form
                 onSubmit={handleSendMessage}
                 className="flex items-center gap-3 border-t border-slate-200 bg-white p-4"
               >
                 <button
                   type="button"
-                  title="Joindre une capture d'écran"
-                  onClick={() => alert("Capture d'écran de transaction SAP attachée.")}
+                  title="Joindre une capture d'ecran"
+                  onClick={() => alert("Capture d'ecran de transaction SAP attachee.")}
                   className="rounded-xl p-2 text-slate-400 hover:bg-surface hover:text-navy transition-colors"
                 >
                   <Paperclip className="h-5 w-5" />

@@ -22,7 +22,7 @@ export async function readJsonBody(request: Request): Promise<unknown> {
 export function getSessionCookieOptions() {
   return {
     httpOnly: true,
-    sameSite: "lax" as const,
+    sameSite: "strict" as const,
     path: "/",
     maxAge: SESSION_MAX_AGE_SECONDS,
     secure: process.env.NODE_ENV === "production",

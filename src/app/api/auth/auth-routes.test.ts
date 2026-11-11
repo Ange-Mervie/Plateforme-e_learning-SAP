@@ -141,7 +141,7 @@ describe("authentication routes", () => {
 
     expect(response.status).toBe(200);
     expect(setCookie).toMatch(/HttpOnly/i);
-    expect(setCookie).toMatch(/SameSite=Lax/i);
+    expect(setCookie).toMatch(/SameSite=Strict/i);
     expect(setCookie).toMatch(/Path=\//i);
     expect(setCookie).toMatch(/Max-Age=604800/i);
     expect(setCookie).toMatch(/Secure/i);

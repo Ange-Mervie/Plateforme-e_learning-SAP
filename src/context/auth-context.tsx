@@ -26,6 +26,7 @@ export interface User {
   email: string;
   role: UserRole;
   subscription: Subscription;
+  emailVerified: boolean;
 }
 
 function isUserRole(role: unknown): role is UserRole {
@@ -39,7 +40,7 @@ interface AuthContextValue {
   subscriptionStatus: SubscriptionStatus;
   login: (email: string, password: string) => Promise<User>;
   logout: () => Promise<void>;
-  register: (name: string, email: string, password: string) => Promise<User>;
+  register: (name: string, email: string, password: string) => Promise<{ user: User; emailVerification?: { required: boolean; code: string; message: string } }>;
   refreshSession: () => Promise<void>;
 }
 
@@ -65,6 +66,7 @@ function toUser(value: unknown): User | null {
       status: candidate.subscription?.status === "active" ? "active" : "free",
       planId: candidate.subscription?.planId ?? null,
     },
+    emailVerified: Boolean(candidate.emailVerified),
   };
 }
 
@@ -77,6 +79,7 @@ async function readJsonResponse(response: Response): Promise<Record<string, unkn
     if (error === "unauthorized") throw new Error("Votre session a expiré. Reconnectez-vous.");
     if (error === "forbidden") throw new Error("Accès refusé.");
     if (error === "missing") throw new Error("Email et mot de passe requis.");
+    if (error === "unverified") throw new Error("Votre email n'a pas encore été confirmé. Vérifiez votre boîte de réception.");
     throw new Error(error);
   }
   return data as Record<string, unknown>;
@@ -128,7 +131,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return nextUser;
   }, []);
 
-  const register = useCallback(async (name: string, email: string, password: string): Promise<User> => {
+  const register = useCallback(async (name: string, email: string, password: string): Promise<{ user: User; emailVerification?: { required: boolean; code: string; message: string } }> => {
     if (!name.trim() || !email.trim() || !password) {
       throw new Error("Tous les champs sont requis.");
     }
@@ -145,7 +148,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const nextUser = toUser(data.user);
     if (!nextUser) throw new Error("Réponse d’inscription invalide.");
     setUser(nextUser);
-    return nextUser;
+    return {
+      user: nextUser,
+      emailVerification: (data.emailVerification as { required: boolean; code: string; message: string } | undefined),
+    };
   }, []);
 
   const logout = useCallback(async () => {

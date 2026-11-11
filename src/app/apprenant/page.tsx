@@ -14,7 +14,7 @@ import MyProjects from "@/components/apprenant/my-projects";
 import MyCertificates from "@/components/apprenant/my-certificates";
 import CourseDocumentDownload from "@/components/apprenant/course-document-download";
 import { Play, Search, Sparkles, BookOpen } from "lucide-react";
-import { requireUser, requireActiveSubscription } from "@/lib/auth/authorization";
+import { requireUser } from "@/lib/auth/authorization";
 import { AuthenticationError } from "@/lib/auth/types";
 
 
@@ -30,13 +30,9 @@ async function ApprenantDashboard() {
   let user;
   try {
     user = await requireUser();
-    await requireActiveSubscription();
   } catch (error) {
     if (error instanceof AuthenticationError && error.status === 401) {
       redirect("/connexion");
-    }
-    if (error instanceof AuthenticationError && error.status === 403) {
-      redirect("/paiement");
     }
     throw error;
   }
@@ -58,6 +54,13 @@ async function ApprenantDashboard() {
             />
           </div>
           <UserBadge />
+
+          {/* Avis email non vérifié */}
+          {!user.emailVerified && (
+            <div className="ml-4 flex items-center gap-2 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-700 border border-amber-200">
+              <span>Email non vérifié</span>
+            </div>
+          )}
         </div>
 
         {/* Dashboard Content */}
@@ -80,7 +83,7 @@ async function ApprenantDashboard() {
                   Bonjour, {userName} 👋
                 </h1>
                 <p className="mt-2 text-sm sm:text-base text-blue-100 leading-relaxed">
-                  Continuez votre montée en compétences SAP — vous êtes à <strong>80 %</strong> sur le module « <strong>SAP FI – Comptabilité générale</strong> ».
+                  Continuez votre montée en compétences SAP  vous êtes à <strong>80 %</strong> sur le module « <strong>SAP FI – Comptabilité générale</strong> ».
                 </p>
               </div>
 
