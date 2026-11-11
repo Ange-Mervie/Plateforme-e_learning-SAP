@@ -5,6 +5,7 @@ import Paths from "@/components/site/paths";
 import Stats from "@/components/site/stats";
 import Testimonials from "@/components/site/testimonials";
 import Certifications from "@/components/site/certifications";
+import IBNGroupSection from "@/components/site/ibn-group-section";
 import Footer from "@/components/site/footer";
 
 export default function Home() {
@@ -18,6 +19,7 @@ export default function Home() {
         <Paths />
         <Testimonials />
         <Certifications />
+        <IBNGroupSection />
       </main>
       <Footer />
     </div>

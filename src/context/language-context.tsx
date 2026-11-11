@@ -169,6 +169,31 @@ const fr = {
   mesFormations: {
     subtitle: "Suivi des formations suivies par l’apprenant.",
   },
+  ibnGroup: {
+    heroTitle: "Partenaire de confiance pour vos projets SAP",
+    heroSubtitle:
+      "Services, solutions et formations SAP pour accompagner votre transformation digitale.",
+    entreprise: "L'entreprise",
+    activites: "Activités",
+    services: "Services technologiques",
+    expertises: "Expertises",
+    realisations: "Réalisations",
+    accompagnement: "Offres d'accompagnement",
+    partenaire: "Partenariat avec IBN Group",
+    partenaireDesc:
+      "Services, solutions et formations SAP pour accompagner votre transformation digitale.",
+    decouvrirIbn: "Découvrir IBN Group",
+    contact: "Contactez IBN Group",
+    contactDesc:
+      "Pour toute demande d'information sur les services, les formations ou les partenariats avec IBN Group.",
+    adresse: "Adresse",
+    telephone: "Téléphone",
+    email: "Email",
+    siteWeb: "Site web",
+    catalogueSap: "Découvrir le catalogue SAP",
+    noteContenuOfficiel:
+      "Les contenus de cette section (chiffres, références clients, coordonnées, activités détaillées) doivent être vérifiés et complétés avec les informations officielles d'IBN Group avant publication. Aucune donnée n'a été inventée.",
+  },
 };
 
 const en: typeof fr = {
@@ -335,6 +360,31 @@ const en: typeof fr = {
   },
   mesFormations: {
     subtitle: "Tracking of the courses followed by the learner.",
+  },
+  ibnGroup: {
+    heroTitle: "Trusted partner for your SAP projects",
+    heroSubtitle:
+      "Services, solutions and SAP training to support your digital transformation.",
+    entreprise: "The company",
+    activites: "Activities",
+    services: "Technology services",
+    expertises: "Expertise",
+    realisations: "Achievements",
+    accompagnement: "Support offers",
+    partenaire: "Partnership with IBN Group",
+    partenaireDesc:
+      "Services, solutions and SAP training to support your digital transformation.",
+    decouvrirIbn: "Discover IBN Group",
+    contact: "Contact IBN Group",
+    contactDesc:
+      "For any information request about services, training or partnerships with IBN Group.",
+    adresse: "Address",
+    telephone: "Phone",
+    email: "Email",
+    siteWeb: "Website",
+    catalogueSap: "Discover the SAP catalog",
+    noteContenuOfficiel:
+      "The contents of this section (figures, customer references, contact details, detailed activities) must be verified and completed with official IBN Group information before publication. No data has been invented.",
   },
 };
 
