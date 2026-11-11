@@ -36,9 +36,9 @@ export default function Header() {
           <Image
             src="/images/ibn-logo.png"
             alt="IBN Group"
-            width={36}
-            height={36}
-            className="h-9 w-9 object-contain"
+            width={30}
+            height={30}
+            className="h-7 w-7 object-contain"
           />
           <span className="text-lg font-bold tracking-tight text-navy">
             ELEVATE <span className="text-xs font-medium text-primary">By IBN Group</span>
