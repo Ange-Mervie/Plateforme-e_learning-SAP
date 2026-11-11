@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { COURSES } from "@/data/courses";
+import { formatEur, formatXaf, eurToXaf } from "@/lib/currency";
 import { useLanguage } from "@/context/language-context";
 import { Search, SlidersHorizontal, BookOpen, Clock, ArrowRight } from "lucide-react";
 
@@ -329,12 +330,19 @@ export default function Catalogue() {
                       </p>
 
                       <div className="mt-6 border-t border-slate-100 pt-4 flex items-center justify-between">
-                        <div>
-                          <p className="text-[10px] text-slate-400">Tarif formation</p>
-                          <span className="text-base font-extrabold text-navy">
-                            {course.price ? `${course.price.toLocaleString("fr-FR")} FCFA` : "Gratuit"}
-                          </span>
-                        </div>
+                          <div>
+                            <p className="text-[10px] text-slate-400">Tarif formation</p>
+                            <div className="flex items-baseline gap-1">
+                              <span className="text-base font-extrabold text-navy">
+                                {course.price ? formatEur(course.price) : "Gratuit"}
+                              </span>
+                              {course.price ? (
+                                <span className="text-sm text-slate-500">
+                                  ({formatXaf(eurToXaf(course.price))})
+                                </span>
+                              ) : null}
+                            </div>
+                          </div>
                         <Link
                           href={`/formation/${course.slug}`}
                           className="inline-flex items-center gap-1 text-xs font-bold text-primary group-hover:translate-x-1 transition-transform"

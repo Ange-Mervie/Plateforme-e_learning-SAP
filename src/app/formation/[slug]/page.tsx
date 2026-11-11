@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { COURSES, getCourseBySlug } from "@/data/courses";
 import { TRAINERS } from "@/data/trainers";
+import { formatEur, formatXaf, eurToXaf } from "@/lib/currency";
 import {
   BookOpen,
   Clock,
@@ -117,9 +118,16 @@ async function FormationContent({ params }: Props) {
             <div className="rounded-2xl border border-slate-700 bg-white p-7 text-navy shadow-xl lg:sticky lg:top-24">
               <div className="flex items-baseline justify-between">
                 <span className="text-sm font-semibold text-slate-500">Accès formation</span>
-                <span className="text-3xl font-extrabold text-navy">
-                  {currentCourse.price ? `${currentCourse.price.toLocaleString("fr-FR")} FCFA` : "Gratuit"}
-                </span>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-3xl font-extrabold text-navy">
+                    {currentCourse.price ? formatEur(currentCourse.price) : "Gratuit"}
+                  </span>
+                  {currentCourse.price ? (
+                    <span className="text-sm text-slate-500">
+                      ({formatXaf(eurToXaf(currentCourse.price))})
+                    </span>
+                  ) : null}
+                </div>
               </div>
               <p className="mt-2 text-xs text-slate-500">
                 Accès illimité aux vidéos, cas pratiques SAP, labs et quiz d&apos;évaluation.

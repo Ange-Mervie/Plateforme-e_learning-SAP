@@ -8,29 +8,27 @@ import {
   ShieldCheck,
   Lock,
 } from "lucide-react";
+import { formatEur, formatXaf, eurToXaf } from "@/lib/currency";
 
 const PACKS = [
   {
     id: "pack-finance",
     title: "Parcours Consultant SAP Finance (FI + CO)",
-    amount: "480 000 FCFA",
-    numericAmount: 480000,
+    amountEur: 1700,
     desc: "Comptabilité générale, contrôle de gestion, ateliers SPRO, labs SAP et examen blanc.",
     popular: true,
   },
   {
     id: "pack-supply",
     title: "Parcours Consultant Logistique & Achats (MM + SD)",
-    amount: "450 000 FCFA",
-    numericAmount: 450000,
+    amountEur: 1500,
     desc: "Gestion des stocks, achats, approvisionnements, facturation et intégration flux.",
     popular: false,
   },
   {
     id: "pack-all",
     title: "Pass All-Access Illimité (12 mois)",
-    amount: "850 000 FCFA",
-    numericAmount: 850000,
+    amountEur: 990,
     desc: "Accès à l'ensemble du catalogue (FI, MM, SD, ABAP, BTP), labs et attestations illimitées.",
     popular: false,
   },
@@ -103,7 +101,12 @@ export default function Paiement() {
                           <div className="flex-1">
                             <div className="flex items-center justify-between">
                               <p className="text-sm font-bold text-navy">{pack.title}</p>
-                              <span className="text-sm font-extrabold text-primary">{pack.amount}</span>
+                              <span className="text-sm font-extrabold text-primary">
+                                {formatEur(pack.amountEur)}
+                              </span>
+                              <span className="text-xs text-slate-500 ml-1">
+                                ({formatXaf(eurToXaf(pack.amountEur))})
+                              </span>
                             </div>
                             <p className="mt-1 text-xs text-slate-500 leading-relaxed">{pack.desc}</p>
                           </div>
@@ -214,7 +217,12 @@ export default function Paiement() {
 
                   <div className="mt-4 flex items-baseline justify-between">
                     <span className="text-sm font-semibold text-slate-600">Montant total :</span>
-                    <span className="text-2xl font-black text-navy">{selectedPack.amount}</span>
+                    <span className="text-2xl font-black text-navy">
+                      {formatEur(selectedPack.amountEur)}
+                    </span>
+                    <span className="text-xs text-slate-500 ml-1">
+                      ({formatXaf(eurToXaf(selectedPack.amountEur))})
+                    </span>
                   </div>
 
                   {error && <p className="mt-4 text-xs font-semibold text-red-600">{error}</p>}
