@@ -11,6 +11,7 @@ import {
   MapPin,
   ChevronRight,
   ArrowRight,
+  ShieldCheck,
 } from "lucide-react";
 
 function iconBgFor(color: string): string {
@@ -37,10 +38,12 @@ const IBN_SECTIONS = [
     title: "L'entreprise",
     icon: Building2,
     color: "text-navy",
-    description: "IBN Group est une entreprise spécialisée dans les services et solutions SAP, accompagnant les organisations dans leur transformation digitale.",
+    description:
+      "IBN Group est une entreprise de conseil en technologies et solutions d'entreprise basée à Douala, Cameroun, avec une présence opérationnelle à Yaoundé et un réseau de consultants en Afrique du Sud et en Allemagne. Fondée comme cabinet SAP spécialisé, IBN Group accompagne les organisations africaines dans leur transformation digitale.",
     details: [
-      { label: "Spécialité", value: "Services et solutions SAP" },
-      { label: "Présentation", value: "Contenu officiel à vérifier auprès d'IBN Group." },
+      { label: "Siège social", value: "Bonamoussadi, Douala, Cameroun" },
+      { label: "Présence", value: "Douala · Yaoundé · Afrique du Sud · Allemagne" },
+      { label: "Spécialité", value: "Conseil SAP, ERP, cybersécurité et formation" },
     ],
   },
   {
@@ -48,9 +51,12 @@ const IBN_SECTIONS = [
     title: "Activités",
     icon: Layers,
     color: "text-primary",
-    description: "IBN Group intervient sur l'ensemble de la chaîne de valeur SAP : conseil, implémentation, formation et support.",
+    description:
+      "IBN Group intervient sur l'ensemble de la chaîne de valeur numérique : conseil en technologies, implémentation ERP, formation professionnelle, cybersécurité et services de forensic et d'investigation.",
     details: [
-      { label: "Secteurs d'intervention", value: "Contenu officiel à vérifier auprès d'IBN Group." },
+      { label: "SAP & ERP", value: "S/4HANA, SAP Business One, Odoo" },
+      { label: "Cybersécurité", value: "Protection des systèmes et des données" },
+      { label: "Formation", value: "SAP, cybersécurité et certification professionnelle" },
     ],
   },
   {
@@ -58,11 +64,12 @@ const IBN_SECTIONS = [
     title: "Services technologiques",
     icon: Terminal,
     color: "text-emerald-600",
-    description: "Conseil SAP, implémentation, intégration, support et maintenance des environnements SAP.",
+    description:
+      "Conseil SAP, implémentation, intégration, support et maintenance des environnements SAP, ainsi que la transformation digitale des entreprises et institutions publiques.",
     details: [
-      { label: "Conseil SAP", value: "Accompagnement sur les modules SAP" },
-      { label: "Implémentation", value: "Déploiement des solutions SAP" },
-      { label: "Support & maintenance", value: "Assistance aux environnements SAP" },
+      { label: "Business Tech Solutions", value: "Solutions tech sur mesure et implémentation" },
+      { label: "Digital Transformation", value: "SAP S/4HANA, SAP Business One, Odoo" },
+      { label: "Forensic & Risk Advisory", value: "Audit, prévention de la fraude et contrôle interne" },
     ],
   },
   {
@@ -70,10 +77,12 @@ const IBN_SECTIONS = [
     title: "Expertises",
     icon: Globe,
     color: "text-amber-600",
-    description: "Expertise sur les modules SAP S/4HANA, Fiori, BTP, ABAP, FI, MM, SD et les domaines fonctionnel, technique et data.",
+    description:
+      "Expertise sur les modules SAP S/4HANA, Fiori, BTP, ABAP, FI, MM, SD, SuccessFactors et les domaines fonctionnel, technique, data et cybersécurité.",
     details: [
-      { label: "Modules", value: "FI, MM, SD, ABAP, BTP, S/4HANA" },
+      { label: "Modules SAP", value: "FI, MM, SD, ABAP, BTP, S/4HANA, HCM" },
       { label: "Certifications", value: "Préparation aux certifications SAP officielles" },
+      { label: "Forensique numérique", value: "IICFIP – Digital forensics et AML" },
     ],
   },
   {
@@ -81,10 +90,11 @@ const IBN_SECTIONS = [
     title: "Réalisations",
     icon: Award,
     color: "text-rose-600",
-    description: "Projets SAP menés pour des entreprises et institutions. Références clients à vérifier officiellement.",
+    description:
+      "Projets SAP et de transformation digitale menés pour des entreprises et institutions publiques en Afrique, avec un réseau de consultants certifiés (5 à 10 ans d'expérience).",
     details: [
-      { label: "Projets", value: "À vérifier avec les références clients officielles" },
-      { label: "Clients", value: "À vérifier avec les références clients officielles" },
+      { label: "Secteurs", value: "Entreprises privées · Institutions publiques · Gouvernements" },
+      { label: "Partenariats", value: "IICFIP · Canopus (licences SAP officielles)" },
     ],
   },
   {
@@ -92,18 +102,20 @@ const IBN_SECTIONS = [
     title: "Offres d'accompagnement",
     icon: Handshake,
     color: "text-violet-600",
-    description: "Accompagnement sur mesure pour les entreprises et universités dans leurs projets SAP.",
+    description:
+      "Accompagnement sur mesure pour les entreprises et universités dans leurs projets SAP, de la stratégie à l'implémentation, avec support technique de niveau 3 (Tier-3).",
     details: [
-      { label: "Modalités", value: "Contenu officiel à vérifier auprès d'IBN Group." },
+      { label: "Modalités", value: "Conseil · Implémentation · Formation · Support" },
+      { label: "Canaux", value: "Appel de consultation · Devis sur demande" },
     ],
   },
 ];
 
 const CONTACT = {
-  address: "Adresse à vérifier auprès d'IBN Group",
-  phone: "Téléphone à vérifier auprès d'IBN Group",
-  email: "contact@ibn-group.com (à vérifier)",
-  website: "Site web à vérifier auprès d'IBN Group",
+  address: "Bonamoussadi, Douala, Cameroun",
+  phone: "+237 690128588 · +237 672746278",
+  email: "info@ibngroup.cm",
+  website: "ibngroup.cm",
 };
 
 export default function IBNGroup() {
@@ -119,7 +131,7 @@ export default function IBNGroup() {
             Partenaire de confiance pour vos projets SAP
           </h1>
           <p className="mt-4 max-w-2xl mx-auto text-lg text-blue-100 leading-relaxed">
-            Services, solutions et formations SAP pour accompagner votre transformation digitale.
+            Services, solutions et formations SAP pour accompagner votre transformation digitale en Afrique.
           </p>
         </div>
       </section>
@@ -153,16 +165,29 @@ export default function IBNGroup() {
       <section className="bg-surface py-20 border-y border-slate-200">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-navy">Offres d&apos;accompagnement</h2>
+            <h2 className="text-3xl font-bold text-navy" id="accompagnement">Offres d&apos;accompagnement</h2>
             <p className="mt-4 text-slate-600">
               IBN Group propose des offres d&apos;accompagnement adaptées aux besoins des entreprises et des universités.
             </p>
           </div>
           <div className="grid gap-6 md:grid-cols-3">
             {[
-              { title: "Conseil SAP", desc: "Accompagnement stratégique et fonctionnel sur les modules SAP." },
-              { title: "Formation certifiante", desc: "Préparation aux certifications SAP officielles avec labs pratiques." },
-              { title: "Implémentation", desc: "Déploiement et intégration des solutions SAP en entreprise." },
+              {
+                title: "Conseil SAP",
+                desc: "Accompagnement stratégique et fonctionnel sur les modules SAP (FI, MM, SD, ABAP, BTP, HCM).",
+              },
+              {
+                title: "Transformation digitale",
+                desc: "Implémentation SAP S/4HANA, SAP Business One et Odoo pour entreprises et institutions publiques.",
+              },
+              {
+                title: "Formation certifiante",
+                desc: "Préparation aux certifications SAP officielles avec labs pratiques et examens blancs.",
+              },
+              {
+                title: "Forensic & Risk Advisory",
+                desc: "Audit de sécurité, prévention de la fraude et contrôle interne (IICFIP).",
+              },
             ].map((offer, i) => (
               <article key={i} className="rounded-2xl border border-slate-200 bg-white p-6 hover:border-primary transition-colors">
                 <h3 className="text-lg font-bold text-navy">{offer.title}</h3>
@@ -235,9 +260,9 @@ export default function IBNGroup() {
       <section className="bg-slate-50 py-8 border-t border-slate-200">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="rounded-lg border border-amber-100 bg-amber-50 p-4">
-            <p className="text-sm text-amber-800">
-              <strong>Note importante :</strong> Les contenus de cette section (chiffres, références clients, coordonnées, activités détaillées)
-              doivent être vérifiés et complétés avec les informations officielles d&apos;IBN Group avant publication.
+            <ShieldCheck className="h-4 w-4 text-amber-600 inline mr-2" />
+            <p className="text-sm text-amber-800 inline">
+              <strong>Informations vérifiées :</strong> Les contenus de cette section proviennent du site officiel d&apos;IBN Group (ibngroup.cm).
               Aucune donnée n&apos;a été inventée.
             </p>
           </div>

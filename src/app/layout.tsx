@@ -5,6 +5,7 @@ import { AuthProvider } from "@/context/auth-context";
 import { LanguageProvider } from "@/context/language-context";
 import { ProgressProvider } from "@/context/progress-context";
 import Header from "@/components/site/header";
+import Chatbot from "@/components/chatbot";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -19,8 +20,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "ELEVATE By IBN — Plateforme e-learning SAP",
-    template: "%s | ELEVATE By IBN",
+    default: "ELEVATE By IBN Group — Plateforme e-learning SAP",
+    template: "%s | ELEVATE By IBN Group",
   },
   description:
     "Plateforme e-learning spécialisée SAP : formations pratiques, cas métier et certifications pour les équipes fonctionnelles, techniques et data.",
@@ -40,6 +41,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
                 <Header />
               </Suspense>
               {children}
+              <Chatbot />
             </ProgressProvider>
           </LanguageProvider>
         </AuthProvider>

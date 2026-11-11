@@ -39,7 +39,7 @@ export default function Header() {
             className="h-9 w-9 object-contain"
           />
           <span className="text-lg font-bold tracking-tight text-navy">
-            ELEVATE <span className="text-xs font-medium text-primary">By IBN</span>
+            ELEVATE <span className="text-xs font-medium text-primary">By IBN Group</span>
           </span>
           {/* Silhouette du continent africain */}
           <svg
@@ -48,7 +48,7 @@ export default function Header() {
             className="h-8 w-14 text-primary/30"
             fill="currentColor"
           >
-            <path d="M10 38 C12 33 14 27 17 22 C20 17 24 12 28 9 C31 6 35 5 38 7 C41 9 43 13 45 17 C47 21 49 25 50 30 C51 34 52 37 54 39 L10 39 Z" />
+            <path d="M12 38 C14 33 16 27 19 22 C22 17 25 12 29 9 C32 6 36 6 39 8 C42 10 44 14 46 18 C48 22 50 26 51 30 C52 34 53 37 55 38 L12 38 Z" />
           </svg>
         </Link>
 
