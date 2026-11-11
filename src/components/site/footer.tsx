@@ -48,7 +48,7 @@ export default function Footer() {
                 SAP
               </span>
               <span className="text-lg font-bold tracking-tight text-white">
-                Academy <span className="text-xs font-normal text-blue-300">by IBN Group</span>
+                ELEVATE <span className="text-xs font-normal text-blue-300">By IBN</span>
               </span>
             </div>
             <p className="mt-4 max-w-xs text-sm leading-6 text-blue-200">
@@ -79,7 +79,7 @@ export default function Footer() {
           ))}
         </div>
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 text-sm text-blue-200 md:flex-row">
-          <p>© 2026 SAP Learning Academy — Propulsé par IBN Group. Tous droits réservés.</p>
+          <p>© 2026 ELEVATE By IBN — Propulsé par IBN Group. Tous droits réservés.</p>
           <div className="flex gap-6 text-xs text-blue-300">
             <Link href="/catalogue" className="hover:text-white">Catalogue</Link>
             <Link href="/certifications" className="hover:text-white">Certifications</Link>

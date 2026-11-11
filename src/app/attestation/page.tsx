@@ -69,7 +69,7 @@ function AttestationContent() {
 
   const handleShareLinkedIn = () => {
     const text = encodeURIComponent(
-      `Je viens de valider ma certification SAP : ${course.title} avec SAP Learning Academy propulsé par IBN Group ! 🎓`
+      `Je viens de valider ma certification SAP : ${course.title} avec ELEVATE By IBN propulsé par IBN Group ! 🎓`
     );
     window.open(`https://www.linkedin.com/feed/?shareActive=true&text=${text}`, "_blank");
   };

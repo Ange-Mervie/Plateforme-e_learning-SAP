@@ -101,7 +101,7 @@ CONTENU DU SUPPORT
 ------------------------------------------------------------
 
 Ce document contient le support pédagogique officiel du cours
-${courseSlug} de la plateforme SAP Learning Academy.
+${courseSlug} de la plateforme ELEVATE By IBN.
 
 Il est réservé exclusivement à l'apprenant ayant validé
 l'ensemble du parcours (évaluation, projet, soutenance,
@@ -109,7 +109,7 @@ attestation).
 
 Toute reproduction ou diffusion non autorisée est interdite.
 
-© IBN Group - SAP Learning Academy
+© IBN Group - ELEVATE By IBN
 ============================================================
   `.trim();
 

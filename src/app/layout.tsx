@@ -19,8 +19,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "SAP Academy — Plateforme e-learning SAP",
-    template: "%s | SAP Academy",
+    default: "ELEVATE By IBN — Plateforme e-learning SAP",
+    template: "%s | ELEVATE By IBN",
   },
   description:
     "Plateforme e-learning spécialisée SAP : formations pratiques, cas métier et certifications pour les équipes fonctionnelles, techniques et data.",

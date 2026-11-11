@@ -25,7 +25,7 @@ export default function Receipt({ data }: { data: ReceiptData }) {
         <div className="flex items-center gap-3">
           <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-navy text-sm font-bold text-white">SAP</span>
           <div>
-            <p className="text-lg font-semibold tracking-tight text-navy">SAP Learning Academy</p>
+            <p className="text-lg font-semibold tracking-tight text-navy">ELEVATE By IBN</p>
             <p className="text-xs font-semibold uppercase tracking-wide text-primary">{t("receipt.title")}</p>
           </div>
         </div>

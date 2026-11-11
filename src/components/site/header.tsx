@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useLanguage } from "@/context/language-context";
 import { useAuth } from "@/context/auth-context";
@@ -29,12 +30,26 @@ export default function Header() {
     <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-8">
         <Link href="/" className="flex items-center gap-2.5">
-          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-navy text-sm font-bold text-white shadow-sm">
-            SAP
-          </span>
+          {/* Logo officiel IBN Group */}
+          <Image
+            src="/images/ibn-logo.png"
+            alt="IBN Group"
+            width={36}
+            height={36}
+            className="h-9 w-9 object-contain"
+          />
           <span className="text-lg font-bold tracking-tight text-navy">
-            Academy <span className="text-xs font-medium text-primary">by IBN</span>
+            ELEVATE <span className="text-xs font-medium text-primary">By IBN</span>
           </span>
+          {/* Silhouette du continent africain */}
+          <svg
+            aria-hidden="true"
+            viewBox="0 0 64 44"
+            className="h-8 w-14 text-primary/30"
+            fill="currentColor"
+          >
+            <path d="M10 38 C12 33 14 27 17 22 C20 17 24 12 28 9 C31 6 35 5 38 7 C41 9 43 13 45 17 C47 21 49 25 50 30 C51 34 52 37 54 39 L10 39 Z" />
+          </svg>
         </Link>
 
         {/* Desktop Navigation */}

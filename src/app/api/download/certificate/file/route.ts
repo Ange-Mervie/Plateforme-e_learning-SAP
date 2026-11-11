@@ -39,7 +39,7 @@ Rôle : ${user.role}
 Formation : ${courseSlug}
 Statut : Attestation délivrée
 Date : ${new Date().toISOString()}
-Plateforme : SAP Learning Academy
+Plateforme : ELEVATE By IBN
 `;
   return new NextResponse(cert, {
     status: 200,

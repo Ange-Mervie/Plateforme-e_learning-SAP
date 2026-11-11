@@ -46,7 +46,7 @@ export default function ApprenantSidebar() {
             SAP
           </span>
           <span className="text-base font-bold tracking-tight text-navy">
-            Academy <span className="text-xs font-semibold text-primary">Apprenant</span>
+            ELEVATE <span className="text-xs font-semibold text-primary">By IBN</span>
           </span>
         </Link>
       </div>

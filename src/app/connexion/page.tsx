@@ -44,7 +44,7 @@ export default function Connexion() {
           {t("connexion.title")}
         </h1>
         <p className="mt-2 text-sm text-slate-600">
-          Accédez à votre espace de formation SAP Learning Academy
+          Accédez à votre espace de formation ELEVATE By IBN
         </p>
       </div>
 

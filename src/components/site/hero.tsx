@@ -37,7 +37,7 @@ export default function Hero() {
             </div>
 
             <h1 className="mt-4 text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl leading-tight">
-              Bienvenue sur <span className="text-blue-300">SAP Learning Academy</span>
+              Bienvenue sur <span className="text-blue-300">ELEVATE By IBN</span>
             </h1>
 
             <p className="mt-6 max-w-xl text-base sm:text-lg leading-relaxed text-blue-100">
