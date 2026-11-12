@@ -32,6 +32,7 @@ interface ContactRequestFormData {
   situation: string;
   formation: string;
   module: string;
+  formateur: string;
   niveau: string;
   objectif: string;
   mode: string;
@@ -51,9 +52,10 @@ interface FormErrors {
 interface ContactFormateurProps {
   formation?: string;
   module?: string;
+  formateur?: string;
 }
 
-export default function ContactFormateur({ formation, module }: ContactFormateurProps) {
+export default function ContactFormateur({ formation, module, formateur }: ContactFormateurProps) {
   const { lang } = useLanguage();
   const isFr = lang === "fr";
 
@@ -74,6 +76,7 @@ export default function ContactFormateur({ formation, module }: ContactFormateur
     situation: situations[0],
     formation: formation || "",
     module: module || "",
+    formateur: formateur || "",
     niveau: niveaux[0],
     objectif: objectifs[0],
     mode: modes[0],
@@ -105,6 +108,7 @@ export default function ContactFormateur({ formation, module }: ContactFormateur
       situation: { fr: "Situation actuelle *", en: "Current situation *" },
       formationLabel: { fr: "Formation souhaitée *", en: "Desired training *" },
       moduleLabel: { fr: "Module SAP concerné", en: "SAP module concerned" },
+      formateurLabel: { fr: "Formateur associé", en: "Associated trainer" },
       niveau: { fr: "Niveau actuel *", en: "Current level *" },
       objectif: { fr: "Objectif *", en: "Objective *" },
       mode: { fr: "Modalité souhaitée *", en: "Preferred mode *" },
@@ -159,7 +163,13 @@ export default function ContactFormateur({ formation, module }: ContactFormateur
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validate()) return;
+    if (!validate()) {
+      // Scroller vers la première erreur
+      const firstErrorKey = Object.keys(errors)[0] as keyof ContactRequestFormData;
+      const el = document.getElementById(String(firstErrorKey));
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
+    }
     setSubmitting(true);
     setSubmitError("");
     try {
@@ -287,8 +297,8 @@ export default function ContactFormateur({ formation, module }: ContactFormateur
             <input
               type="text"
               value={formData.formation}
-              readOnly
-              className="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-600"
+              onChange={(e) => handleChange("formation", e.target.value)}
+              className="h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm text-navy outline-none focus:border-primary"
             />
           </div>
           <div className="space-y-2">
@@ -296,8 +306,17 @@ export default function ContactFormateur({ formation, module }: ContactFormateur
             <input
               type="text"
               value={formData.module}
-              readOnly
-              className="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-600"
+              onChange={(e) => handleChange("module", e.target.value)}
+              className="h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm text-navy outline-none focus:border-primary"
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-xs font-semibold text-slate-700">{getLabel("formateurLabel")}</label>
+            <input
+              type="text"
+              value={formData.formateur}
+              onChange={(e) => handleChange("formateur", e.target.value)}
+              className="h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm text-navy outline-none focus:border-primary"
             />
           </div>
           <div className="space-y-2">

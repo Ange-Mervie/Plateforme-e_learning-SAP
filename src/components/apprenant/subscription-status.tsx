@@ -70,11 +70,11 @@ export default function SubscriptionStatus() {
 
       <div>
         <Link
-          href="/paiement"
+          href="/contact"
           className="inline-flex items-center gap-1.5 rounded-xl bg-surface px-4 py-2.5 text-xs font-bold text-navy hover:bg-slate-200 transition-colors"
         >
           <Sparkles className="h-4 w-4 text-primary" />
-          <span>{isActive ? "Gérer mon abonnement" : "Mettre à niveau"}</span>
+          <span>{isActive ? "Contacter un formateur" : "Contacter un formateur"}</span>
           <ArrowRight className="h-3.5 w-3.5 text-slate-400" />
         </Link>
       </div>

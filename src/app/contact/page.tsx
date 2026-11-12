@@ -7,11 +7,13 @@ import ContactFormateur from "@/components/contact-form";
 export default function ContactPage() {
   const [formation, setFormation] = useState("");
   const [module, setModule] = useState("");
+  const [formateur, setFormateur] = useState("");
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     setFormation(params.get("formation") || "");
     setModule(params.get("module") || "");
+    setFormateur(params.get("formateur") || "");
   }, []);
 
   return (
@@ -34,7 +36,7 @@ export default function ContactPage() {
       </div>
 
       <div className="mx-auto max-w-4xl px-6 py-12">
-        <ContactFormateur formation={formation} module={module} />
+        <ContactFormateur formation={formation} module={module} formateur={formateur} />
       </div>
     </div>
   );

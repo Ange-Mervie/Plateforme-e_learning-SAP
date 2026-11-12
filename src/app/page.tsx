@@ -3,6 +3,7 @@ import Domains from "@/components/site/domains";
 import PopularCourses from "@/components/site/popular-courses";
 import Paths from "@/components/site/paths";
 import Stats from "@/components/site/stats";
+import ParcoursApprenant from "@/components/site/parcours-apprenant";
 import Testimonials from "@/components/site/testimonials";
 import Certifications from "@/components/site/certifications";
 import IBNGroupSection from "@/components/site/ibn-group-section";
@@ -16,6 +17,7 @@ export default function Home() {
         <Domains />
         <PopularCourses />
         <Stats />
+        <ParcoursApprenant />
         <Paths />
         <Testimonials />
         <Certifications />

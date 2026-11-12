@@ -117,16 +117,15 @@ async function FormationContent({ params }: Props) {
 
             <div className="rounded-2xl border border-slate-700 bg-white p-7 text-navy shadow-xl lg:sticky lg:top-24">
               <div className="flex items-baseline justify-between">
-                <span className="text-sm font-semibold text-slate-500">Accès formation</span>
+                <span className="text-sm font-semibold text-slate-500">Tarif formation</span>
                 <div className="flex items-baseline gap-1">
-                  <span className="text-3xl font-extrabold text-navy">
-                    {currentCourse.price ? formatEur(currentCourse.price) : "Gratuit"}
-                  </span>
                   {currentCourse.price ? (
-                    <span className="text-sm text-slate-500">
-                      ({formatXaf(eurToXaf(currentCourse.price))})
+                    <span className="text-2xl font-extrabold text-primary">
+                      {currentCourse.price} €
                     </span>
-                  ) : null}
+                  ) : (
+                    <span className="text-2xl font-extrabold text-emerald-600">Gratuit</span>
+                  )}
                 </div>
               </div>
               <p className="mt-2 text-xs text-slate-500">
@@ -142,7 +141,7 @@ async function FormationContent({ params }: Props) {
                   <span>Commencer la formation</span>
                 </Link>
                 <Link
-                  href={`/contact?formation=${encodeURIComponent(currentCourse.title)}&module=${encodeURIComponent(currentCourse.module)}`}
+                  href={`/contact?formation=${encodeURIComponent(currentCourse.title)}&module=${encodeURIComponent(currentCourse.module)}&formateur=${encodeURIComponent(trainer.name)}`}
                   className="flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 text-sm font-semibold text-navy transition-colors hover:bg-surface"
                 >
                   <Mail className="h-4 w-4" />
@@ -316,7 +315,7 @@ async function FormationContent({ params }: Props) {
               <p className="text-sm text-slate-600 mb-6">
                 Remplissez ce formulaire pour être mis en relation avec un formateur SAP concernant cette formation.
               </p>
-              <ContactFormateur formation={currentCourse.title} module={currentCourse.module} />
+              <ContactFormateur formation={currentCourse.title} module={currentCourse.module} formateur={trainer.name} />
             </div>
           </div>
         </div>

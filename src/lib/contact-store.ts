@@ -20,6 +20,7 @@ interface ContactRequest {
   // Informations formation
   formation: string;
   module: string;
+  formateur: string;
   niveau: string;
   objectif: string;
   mode: string;

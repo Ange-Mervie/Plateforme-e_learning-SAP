@@ -331,24 +331,23 @@ export default function Catalogue() {
 
                       <div className="mt-6 border-t border-slate-100 pt-4 flex items-center justify-between">
                           <div>
-                            <p className="text-[10px] text-slate-400">Tarif formation</p>
+                            <p className="text-[10px] text-slate-400">Tarif</p>
                             <div className="flex items-baseline gap-1">
-                              <span className="text-base font-extrabold text-navy">
-                                {course.price ? formatEur(course.price) : "Gratuit"}
-                              </span>
                               {course.price ? (
-                                <span className="text-sm text-slate-500">
-                                  ({formatXaf(eurToXaf(course.price))})
+                                <span className="text-base font-extrabold text-primary">
+                                  {course.price} €
                                 </span>
-                              ) : null}
+                              ) : (
+                                <span className="text-base font-extrabold text-emerald-600">Gratuit</span>
+                              )}
                             </div>
                           </div>
                         <Link
                           href={`/formation/${course.slug}`}
-                          className="inline-flex items-center gap-1 text-xs font-bold text-primary group-hover:translate-x-1 transition-transform"
+                          className="inline-flex h-9 w-full items-center justify-center gap-1.5 rounded-xl bg-primary px-3 text-xs font-bold text-white shadow-sm hover:bg-primary-dark transition-colors"
                         >
                           <span>Découvrir</span>
-                          <ArrowRight className="h-3.5 w-3.5" />
+                          <ArrowRight className="h-3 w-3" />
                         </Link>
                       </div>
                     </div>
