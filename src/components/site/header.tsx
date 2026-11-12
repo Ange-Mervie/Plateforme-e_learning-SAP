@@ -26,13 +26,60 @@ export default function Header() {
 
   const isActive = (href: string) => pathname === href;
 
+  const authActions = isAuthenticated && user ? (
+    <div className="hidden items-center gap-3 sm:flex">
+      <Link
+        href="/admin/demandes"
+        className="flex items-center gap-2 rounded-lg bg-surface px-3 py-2 text-sm font-semibold text-navy transition-colors hover:bg-slate-200"
+      >
+        <LayoutDashboard className="h-4 w-4 text-primary" />
+        <span>Admin Demandes</span>
+      </Link>
+      <div className="flex items-center gap-2 pl-1 border-l border-slate-200">
+        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
+          {user.name ? user.name.slice(0, 2).toUpperCase() : "U"}
+        </span>
+        <button
+          type="button"
+          onClick={() => void logout().catch((error: unknown) => console.error("[Auth] Logout failed:", error))}
+          title="Déconnexion"
+          className="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 hover:text-red-600 transition-colors"
+        >
+          <LogOut className="h-4 w-4" />
+        </button>
+      </div>
+    </div>
+  ) : null;
+
+  const mobileAuthActions = isAuthenticated && user ? (
+    <div className="flex flex-col gap-2">
+      <Link
+        href="/admin/demandes"
+        onClick={() => setMobileMenuOpen(false)}
+        className="flex items-center gap-2 rounded-lg bg-surface px-4 py-2.5 text-sm font-semibold text-navy"
+      >
+        <LayoutDashboard className="h-4 w-4 text-primary" />
+        Admin Demandes ({user.name})
+      </Link>
+      <button
+        type="button"
+        onClick={() => {
+          void logout().catch((error: unknown) => console.error("[Auth] Logout failed:", error));
+          setMobileMenuOpen(false);
+        }}
+        className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50"
+      >
+        <LogOut className="h-4 w-4" />
+        Déconnexion
+      </button>
+    </div>
+  ) : null;
+
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-8">
         <Link href="/" className="flex items-center gap-2.5">
-          {/* Logo SAP */}
           <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-navy text-sm font-bold text-white shadow-sm">SAP</span>
-          {/* Logo IBN Group */}
           <Image
             src="/images/ibn-logo.png"
             alt="IBN Group"
@@ -45,7 +92,6 @@ export default function Header() {
           </span>
         </Link>
 
-        {/* Desktop Navigation */}
         <nav className="hidden items-center gap-7 lg:flex">
           {NAV_ITEMS.map((item) => {
             const active = isActive(item.href);
@@ -67,51 +113,10 @@ export default function Header() {
           })}
         </nav>
 
-        {/* Right side actions */}
         <div className="flex items-center gap-3">
           <LanguageSwitcher />
+          {authActions}
 
-          {isAuthenticated && user ? (
-            <div className="hidden items-center gap-3 sm:flex">
-              <Link
-                href="/apprenant"
-                className="flex items-center gap-2 rounded-lg bg-surface px-3 py-2 text-sm font-semibold text-navy transition-colors hover:bg-slate-200"
-              >
-                <LayoutDashboard className="h-4 w-4 text-primary" />
-                <span>Mon Espace</span>
-              </Link>
-              <div className="flex items-center gap-2 pl-1 border-l border-slate-200">
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
-                  {user.name ? user.name.slice(0, 2).toUpperCase() : "U"}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => void logout().catch((error: unknown) => console.error("[Auth] Logout failed:", error))}
-                  title="Déconnexion"
-                  className="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 hover:text-red-600 transition-colors"
-                >
-                  <LogOut className="h-4 w-4" />
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div className="hidden items-center gap-3 sm:flex">
-              <Link
-                href="/connexion"
-                className="text-sm font-medium text-slate-700 transition-colors hover:text-navy"
-              >
-                {t("nav.login")}
-              </Link>
-              <Link
-                href="/inscription"
-                className="inline-flex h-10 items-center justify-center rounded-lg bg-primary px-5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary-dark"
-              >
-                {t("nav.register")}
-              </Link>
-            </div>
-          )}
-
-          {/* Mobile hamburger menu toggle */}
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -123,7 +128,6 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Mobile Drawer */}
       {mobileMenuOpen && (
         <div className="border-b border-slate-200 bg-white px-6 py-4 lg:hidden">
           <nav className="flex flex-col space-y-3">
@@ -145,46 +149,7 @@ export default function Header() {
             })}
 
             <div className="border-t border-slate-200 pt-3">
-              {isAuthenticated && user ? (
-                <div className="flex flex-col gap-2">
-                  <Link
-                    href="/apprenant"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-2 rounded-lg bg-surface px-4 py-2.5 text-sm font-semibold text-navy"
-                  >
-                    <LayoutDashboard className="h-4 w-4 text-primary" />
-                    Mon Espace ({user.name})
-                  </Link>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      void logout().catch((error: unknown) => console.error("[Auth] Logout failed:", error));
-                      setMobileMenuOpen(false);
-                    }}
-                    className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50"
-                  >
-                    <LogOut className="h-4 w-4" />
-                    Déconnexion
-                  </button>
-                </div>
-              ) : (
-                <div className="flex flex-col gap-2">
-                  <Link
-                    href="/connexion"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-center rounded-lg border border-slate-200 py-2.5 text-sm font-medium text-navy"
-                  >
-                    {t("nav.login")}
-                  </Link>
-                  <Link
-                    href="/inscription"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-center rounded-lg bg-primary py-2.5 text-sm font-semibold text-white"
-                  >
-                    {t("nav.register")}
-                  </Link>
-                </div>
-              )}
+              {mobileAuthActions}
             </div>
           </nav>
         </div>

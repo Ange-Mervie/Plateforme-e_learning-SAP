@@ -103,7 +103,7 @@ export default function Formateurs() {
 
               <div className="mt-auto pt-5 border-t border-slate-100 flex flex-col gap-2 p-4">
                 <Link
-                  href="/apprenant/messagerie"
+                  href="/contact"
                   className="inline-flex h-10 items-center justify-center gap-2 w-full rounded-xl bg-primary text-xs font-bold text-white shadow-sm hover:bg-primary-dark transition-colors text-center"
                 >
                   <MessageSquare className="h-3.5 w-3.5" />
@@ -127,7 +127,7 @@ export default function Formateurs() {
             {t("formateurs.expertText")}
           </p>
           <Link
-            href="/inscription"
+            href="/contact"
             className="mt-8 inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-primary px-8 text-sm font-bold text-white shadow-md hover:bg-primary-dark transition-all"
           >
             <span>{t("formateurs.proposeCourse")}</span>

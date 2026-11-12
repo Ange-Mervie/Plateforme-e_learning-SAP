@@ -283,7 +283,7 @@ export default function ProjetPage() {
                 Nos formateurs et mentors sont disponibles sur la messagerie pour vous orienter.
               </p>
               <Link
-                href="/apprenant/messagerie"
+                href="/contact"
                 className="mt-4 inline-flex h-9 w-full items-center justify-center rounded-xl bg-primary text-xs font-bold text-white hover:bg-primary-dark transition-colors"
               >
                 Contacter un formateur

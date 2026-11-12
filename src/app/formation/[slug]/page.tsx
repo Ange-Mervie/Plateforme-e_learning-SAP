@@ -1,22 +1,23 @@
 import { Suspense } from "react";
-import { notFound } from "next/navigation";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { COURSES, getCourseBySlug } from "@/data/courses";
 import { TRAINERS } from "@/data/trainers";
 import { formatEur, formatXaf, eurToXaf } from "@/lib/currency";
 import {
-  BookOpen,
+  Mail,
+  Phone,
   Clock,
   CheckCircle2,
-  Award,
-  Layers,
-  Globe,
-  Terminal,
-  User,
-  ArrowRight,
-  ShieldCheck,
   ChevronRight,
+  Globe,
+  Layers,
+  Terminal,
+  Award,
+  ShieldCheck,
+  BookOpen,
 } from "lucide-react";
+import ContactFormateur from "@/components/contact-form";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -27,9 +28,10 @@ async function FormationContent({ params }: Props) {
   const course = getCourseBySlug(slug);
 
   if (!course) {
-    // If not found by exact slug, try matching by module code uppercase
     const byModule = COURSES.find((c) => c.module.toLowerCase() === slug.toLowerCase());
     if (!byModule) {
+      // import notFound dynamically
+      const { notFound } = await import("next/navigation");
       notFound();
     }
   }
@@ -50,7 +52,6 @@ async function FormationContent({ params }: Props) {
         <div className="absolute inset-0 bg-gradient-to-b from-navy/60 via-navy/90 to-navy" />
 
         <div className="relative mx-auto max-w-7xl px-6 py-14 lg:px-8">
-          {/* Breadcrumb */}
           <nav className="flex items-center gap-2 text-xs font-medium text-blue-200">
             <Link href="/" className="hover:text-white">Accueil</Link>
             <ChevronRight className="h-3 w-3" />
@@ -114,7 +115,6 @@ async function FormationContent({ params }: Props) {
               </div>
             </div>
 
-            {/* Sticky Card Action CTA */}
             <div className="rounded-2xl border border-slate-700 bg-white p-7 text-navy shadow-xl lg:sticky lg:top-24">
               <div className="flex items-baseline justify-between">
                 <span className="text-sm font-semibold text-slate-500">Accès formation</span>
@@ -130,7 +130,7 @@ async function FormationContent({ params }: Props) {
                 </div>
               </div>
               <p className="mt-2 text-xs text-slate-500">
-                Accès illimité aux vidéos, cas pratiques SAP, labs et quiz d&apos;évaluation.
+                Accès illimité aux vidéos, cas pratiques SAP, labs et quiz d'évaluation.
               </p>
 
               <div className="mt-6 flex flex-col gap-3">
@@ -142,10 +142,11 @@ async function FormationContent({ params }: Props) {
                   <span>Commencer la formation</span>
                 </Link>
                 <Link
-                  href="/paiement"
-                  className="flex h-11 w-full items-center justify-center rounded-xl border border-slate-200 text-sm font-semibold text-navy transition-colors hover:bg-surface"
+                  href={`/contact?formation=${encodeURIComponent(currentCourse.title)}&module=${encodeURIComponent(currentCourse.module)}`}
+                  className="flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 text-sm font-semibold text-navy transition-colors hover:bg-surface"
                 >
-                  Souscrire un abonnement complet
+                  <Mail className="h-4 w-4" />
+                  <span>Contacter un formateur</span>
                 </Link>
               </div>
 
@@ -179,7 +180,7 @@ async function FormationContent({ params }: Props) {
                 Objectifs pédagogiques
               </h2>
               <p className="mt-2 text-sm text-slate-600">
-                À l&apos;issue de ce module SAP, vous serez capable de :
+                À l'issue de ce module SAP, vous serez capable de :
               </p>
               <div className="mt-5 grid gap-3 sm:grid-cols-2">
                 {currentCourse.objectives.map((obj, i) => (
@@ -195,15 +196,12 @@ async function FormationContent({ params }: Props) {
             <div>
               <h2 className="text-2xl font-bold text-navy">Programme complet de la formation</h2>
               <p className="mt-2 text-sm text-slate-600">
-                {currentCourse.sections.length} sections · {totalLessons} leçons guidées avec cas d&apos;entreprise réels.
+                {currentCourse.sections.length} sections · {totalLessons} leçons guidées avec cas d'entreprise réels.
               </p>
 
               <div className="mt-6 space-y-4">
                 {currentCourse.sections.map((section, idx) => (
-                  <div
-                    key={idx}
-                    className="overflow-hidden rounded-xl border border-slate-200 bg-white"
-                  >
+                  <div key={idx} className="overflow-hidden rounded-xl border border-slate-200 bg-white">
                     <div className="bg-surface px-6 py-4 flex items-center justify-between border-b border-slate-200">
                       <div className="flex items-center gap-3">
                         <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-navy text-xs font-bold text-white">
@@ -249,7 +247,7 @@ async function FormationContent({ params }: Props) {
                   </ul>
                 ) : (
                   <p className="text-sm text-slate-600">
-                    Aucun prérequis technique avancé exigé. Avoir des notions générales de gestion d&apos;entreprise ou d&apos;informatique est un plus.
+                    Aucun prérequis technique avancé exigé. Avoir des notions générales de gestion d'entreprise ou d'informatique est un plus.
                   </p>
                 )}
               </div>
@@ -264,14 +262,14 @@ async function FormationContent({ params }: Props) {
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-navy">{trainer.name}</h3>
-                  <p className="text-sm text-slate-600">{trainer.title} · {trainer.yearsExperience} ans d&apos;expérience</p>
+                  <p className="text-sm text-slate-600">{trainer.title} · {trainer.yearsExperience} ans d'expérience</p>
                   <p className="mt-2 text-sm text-slate-700 leading-relaxed">{trainer.bio}</p>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Sidebar / Related courses */}
+          {/* Sidebar / Related courses + Contact form */}
           <div className="space-y-8">
             <div className="rounded-2xl border border-slate-200 bg-white p-6">
               <h3 className="text-lg font-bold text-navy">Formations complémentaires</h3>
@@ -295,9 +293,9 @@ async function FormationContent({ params }: Props) {
               </div>
             </div>
 
-            <div className="rounded-2xl bg-gradient-to-br from-navy to-navy-light p-6 text-white text-center">
+            <div className="rounded-2xl bg-gradient-to-br from-navy to-navy-light p-6 text-white text-center" id="contact-form-anchor">
               <Award className="h-10 w-10 text-amber-400 mx-auto" />
-              <h3 className="mt-3 text-lg font-bold">Passez l&apos;examen blanc</h3>
+              <h3 className="mt-3 text-lg font-bold">Passez l'examen blanc</h3>
               <p className="mt-2 text-xs text-blue-100 leading-relaxed">
                 Testez vos connaissances en conditions réelles avec notre moteur de certification.
               </p>
@@ -308,12 +306,26 @@ async function FormationContent({ params }: Props) {
                 Accéder aux évaluations
               </Link>
             </div>
+
+            {/* Contact Form Section */}
+            <div className="rounded-2xl border border-slate-200 bg-white p-8 lg:p-12 shadow-sm">
+              <h3 className="text-lg font-bold text-navy mb-6">
+                <Mail className="h-5 w-5 text-primary mr-2" />
+                Contacter un formateur
+              </h3>
+              <p className="text-sm text-slate-600 mb-6">
+                Remplissez ce formulaire pour être mis en relation avec un formateur SAP concernant cette formation.
+              </p>
+              <ContactFormateur formation={currentCourse.title} module={currentCourse.module} />
+            </div>
           </div>
         </div>
       </section>
     </main>
   );
 }
+
+
 
 export default function FormationPage({ params }: Props) {
   return (
