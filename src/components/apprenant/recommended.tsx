@@ -3,13 +3,6 @@ import { ArrowRight, Sparkles } from "lucide-react";
 
 const COURSES = [
   {
-    code: "CO",
-    slug: "co-controle-de-gestion",
-    title: "SAP CO – Contrôle de gestion",
-    level: "Intermédiaire",
-    duration: "5 h",
-  },
-  {
     code: "ABAP",
     slug: "abap-fondamentaux",
     title: "SAP ABAP : fondamentaux",

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createContactRequest, getAllContactRequests, getContactRequestById, updateContactRequestStatus } from "@/lib/contact-store";
+import { createContactRequest, getAllContactRequests, getContactRequestById, updateContactRequest } from "@/lib/contact-store";
 
 interface ContactRequestBody {
   nom: string;
@@ -96,11 +96,12 @@ export async function GET() {
 
 export async function PATCH(req: Request) {
   try {
-    const { id, status, commentaire, formateurAssigne } = await req.json();
-    if (!id || !status) {
-      return NextResponse.json({ error: "ID et statut requis." }, { status: 400 });
+    const body = await req.json();
+    const { id, ...updates } = body;
+    if (!id) {
+      return NextResponse.json({ error: "ID requis." }, { status: 400 });
     }
-    const ok = await updateContactRequestStatus(id, status, commentaire, formateurAssigne);
+    const ok = await updateContactRequest({ id, ...updates } as any);
     if (!ok) {
       return NextResponse.json({ error: "Demande non trouvée." }, { status: 404 });
     }

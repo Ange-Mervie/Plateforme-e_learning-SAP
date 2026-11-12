@@ -23,7 +23,7 @@ export const TRAINERS: Trainer[] = [
     certifications: ["SAP Certified Application Associate"],
     languages: ["fr", "en"],
     bio: "Consultante financière spécialisée en comptabilité générale et contrôle de gestion, avec 12 ans d’expérience sur des projets S/4HANA.",
-    courseSlugs: ["fi-comptabilite-generale", "co-controle-de-gestion"],
+    courseSlugs: ["fi-comptabilite-generale"],
     consent: true,
   },
   {

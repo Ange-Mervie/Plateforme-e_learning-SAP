@@ -27,9 +27,8 @@ export const PARCOURS: Parcours[] = [
     startLevel: "fondamentaux",
     steps: [
       { courseSlug: "fi-comptabilite-generale", order: 1 },
-      { courseSlug: "co-controle-de-gestion", order: 2 },
     ],
-    totalHours: 11,
+    totalHours: 6,
     certificationTarget: "S/4HANA Finance",
     price: 1600000,
     featured: true,

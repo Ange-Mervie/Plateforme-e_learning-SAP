@@ -10,6 +10,10 @@ export function eurToXaf(amountEur: number): number {
   return Math.round(amountEur * CURRENCY_CONFIG.rate);
 }
 
+export function xafToEur(amountXaf: number): number {
+  return Math.round((amountXaf / CURRENCY_CONFIG.rate) * 100) / 100;
+}
+
 export function formatXaf(amountXaf: number): string {
   return new Intl.NumberFormat("fr-FR", {
     style: "currency",

@@ -164,7 +164,7 @@ export default function ContactFormateur({ formation, module, formateur }: Conta
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) {
-      // Scroller vers la première erreur
+      setSubmitError("Veuillez remplir tous les champs obligatoires.");
       const firstErrorKey = Object.keys(errors)[0] as keyof ContactRequestFormData;
       const el = document.getElementById(String(firstErrorKey));
       if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -213,7 +213,12 @@ export default function ContactFormateur({ formation, module, formateur }: Conta
   }
 
   return (
-    <div className="space-y-8">
+    <form onSubmit={handleSubmit} className="space-y-8">
+      {submitError && (
+        <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700 mb-4">
+          {submitError}
+        </div>
+      )}
       <div className="mb-4">
         <h3 className="flex items-center gap-2 text-lg font-bold text-navy">
           <User className="h-5 w-5 text-primary" />
@@ -447,8 +452,7 @@ export default function ContactFormateur({ formation, module, formateur }: Conta
 
       <div className="mt-6 pt-4 border-t border-slate-200">
         <button
-          type="button"
-          onClick={handleSubmit}
+          type="submit"
           disabled={submitting}
           className="flex w-full items-center justify-center gap-2 h-12 rounded-xl bg-primary text-sm font-bold text-white shadow-md hover:bg-primary-dark transition-all disabled:opacity-60"
         >
@@ -460,6 +464,6 @@ export default function ContactFormateur({ formation, module, formateur }: Conta
           </div>
         )}
       </div>
-    </div>
+    </form>
   );
 }

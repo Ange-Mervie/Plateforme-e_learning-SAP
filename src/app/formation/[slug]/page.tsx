@@ -3,13 +3,13 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { COURSES, getCourseBySlug } from "@/data/courses";
 import { TRAINERS } from "@/data/trainers";
-import { formatEur, formatXaf, eurToXaf } from "@/lib/currency";
+import { formatEur, xafToEur } from "@/lib/currency";
+import FormationBreadcrumb from "@/components/site/formation-breadcrumb";
 import {
   Mail,
   Phone,
   Clock,
   CheckCircle2,
-  ChevronRight,
   Globe,
   Layers,
   Terminal,
@@ -52,13 +52,7 @@ async function FormationContent({ params }: Props) {
         <div className="absolute inset-0 bg-gradient-to-b from-navy/60 via-navy/90 to-navy" />
 
         <div className="relative mx-auto max-w-7xl px-6 py-14 lg:px-8">
-          <nav className="flex items-center gap-2 text-xs font-medium text-blue-200">
-            <Link href="/" className="hover:text-white">Accueil</Link>
-            <ChevronRight className="h-3 w-3" />
-            <Link href="/catalogue" className="hover:text-white">Catalogue</Link>
-            <ChevronRight className="h-3 w-3" />
-            <span className="text-white">{currentCourse.module}</span>
-          </nav>
+          <FormationBreadcrumb module={currentCourse.module} />
 
           <div className="mt-6 grid gap-10 lg:grid-cols-3 lg:items-start">
             <div className="lg:col-span-2">
@@ -121,7 +115,7 @@ async function FormationContent({ params }: Props) {
                 <div className="flex items-baseline gap-1">
                   {currentCourse.price ? (
                     <span className="text-2xl font-extrabold text-primary">
-                      {currentCourse.price} €
+                      {formatEur(xafToEur(currentCourse.price))}
                     </span>
                   ) : (
                     <span className="text-2xl font-extrabold text-emerald-600">Gratuit</span>
