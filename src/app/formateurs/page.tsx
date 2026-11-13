@@ -6,7 +6,7 @@ import { useLanguage } from "@/context/language-context";
 import { Award, BookOpen, MessageSquare, ArrowRight, Mail, Phone } from "lucide-react";
 
 export default function Formateurs() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
 
   return (
     <main className="bg-white min-h-screen">
@@ -30,18 +30,9 @@ export default function Formateurs() {
               key={trainer.slug}
               className="flex flex-col justify-between rounded-2xl border border-slate-200 bg-white shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg hover:border-primary"
             >
-              <div className="relative h-48 overflow-hidden rounded-t-2xl bg-navy">
-                <span className="absolute top-3 left-3 rounded-full bg-emerald-500/90 px-2 py-1 text-[10px] font-bold text-white shadow-sm">
-                  Expert certifié
-                </span>
-                <div className="flex h-full w-full items-center justify-center rounded-t-2xl bg-navy text-2xl font-extrabold text-white shadow-md">
-                  {trainer.name
-                    .split(" ")
-                    .map((part) => part[0])
-                    .join("")
-                    .slice(0, 2)
-                    .toUpperCase()}
-                </div>
+              <div className="relative h-56 overflow-hidden rounded-t-2xl bg-slate-100">
+                <img src={trainer.photo} alt={trainer.name} className="h-full w-full object-cover object-top" />
+                <span className="absolute top-3 left-3 rounded-full bg-emerald-500/90 px-2 py-1 text-[10px] font-bold text-white shadow-sm">Expert certifié</span>
               </div>
 
               <div className="p-6">
@@ -62,6 +53,11 @@ export default function Formateurs() {
                 </div>
 
                 <div className="mt-4 flex flex-wrap gap-1.5">
+                  {trainer.tracks.map((tr) => (
+                    <span key={tr} className={`rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase ${tr === "sap" ? "bg-blue-50 text-primary" : "bg-violet-50 text-violet-700"}`}>
+                      {tr === "sap" ? "SAP Training" : "Odoo Training"}
+                    </span>
+                  ))}
                   {trainer.specialties.map((s) => (
                     <span
                       key={s}
@@ -75,9 +71,7 @@ export default function Formateurs() {
                 <dl className="mt-6 grid grid-cols-2 gap-4 rounded-xl bg-surface p-4 text-xs">
                   <div>
                     <dt className="text-slate-500">{t("formateurs.experience")}</dt>
-                    <dd className="mt-0.5 font-bold text-navy">
-                      {trainer.yearsExperience} {t("formateurs.years")}
-                    </dd>
+                    <dd className="mt-0.5 font-bold text-navy">{trainer.yearsExperience != null ? `${trainer.yearsExperience} ${t("formateurs.years")}` : "—"}</dd>
                   </div>
                   <div>
                     <dt className="text-slate-500">{t("formateurs.coursesTaught")}</dt>
@@ -87,7 +81,7 @@ export default function Formateurs() {
                   </div>
                 </dl>
 
-                <p className="mt-5 text-xs leading-relaxed text-slate-600">{trainer.bio}</p>
+                <p className="mt-5 text-xs leading-relaxed text-slate-600">{lang === "en" ? trainer.bioEn : trainer.bio}</p>
 
                 <div className="mt-6 flex flex-wrap gap-2">
                   {trainer.certifications.map((cert, i) => (
@@ -107,13 +101,13 @@ export default function Formateurs() {
                   className="inline-flex h-10 items-center justify-center gap-2 w-full rounded-xl bg-primary text-xs font-bold text-white shadow-sm hover:bg-primary-dark transition-colors text-center"
                 >
                   <MessageSquare className="h-3.5 w-3.5" />
-                  <span>Contacter le formateur</span>
+                  <span>{lang === "en" ? "Contact trainer" : "Contacter le formateur"}</span>
                 </Link>
                 <Link
                   href="/catalogue"
                   className="inline-flex h-10 items-center justify-center gap-2 w-full rounded-xl border border-slate-200 text-xs font-semibold text-navy hover:bg-surface transition-colors text-center"
                 >
-                  Consulter ses cours
+                  {lang === "en" ? "View courses" : "Consulter ses cours"}
                 </Link>
               </div>
             </article>

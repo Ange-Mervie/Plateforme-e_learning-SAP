@@ -34,6 +34,7 @@ async function FormateurDashboard() {
         </div>
         <nav className="p-4 space-y-2">
           <a href="/formateur" className="block px-4 py-2 rounded-lg bg-primary text-white">Mes formations</a>
+          <a href="/formateur/demandes" className="block px-4 py-2 rounded-lg text-slate-700 hover:bg-slate-100">Mes demandes de formation</a>
           <a href="/formateur/projets" className="block px-4 py-2 rounded-lg text-slate-700 hover:bg-slate-100">Évaluer les projets</a>
           <a href="/formateur/soutenances" className="block px-4 py-2 rounded-lg text-slate-700 hover:bg-slate-100">Décisions de soutenance</a>
           <a href="/formateur/evaluations" className="block px-4 py-2 rounded-lg text-slate-700 hover:bg-slate-100">Évaluations</a>

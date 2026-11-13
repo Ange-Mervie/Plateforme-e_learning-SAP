@@ -225,8 +225,8 @@ function getBotResponse(userText: string, lang: Lang): string {
           "Les statuts d'abonnement : en attente, actif, expiré, annulé, échec de paiement.",
         ]
       : [
-          "A subscription is required to access protected courses, assessments and certificates. You can subscribe from the /payment page.",
-          "Subscription statuses: pending, active, expired, cancelled, payment failed.",
+          "To start a training program, contact a trainer through the request form. Our team will guide you through your learning path.",
+          "You can track your request progress from your dedicated space.",
         ],
     cours: lang === "fr"
       ? [
@@ -235,16 +235,16 @@ function getBotResponse(userText: string, lang: Lang): string {
         ]
       : [
           "Courses are accessible from the catalog (/catalog). Each training includes modules, chapters and lessons with progress tracking.",
-          "Protected content requires an active and paid subscription.",
+          "To access a complete learning path, contact a certified IBN Group trainer.",
         ],
     examen: lang === "fr"
       ? [
           "Les évaluations se passent dans l'onglet évaluation de chaque formation. Seuil de réussite : 70%.",
-          "Vous devez avoir un abonnement actif pour passer un examen blanc.",
+          "Les examens blancs sont accessibles gratuitement depuis la page Certifications.",
         ]
       : [
           "Assessments take place in the assessment tab of each training. Passing threshold: 70%.",
-          "You must have an active subscription to take a mock exam.",
+          "Mock exams are available for free from the Certifications page.",
         ],
     attestation: lang === "fr"
       ? [

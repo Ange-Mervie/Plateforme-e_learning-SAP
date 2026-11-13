@@ -2,6 +2,8 @@ import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { requireRole } from "@/lib/auth/authorization";
 import { AuthenticationError } from "@/lib/auth/types";
+import { Mail } from "lucide-react";
+import { Badge } from "@/components/admin/badge";
 
 export default function AdminPage() {
   return (
@@ -38,6 +40,14 @@ async function AdminDashboard() {
           <a href="/admin/abonnements" className="block px-4 py-2 rounded-lg text-slate-700 hover:bg-slate-100">Abonnements</a>
           <a href="/admin/formations" className="block px-4 py-2 rounded-lg text-slate-700 hover:bg-slate-100">Formations</a>
           <a href="/admin/paiements" className="block px-4 py-2 rounded-lg text-slate-700 hover:bg-slate-100">Paiements</a>
+          <a
+            href="/admin/demandes"
+            className="flex items-center px-4 py-2 rounded-lg text-slate-700 hover:bg-slate-100"
+          >
+            <Mail className="h-4 w-4 mr-2" />
+            Demandes de formation
+            <Badge />
+          </a>
         </nav>
       </aside>
 

@@ -1,13 +1,10 @@
 import { Suspense } from "react";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { COURSES, getCourseBySlug } from "@/data/courses";
 import { TRAINERS } from "@/data/trainers";
-import { formatEur, xafToEur } from "@/lib/currency";
 import FormationBreadcrumb from "@/components/site/formation-breadcrumb";
 import {
   Mail,
-  Phone,
   Clock,
   CheckCircle2,
   Globe,
@@ -110,51 +107,40 @@ async function FormationContent({ params }: Props) {
             </div>
 
             <div className="rounded-2xl border border-slate-700 bg-white p-7 text-navy shadow-xl lg:sticky lg:top-24">
-              <div className="flex items-baseline justify-between">
-                <span className="text-sm font-semibold text-slate-500">Tarif formation</span>
-                <div className="flex items-baseline gap-1">
-                  {currentCourse.price ? (
-                    <span className="text-2xl font-extrabold text-primary">
-                      {formatEur(xafToEur(currentCourse.price))}
-                    </span>
-                  ) : (
-                    <span className="text-2xl font-extrabold text-emerald-600">Gratuit</span>
-                  )}
-                </div>
-              </div>
-              <p className="mt-2 text-xs text-slate-500">
-                Accès illimité aux vidéos, cas pratiques SAP, labs et quiz d'évaluation.
+              <h3 className="text-lg font-bold text-navy">Intéressé par cette formation ?</h3>
+              <p className="mt-2 text-sm text-slate-600">
+                Contactez un formateur certifié IBN Group pour définir votre parcours et les modalités d&apos;accompagnement.
               </p>
 
               <div className="mt-6 flex flex-col gap-3">
                 <Link
-                  href={`/cours/${currentCourse.slug}`}
-                  className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary text-sm font-bold text-white shadow-sm transition-all hover:bg-primary-dark"
-                >
-                  <BookOpen className="h-4 w-4" />
-                  <span>Commencer la formation</span>
-                </Link>
-                <Link
                   href={`/contact?formation=${encodeURIComponent(currentCourse.title)}&module=${encodeURIComponent(currentCourse.module)}&formateur=${encodeURIComponent(trainer.name)}`}
-                  className="flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 text-sm font-semibold text-navy transition-colors hover:bg-surface"
+                  className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary text-sm font-bold text-white shadow-sm transition-all hover:bg-primary-dark"
                 >
                   <Mail className="h-4 w-4" />
                   <span>Contacter un formateur</span>
+                </Link>
+                <Link
+                  href="/catalogue?track=sap"
+                  className="flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 text-sm font-semibold text-navy transition-colors hover:bg-surface"
+                >
+                  <BookOpen className="h-4 w-4" />
+                  <span>Retour au catalogue</span>
                 </Link>
               </div>
 
               <div className="mt-6 space-y-2.5 border-t border-slate-100 pt-5 text-xs text-slate-600">
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
-                  <span>Accès instantané 24/7 sur ordinateur et mobile</span>
+                  <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
+                  <span>Accompagnement pédagogique personnalisé</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
-                  <span>Examen de validation et attestation officielle IBN</span>
+                  <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
+                  <span>Exercices pratiques et cas métier réels</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
-                  <span>Support et mentorat par nos consultants SAP</span>
+                  <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
+                  <span>Suivi par des consultants SAP experts</span>
                 </div>
               </div>
             </div>

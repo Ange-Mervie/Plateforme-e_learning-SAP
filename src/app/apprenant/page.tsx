@@ -83,7 +83,7 @@ async function ApprenantDashboard() {
                   Bonjour, {userName} 👋
                 </h1>
                 <p className="mt-2 text-sm sm:text-base text-blue-100 leading-relaxed">
-                  Continuez votre montée en compétences SAP  vous êtes à <strong>80 %</strong> sur le module « <strong>SAP FI – Comptabilité générale</strong> ».
+                  Continuez votre montée en compétences SAP  vous êtes à <strong>80 %</strong> sur le module « <strong>SAP FI ,comptabilité générale</strong> ».
                 </p>
               </div>
 

@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import { createContactRequest, getAllContactRequests, getContactRequestById, updateContactRequest } from "@/lib/contact-store";
+import { getUserForSession } from "@/lib/auth/sessions";
 
 interface ContactRequestBody {
   nom: string;
@@ -87,8 +89,15 @@ export async function POST(req: Request) {
 
 export async function GET() {
   try {
+    const token = (await cookies()).get("sap_academy_session")?.value;
+    const user = await getUserForSession(token);
     const requests = await getAllContactRequests();
-    return NextResponse.json({ requests });
+
+    const filtered = user?.role === "formateur"
+      ? requests.filter((r) => r.formateurAssigne === user.name)
+      : requests;
+
+    return NextResponse.json({ requests: filtered });
   } catch {
     return NextResponse.json({ error: "Erreur lors de la récupération des demandes." }, { status: 500 });
   }

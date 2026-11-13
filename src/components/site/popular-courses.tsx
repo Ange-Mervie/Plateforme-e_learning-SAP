@@ -1,49 +1,13 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useLanguage } from "@/context/language-context";
 
 const COURSES = [
-  {
-    code: "FI",
-    title: "SAP FI : Comptabilité générale",
-    description:
-      "Plan comptable, écritures, clôture mensuelle et annuelle, reporting légal.",
-    level: "Intermédiaire",
-    duration: "6 h",
-    rating: "4.8",
-    students: "2,4k",
-  },
-  {
-    code: "MM",
-    title: "SAP MM : Achats et stocks",
-    description:
-      "Demandes d'achat, commandes, réception, factures fournisseurs, gestion des stocks.",
-    level: "Intermédiaire",
-    duration: "5 h",
-    rating: "4.7",
-    students: "1,9k",
-  },
-  {
-    code: "SD",
-    title: "SAP SD : Ventes et distribution",
-    description:
-      "Commandes clients, livraison, facturation, tarification et partenaires.",
-    level: "Intermédiaire",
-    duration: "5 h",
-    rating: "4.8",
-    students: "2,1k",
-  },
-  {
-    code: "ABAP",
-    title: "SAP ABAP : fondamentaux",
-    description:
-      "Syntaxe, dictionnaire de données, programmes, rapports, exercices de programmation.",
-    level: "Débutant",
-    duration: "8 h",
-    rating: "4.9",
-    students: "1,2k",
-  },
+  { code: "FI", title: "SAP FI — Comptabilité générale", description: "Plan comptable, écritures, clôture mensuelle et annuelle, reporting légal.", level: "Intermédiaire", duration: "6 h", rating: "4.8", students: "2,4k" },
+  { code: "MM", title: "SAP MM — Achats et stocks", description: "Demandes d'achat, commandes, réception, factures fournisseurs, gestion des stocks.", level: "Intermédiaire", duration: "5 h", rating: "4.7", students: "1,9k" },
+  { code: "SD", title: "SAP SD — Ventes et distribution", description: "Commandes clients, livraison, facturation, tarification et partenaires.", level: "Intermédiaire", duration: "5 h", rating: "4.8", students: "2,1k" },
+  { code: "ABAP", title: "SAP ABAP — Fondamentaux", description: "Syntaxe, dictionnaire de données, programmes, rapports, exercices de programmation.", level: "Débutant", duration: "8 h", rating: "4.9", students: "1,2k" },
 ];
 
 export default function PopularCourses() {
@@ -56,8 +20,8 @@ export default function PopularCourses() {
             <p className="text-sm font-semibold uppercase tracking-wide text-primary">{t("popular.catalogue")}</p>
             <h2 className="mt-2 text-3xl font-bold tracking-tight text-navy">{t("popular.title")}</h2>
           </div>
-          <Link href="/catalogue" className="hidden text-sm font-semibold text-primary hover:text-primary-dark sm:block">
-            Voir tout le catalogue →
+          <Link href="/catalogue?track=sap" className="hidden text-sm font-semibold text-primary hover:text-primary-dark sm:block">
+            {t("popular.viewAll")}
           </Link>
         </div>
 
@@ -75,12 +39,12 @@ export default function PopularCourses() {
                   <span>·</span>
                   <span>{course.duration}</span>
                   <span>·</span>
-                  <span>{course.students} apprenants</span>
+                  <span>{course.students}</span>
                 </div>
                 <div className="mt-4 flex items-center justify-between">
                   <span className="text-sm font-semibold text-navy">★ {course.rating}</span>
                   <Link href={`/cours/${course.code}`} className="text-sm font-semibold text-primary hover:text-primary-dark">
-                    Voir le cours →
+                    {t("popular.viewCourse")}
                   </Link>
                 </div>
               </div>

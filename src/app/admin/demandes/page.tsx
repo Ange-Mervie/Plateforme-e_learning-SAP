@@ -1,24 +1,33 @@
 "use client";
 
-import Link from "next/link";
 import { useState, useEffect } from "react";
-import { Mail, Phone, ChevronRight } from "lucide-react";
+import Link from "next/link";
+import { useLanguage } from "@/context/language-context";
+import { ChevronRight, Search } from "lucide-react";
+import { TRAINERS } from "@/data/trainers";
 
-const STATUTS = [
-  { value: "nouvelle", label: "Nouvelle demande" },
-  { value: "en_attente", label: "En attente de traitement" },
-  { value: "formateur_affecte", label: "Formateur affecté" },
-  { value: "candidat_contacte", label: "Candidat contacté" },
-  { value: "en_discussion", label: "En discussion" },
-  { value: "inscription_confirmee", label: "Inscription confirmée" },
-  { value: "cloturee", label: "Demande clôturée" },
+const STATUT_KEYS = [
+  { value: "nouvelle", labelKey: "status.nouvelle" },
+  { value: "a_affecter", labelKey: "status.a_affecter" },
+  { value: "affectee", labelKey: "status.affectee" },
+  { value: "contact_en_cours", labelKey: "status.contact_en_cours" },
+  { value: "formation_planifiee", labelKey: "status.formation_planifiee" },
+  { value: "en_formation", labelKey: "status.en_formation" },
+  { value: "terminee", labelKey: "status.terminee" },
+  { value: "annulee", labelKey: "status.annulee" },
 ];
 
 export default function AdminDemandesPage() {
+  const { t, lang } = useLanguage();
+  const isFr = lang === "fr";
   const [requests, setRequests] = useState<any[]>([]);
-  const [filterStatut, setFilterStatut] = useState<string>("all");
-  const [filterSearch, setFilterSearch] = useState<string>("");
+  const [filterStatut, setFilterStatut] = useState("all");
+  const [filterFormation, setFilterFormation] = useState("all");
+  const [filterFormateur, setFilterFormateur] = useState("all");
+  const [filterSearch, setFilterSearch] = useState("");
+  const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const pageSize = 10;
 
   async function loadRequests() {
     setLoading(true);
@@ -26,172 +35,61 @@ export default function AdminDemandesPage() {
       const res = await fetch("/api/contact");
       const data = await res.json();
       setRequests(data.requests || []);
-    } catch {
-      setRequests([]);
-    } finally {
-      setLoading(false);
-    }
+    } catch { setRequests([]); } finally { setLoading(false); }
   }
 
-  useEffect(() => {
-    loadRequests();
-  }, []);
+  useEffect(() => { loadRequests(); }, []);
 
+  const formations = Array.from(new Set(requests.map((r: any) => r.formation).filter(Boolean))).sort() as string[];
   const filtered = requests.filter((r: any) => {
     if (filterStatut !== "all" && r.status !== filterStatut) return false;
+    if (filterFormation !== "all" && r.formation !== filterFormation) return false;
+    if (filterFormateur !== "all" && r.formateurAssigne !== filterFormateur) return false;
     const q = filterSearch.toLowerCase();
-    return (
-      r.nom.toLowerCase().includes(q) ||
-      r.email.toLowerCase().includes(q) ||
-      r.telephone.includes(q) ||
-      r.formation.toLowerCase().includes(q)
-    );
+    return (r.nom||"").toLowerCase().includes(q)||(r.email||"").toLowerCase().includes(q)||(r.requestNumber||"").toLowerCase().includes(q)||(r.formation||"").toLowerCase().includes(q);
   });
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
 
   async function updateStatus(id: string, status: string) {
-    await fetch("/api/contact", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id, status }),
-    });
-    setRequests((prev: any[]) => prev.map((r: any) => (r.id === id ? { ...r, status } : r)));
+    await fetch("/api/contact", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id, status }) });
+    await loadRequests();
   }
+
+  if (loading) return <div className="mx-auto max-w-4xl py-20 text-center"><p className="text-slate-600">{t("requests.loading")}</p></div>;
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-navy">
-      <div className="border-b border-slate-200 bg-white">
-        <div className="mx-auto max-w-7xl px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-navy">Gestion des demandes de contact</h1>
-              <p className="text-sm text-slate-600">Suivi des demandes de formation ELEVATE By IBN Group</p>
-            </div>
-            <Link
-              href="/catalogue"
-              className="inline-flex items-center gap-2 h-10 rounded-xl bg-primary px-4 text-xs font-bold text-white hover:bg-primary-dark transition-colors"
-            >
-              <ChevronRight className="h-3.5 w-3.5" />
-              Retour au catalogue
-            </Link>
-          </div>
-        </div>
-      </div>
-
+      <div className="border-b border-slate-200 bg-white"><div className="mx-auto max-w-7xl px-6 py-4 flex items-center justify-between"><div><h1 className="text-2xl font-bold text-navy">{t("requests.title")}</h1><p className="text-sm text-slate-600">{t("requests.subtitle")}</p></div><Link href="/catalogue" className="inline-flex items-center gap-2 h-10 rounded-xl bg-primary px-4 text-xs font-bold text-white hover:bg-primary-dark"><ChevronRight className="h-3.5 w-3.5" />{t("requests.backToCatalog")}</Link></div></div>
       <div className="mx-auto max-w-7xl px-6 py-8">
-        <div className="grid gap-4 sm:grid-cols-4 mb-8">
-          {[...STATUTS, { value: "all", label: "Total" }].map((s, i) => {
-            const count = s.value === "all" ? requests.length : requests.filter((r: any) => r.status === s.value).length;
-            return (
-              <div key={i} className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{s.label}</p>
-                <p className="mt-1 text-2xl font-bold text-navy">{count}</p>
-              </div>
-            );
-          })}
+        <div className="mb-8 grid gap-4 sm:grid-cols-4">
+          {[{l:t("requests.total"),c:requests.length},{l:t("requests.new"),c:requests.filter((r:any)=>r.status==="nouvelle").length},{l:t("requests.assigned"),c:requests.filter((r:any)=>r.status==="affectee").length},{l:t("requests.inTraining"),c:requests.filter((r:any)=>r.status==="en_formation").length}].map((s,i)=>(
+            <div key={i} className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm"><p className="text-xs font-semibold uppercase tracking-wider text-slate-500">{s.l}</p><p className="mt-1 text-2xl font-bold text-navy">{s.c}</p></div>
+          ))}
         </div>
-
-        <div className="flex flex-col sm:flex-row gap-4 mb-6">
-          <div className="flex-1 relative">
-            <Mail className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
-            <input
-              type="text"
-              placeholder="Rechercher par nom, email, téléphone ou formation..."
-              value={filterSearch}
-              onChange={(e) => setFilterSearch(e.target.value)}
-              className="h-10 w-full rounded-lg border border-slate-300 pl-10 pr-4 text-sm text-navy outline-none focus:border-primary"
-            />
-          </div>
-          <select
-            value={filterStatut}
-            onChange={(e) => setFilterStatut(e.target.value)}
-            className="h-10 rounded-lg border border-slate-300 bg-white px-3 text-sm text-navy outline-none focus:border-primary"
-          >
-            <option value="all">Tous les statuts</option>
-            {STATUTS.map((s) => (
-              <option key={s.value} value={s.value}>{s.label}</option>
-            ))}
-          </select>
+        <div className="mb-6 flex flex-col items-end gap-4 sm:flex-row">
+          <div className="relative flex-1 w-full"><Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" /><input type="text" placeholder={t("requests.search")} value={filterSearch} onChange={(e)=>setFilterSearch(e.target.value)} className="h-10 w-full rounded-lg border border-slate-300 pl-10 pr-4 text-sm text-navy outline-none focus:border-primary" /></div>
+          <div className="min-w-[150px]"><label className="mb-1 block text-xs font-semibold uppercase text-slate-500">{t("requests.status")}</label><select value={filterStatut} onChange={(e)=>{setFilterStatut(e.target.value);setPage(1);}} className="h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm text-navy outline-none focus:border-primary"><option value="all">{t("requests.allStatuses")}</option>{STATUT_KEYS.map(s=><option key={s.value} value={s.value}>{t(s.labelKey)}</option>)}</select></div>
+          <div className="min-w-[150px]"><label className="mb-1 block text-xs font-semibold uppercase text-slate-500">{t("requests.training")}</label><select value={filterFormation} onChange={(e)=>{setFilterFormation(e.target.value);setPage(1);}} className="h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm text-navy outline-none focus:border-primary"><option value="all">{t("requests.allTrainings")}</option>{formations.map(f=><option key={f} value={f}>{f}</option>)}</select></div>
+          <div className="min-w-[150px]"><label className="mb-1 block text-xs font-semibold uppercase text-slate-500">{t("requests.trainer")}</label><select value={filterFormateur} onChange={(e)=>{setFilterFormateur(e.target.value);setPage(1);}} className="h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm text-navy outline-none focus:border-primary"><option value="all">{t("requests.allTrainers")}</option>{TRAINERS.map(f=><option key={f.name} value={f.name}>{f.name}</option>)}</select></div>
         </div>
-
-        <div className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-          <table className="w-full text-sm text-left">
-            <thead className="bg-surface border-b border-slate-200">
-              <tr>
-                <th className="px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Demande</th>
-                <th className="px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Candidat</th>
-                <th className="px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Contact</th>
-                <th className="px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Formation</th>
-                <th className="px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Statut</th>
-                <th className="px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Date</th>
-                <th className="px-4 py-3 text-xs font-semibold text-slate-500 uppercase text-right">Action</th>
+        <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+          <table className="w-full text-left text-sm"><thead className="border-b border-slate-200 bg-surface"><tr>{[t("requests.request"),t("requests.candidate"),t("requests.training"),t("requests.module"),t("requests.trainer"),t("requests.status"),t("requests.date"),t("requests.action")].map((h,i)=><th key={i} className={`px-4 py-3 text-xs font-semibold uppercase text-slate-500 ${i===7?"text-right":""}`}>{h}</th>)}</tr></thead>
+          <tbody className="divide-y divide-slate-100">
+            {paginated.length===0 ? <tr><td colSpan={8} className="px-4 py-8 text-center text-slate-500">{t("requests.none")}</td></tr> : paginated.map((r:any)=>(
+              <tr key={r.id} className="transition-colors hover:bg-surface">
+                <td className="px-4 py-3 text-xs font-bold text-primary">{r.requestNumber}</td>
+                <td className="px-4 py-3"><p className="text-sm font-semibold text-navy">{r.nom}</p><p className="text-xs text-slate-500">{r.email}</p></td>
+                <td className="px-4 py-3 text-sm font-semibold text-navy">{r.formation}</td>
+                <td className="px-4 py-3 text-sm text-slate-600">{r.module}</td>
+                <td className="px-4 py-3 text-sm text-slate-600">{r.formateurAssigne||t("requests.unassigned")}</td>
+                <td className="px-4 py-3"><select value={r.status} onChange={(e)=>updateStatus(r.id,e.target.value)} className="h-9 rounded-lg border border-slate-300 bg-white px-2 text-sm outline-none focus:border-primary">{STATUT_KEYS.map(s=><option key={s.value} value={s.value}>{t(s.labelKey)}</option>)}</select></td>
+                <td className="px-4 py-3 text-sm text-slate-600">{r.createdAt?new Date(r.createdAt).toLocaleDateString(isFr?"fr-FR":"en-US"):"-"}</td>
+                <td className="px-4 py-3 text-right"><Link href={`/admin/demandes/${r.id}`} className="text-xs font-semibold text-primary hover:underline">{t("requests.viewDetails")}</Link></td>
               </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {loading ? (
-                <tr>
-                  <td colSpan={7} className="px-4 py-8 text-center text-slate-500">Chargement…</td>
-                </tr>
-              ) : filtered.length === 0 ? (
-                <tr>
-                  <td colSpan={7} className="px-4 py-8 text-center text-slate-500">Aucune demande trouvée.</td>
-                </tr>
-              ) : (
-                filtered.map((r: any) => (
-                  <tr key={r.id} className="hover:bg-surface transition-colors">
-                    <td className="px-4 py-3">
-                      <span className="text-xs font-bold text-primary">{r.requestNumber}</span>
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-2">
-                        <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
-                          {r.nom.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase()}
-                        </div>
-                        <div>
-                          <p className="text-sm font-semibold text-navy">{r.nom}</p>
-                          <p className="text-xs text-slate-500">{r.situation}</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex flex-col gap-1">
-                        <p className="text-sm text-navy">{r.email}</p>
-                        <p className="text-sm text-slate-600">{r.telephone}</p>
-                        <p className="text-xs text-slate-500">{r.ville}, {r.pays}</p>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex flex-col gap-1">
-                        <p className="text-sm font-semibold text-navy">{r.formation}</p>
-                        <p className="text-xs text-slate-500">Module {r.module}</p>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3">
-                      <select
-                        value={r.status}
-                        onChange={(e) => updateStatus(r.id, e.target.value)}
-                        className="h-8 rounded-lg border border-slate-300 bg-white px-2 text-xs outline-none focus:border-primary"
-                      >
-                        {STATUTS.map((s) => (
-                          <option key={s.value} value={s.value}>{s.label}</option>
-                        ))}
-                      </select>
-                    </td>
-                    <td className="px-4 py-3 text-sm text-slate-600">
-                      {new Date(r.createdAt).toLocaleDateString("fr-FR")}
-                    </td>
-                    <td className="px-4 py-3 text-right">
-                      <Link
-                        href={`/admin/demandes/${r.id}`}
-                        className="text-xs font-semibold text-primary hover:underline"
-                      >
-                        Voir détails <ChevronRight className="h-3 w-3 ml-0.5" />
-                      </Link>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+            ))}
+          </tbody></table>
+          {totalPages>1 && <div className="flex items-center justify-between border-t border-slate-200 px-4 py-3 text-xs text-slate-600"><span>{page}/{totalPages}</span><div className="flex gap-2"><button disabled={page<=1} onClick={()=>setPage(p=>p-1)} className="rounded border px-2 py-1 disabled:opacity-40">Prev</button><button disabled={page>=totalPages} onClick={()=>setPage(p=>p+1)} className="rounded border px-2 py-1 disabled:opacity-40">Next</button></div></div>}
         </div>
       </div>
     </div>

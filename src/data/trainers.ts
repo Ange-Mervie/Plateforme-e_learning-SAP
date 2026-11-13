@@ -8,48 +8,59 @@ export interface Trainer {
   certifications: string[];
   languages: ("fr" | "en")[];
   bio: string;
+  bioEn: string;
   courseSlugs: string[];
   consent: boolean;
+  tracks: ("sap" | "odoo")[];
 }
 
 export const TRAINERS: Trainer[] = [
   {
-    slug: "consultant-financier",
-    name: "Dr. Claire Moreau",
-    title: "Consultante SAP FI/CO",
-    photo: "/trainers/claire-moreau.jpg",
-    specialties: ["FI", "CO", "S/4HANA Finance"],
-    yearsExperience: 12,
-    certifications: ["SAP Certified Application Associate"],
+    slug: "mr-legima",
+    name: "Mr. Legima",
+    title: "Formateur SAP & Odoo",
+    photo: "/images/2.jpg",
+    specialties: ["SAP FI/CO", "Odoo Comptabilité", "ERP"],
+    yearsExperience: null,
+    certifications: [],
     languages: ["fr", "en"],
-    bio: "Consultante financière spécialisée en comptabilité générale et contrôle de gestion, avec 12 ans d’expérience sur des projets S/4HANA.",
-    courseSlugs: ["fi-comptabilite-generale"],
+    bio: "Formateur spécialisé en solutions ERP, il accompagne les apprenants sur les modules financiers SAP et les applications de comptabilité Odoo avec une approche pratique orientée métier.",
+    bioEn: "ERP trainer specializing in SAP financial modules and Odoo accounting applications, supporting learners with a practical, business-oriented approach.",
+    courseSlugs: ["fi-comptabilite-generale", "odoo-comptabilite"],
     consent: true,
+    tracks: ["sap", "odoo"],
   },
   {
-    slug: "logisticien",
-    name: "Karim Benali",
-    title: "Consultant SAP MM/SD",
-    photo: "/trainers/karim-benali.jpg",
-    specialties: ["MM", "SD", "WM/EWM"],
-    yearsExperience: 9,
-    certifications: ["SAP Certified Specialist"],
+    slug: "mr-chami",
+    name: "Mr. Chami",
+    title: "Formateur SAP & Odoo",
+    photo: "/images/3.jpg",
+    specialties: ["SAP MM/SD", "Odoo Ventes & Achats", "Logistique"],
+    yearsExperience: null,
+    certifications: [],
     languages: ["fr", "en"],
-    bio: "Expert en logistique et distribution, il accompagne les clients dans la chaîne d’approvisionnement SAP.",
-    courseSlugs: ["mm-achats-stocks", "sd-ventes-distribution"],
+    bio: "Formateur expert en processus logistiques et commerciaux, il intervient sur SAP MM/SD ainsi que sur les applications Odoo Ventes, Achats et Inventaire.",
+    bioEn: "Trainer expert in logistics and commercial processes, delivering courses on SAP MM/SD as well as Odoo Sales, Purchase, and Inventory apps.",
+    courseSlugs: ["mm-achats-stocks", "sd-ventes-distribution", "odoo-ventes-achats"],
     consent: true,
+    tracks: ["sap", "odoo"],
   },
   {
-    slug: "architecte-btp",
-    name: "Sophie Laurent",
-    title: "Architecte SAP BTP",
-    photo: "/architecte-btp.jpg",
-    specialties: ["BTP", "RAP", "Fiori"],
-    yearsExperience: 8,
-    certifications: ["SAP Certified Development Associate"],
+    slug: "mr-ivo-babila",
+    name: "Mr. Ivo Babila",
+    title: "Formateur SAP & Odoo",
+    photo: "/images/4.jpg",
+    specialties: ["SAP ABAP", "Odoo Technique", "Intégration ERP"],
+    yearsExperience: null,
+    certifications: [],
     languages: ["fr", "en"],
-    bio: "Architecte SAP BTP et développeur Fiori, elle conçoit des solutions métier sur la plateforme.",
-    courseSlugs: ["abap-fondamentaux", "abap-moderne-oo"],
+    bio: "Formateur technique SAP et Odoo, il accompagne les apprenants sur le développement, la personnalisation et l'intégration des solutions ERP.",
+    bioEn: "Technical SAP and Odoo trainer, supporting learners in development, customization, and integration of ERP solutions.",
+    courseSlugs: ["abap-fondamentaux", "odoo-technique"],
     consent: true,
+    tracks: ["sap", "odoo"],
   },
 ];
+
+export const getTrainerBySlug = (slug: string): Trainer | undefined =>
+  TRAINERS.find((t) => t.slug === slug);
