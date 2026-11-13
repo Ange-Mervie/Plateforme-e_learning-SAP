@@ -154,7 +154,7 @@ export default function Header() {
     <header ref={headerRef} className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-8">
         <Link href="/" className="flex items-center gap-2.5">
-          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-navy text-sm font-bold text-white shadow-sm">SAP</span>
+          <Image src="/images/sap-logo.svg" alt="SAP" width={70} height={35} className="h-7 w-auto object-contain" />
           <Image src="/images/ibn-logo.png" alt="IBN Group" width={30} height={30} className="h-7 w-7 object-contain" />
           <span className="text-lg font-bold tracking-tight text-navy">
             ELEVATE <span className="text-xs font-medium text-primary">By IBN Group</span>
