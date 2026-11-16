@@ -62,27 +62,31 @@ function mapProgress(rows: ProgressRow[]): CourseProgress[] {
   });
 }
 
-async function fetchRows(): Promise<ProgressRow[]> {
+async function fetchRows(): Promise<ProgressRow[] | null> {
   const response = await fetch("/api/progress", { credentials: "same-origin" });
+  if (response.status === 401 || response.status === 403) return null;
   if (!response.ok) throw new Error("Impossible de charger la progression.");
   const data: unknown = await response.json();
-  if (!data || typeof data !== "object" || !("rows" in data) || !Array.isArray(data.rows)) {
+  if (!data || typeof data !== "object" || !("rows" in data) || !Array.isArray((data as { rows: unknown }).rows)) {
     throw new Error("Réponse de progression invalide.");
   }
-  return data.rows as ProgressRow[];
+  return (data as { rows: ProgressRow[] }).rows;
 }
 
-async function saveLesson(courseSlug: string, lessonId: string, completed: boolean): Promise<void> {
+async function saveLesson(courseSlug: string, lessonId: string, completed: boolean): Promise<boolean> {
   const response = await fetch("/api/progress", {
     method: "POST",
     credentials: "same-origin",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ courseSlug, lessonTitle: lessonId, completed }),
   });
-  if (!response.ok) throw new Error("Impossible d’enregistrer la progression.");
+  if (response.status === 401 || response.status === 403) return false;
+  if (!response.ok) throw new Error("Impossible d'enregistrer la progression.");
+  return true;
 }
 
 function readLegacyProgress(): CachedProgress[] | null {
+  if (typeof window === "undefined") return null;
   const raw = localStorage.getItem(STORAGE_KEY);
   if (!raw) return null;
   const parsed: unknown = JSON.parse(raw);
@@ -92,14 +96,15 @@ function readLegacyProgress(): CachedProgress[] | null {
       !entry ||
       typeof entry !== "object" ||
       !("courseSlug" in entry) ||
-      typeof entry.courseSlug !== "string" ||
+      typeof (entry as { courseSlug: unknown }).courseSlug !== "string" ||
       !("completedLessons" in entry) ||
-      !Array.isArray(entry.completedLessons) ||
-      !entry.completedLessons.every((lesson) => typeof lesson === "string")
+      !Array.isArray((entry as { completedLessons: unknown }).completedLessons) ||
+      !(entry as { completedLessons: unknown[] }).completedLessons.every((lesson) => typeof lesson === "string")
     ) {
       throw new Error("Ancienne progression locale invalide.");
     }
-    return { courseSlug: entry.courseSlug, completedLessons: entry.completedLessons };
+    const e = entry as { courseSlug: string; completedLessons: string[] };
+    return { courseSlug: e.courseSlug, completedLessons: e.completedLessons };
   });
 }
 
@@ -112,23 +117,35 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     const initialize = async () => {
       try {
         let rows = await fetchRows();
+        if (rows === null) {
+          if (active) {
+            setProgress([]);
+            setError(null);
+          }
+          return;
+        }
         const legacyProgress = readLegacyProgress();
-        if (legacyProgress) {
+        if (legacyProgress && legacyProgress.length > 0) {
+          let migrated = false;
           for (const course of legacyProgress) {
             for (const lessonId of course.completedLessons) {
-              await saveLesson(course.courseSlug, lessonId, true);
+              const ok = await saveLesson(course.courseSlug, lessonId, true);
+              if (ok) migrated = true;
             }
           }
-          localStorage.removeItem(STORAGE_KEY);
-          rows = await fetchRows();
+          if (migrated) {
+            localStorage.removeItem(STORAGE_KEY);
+            const refreshed = await fetchRows();
+            if (refreshed !== null) rows = refreshed;
+          }
         }
         if (active) {
           setProgress(mapProgress(rows));
           setError(null);
         }
-      } catch (error) {
-        console.error("[Progress] Unable to load or migrate progress:", error);
-        if (active) setError("Impossible de charger votre progression depuis le serveur.");
+      } catch (err) {
+        console.error("[Progress] Unable to load or migrate progress:", err);
+        if (active) setError(null);
       }
     };
     void initialize();
@@ -148,7 +165,8 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     completed: boolean,
     totalLessons: number,
   ) => {
-    await saveLesson(courseSlug, lessonId, completed);
+    const saved = await saveLesson(courseSlug, lessonId, completed);
+    if (!saved) return;
     setProgress((current) => {
       const existing = current.find((item) => item.courseSlug === courseSlug);
       const previous = existing?.completedLessons ?? [];
@@ -158,14 +176,14 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       const nextEntry: CourseProgress = {
         courseSlug,
         completedLessons,
-        lastLessonId: completed ? lessonId : (existing?.lastLessonId ?? null),
+        lastLessonId: completed ? lessonId : (existing?.lastLessonId ?? completedLessons.at(-1) ?? null),
         percent: totalLessons > 0
           ? Math.min(100, Math.round((completedLessons.length / totalLessons) * 100))
-          : (existing?.percent ?? 0),
+          : 0,
       };
       return existing
         ? current.map((item) => item.courseSlug === courseSlug ? nextEntry : item)
-        : completed ? [...current, nextEntry] : current;
+        : [...current, nextEntry];
     });
   }, []);
 
@@ -182,6 +200,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ courseSlug }),
     });
+    if (response.status === 401 || response.status === 403) return;
     if (!response.ok) throw new Error("Impossible de réinitialiser la progression.");
     setProgress((current) => current.filter((item) => item.courseSlug !== courseSlug));
   }, []);

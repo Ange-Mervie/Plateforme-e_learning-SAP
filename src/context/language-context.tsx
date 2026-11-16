@@ -1,8 +1,9 @@
 ﻿"use client";
 
-import { createContext, useContext, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
 export type Lang = "fr" | "en";
+const LANG_KEY = "sap_academy_lang";
 
 const fr = {
   nav: {
@@ -595,7 +596,25 @@ interface LanguageContextValue {
 export const LanguageContext = createContext<LanguageContextValue | null>(null);
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [lang, setLang] = useState<Lang>("fr");
+  const [lang, setLangState] = useState<Lang>("fr");
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(LANG_KEY);
+      if (stored === "en" || stored === "fr") setLangState(stored);
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  const setLang = (next: Lang) => {
+    setLangState(next);
+    try {
+      localStorage.setItem(LANG_KEY, next);
+    } catch {
+      // ignore
+    }
+  };
 
   const t = (key: string) => {
     const dict = lang === "en" ? en : fr;
