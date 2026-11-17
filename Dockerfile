@@ -26,7 +26,6 @@ COPY --from=builder /app/sql ./sql
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/scripts/docker-migrate.mjs ./scripts/docker-migrate.mjs
 COPY --from=builder /app/package.json ./package.json
-# mysql2 needed by migration script at runtime (standalone may not include it in root context reliably)
 COPY --from=deps /app/node_modules ./node_modules
 RUN mkdir -p /app/data && chown -R nextjs:nodejs /app/data
 EXPOSE 3000

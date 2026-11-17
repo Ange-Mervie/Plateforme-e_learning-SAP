@@ -14,9 +14,6 @@ pnpm-debug.log*
 coverage
 .vscode
 .idea
-Dockerfile
-docker-compose.yml
-.dockerignore
 GUIDE_INSTALLATION_DOCKER.md
 README.md
 docs
