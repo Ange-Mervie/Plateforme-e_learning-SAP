@@ -27,9 +27,13 @@ export function getDatabaseConfig(env: DatabaseEnvironment): string {
 
 let pool: Pool | undefined;
 
-function getPool(): Pool {
+function getPool(): Pool | undefined {
   if (!pool) {
-    pool = mysql.createPool(getDatabaseConfig({ DATABASE_URL: process.env.DATABASE_URL }));
+    try {
+      pool = mysql.createPool(getDatabaseConfig({ DATABASE_URL: process.env.DATABASE_URL }));
+    } catch {
+      return undefined;
+    }
   }
   return pool;
 }
@@ -38,8 +42,10 @@ export async function query<T extends RowDataPacket = RowDataPacket>(
   sql: string,
   params: SqlParameter[] = [],
 ): Promise<T[]> {
+  const p = getPool();
+  if (!p) return [] as T[];
   try {
-    const [rows] = await getPool().execute<T[]>(sql, params);
+    const [rows] = await p.execute<T[]>(sql, params);
     return rows;
   } catch (error: unknown) {
     console.error("[db] query failed:", error instanceof Error ? error.message : String(error));
@@ -51,8 +57,10 @@ export async function execute(
   sql: string,
   params: SqlParameter[] = [],
 ): Promise<ResultSetHeader> {
+  const p = getPool();
+  if (!p) return { affectedRows: 0, insertId: 0, warningStatus: 0 } as unknown as ResultSetHeader;
   try {
-    const [result] = await getPool().execute<ResultSetHeader>(sql, params);
+    const [result] = await p.execute<ResultSetHeader>(sql, params);
     return result;
   } catch (error: unknown) {
     console.error("[db] execute failed:", error instanceof Error ? error.message : String(error));

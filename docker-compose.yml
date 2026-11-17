@@ -1,37 +1,14 @@
 ﻿services:
-  db:
-    image: mysql:8.3
-    restart: unless-stopped
-    environment:
-      MYSQL_DATABASE: sap_academy
-      MYSQL_USER: sap_user
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?set MYSQL_PASSWORD in .env}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?set MYSQL_ROOT_PASSWORD in .env}
-    ports:
-      - "3307:3306"
-    volumes:
-      - db_data:/var/lib/mysql
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 30s
-
   app:
     build: .
     restart: unless-stopped
     ports:
       - "${APP_PORT:-3000}:3000"
     environment:
-      DATABASE_URL: mysql://sap_user:${MYSQL_PASSWORD}@db:3306/sap_academy
+      DATABASE_URL: ${DATABASE_URL:-}
       SESSION_SECRET: ${SESSION_SECRET:?set SESSION_SECRET in .env}
       APP_ORIGIN: ${APP_ORIGIN:-http://localhost:3000}
       NEXT_TELEMETRY_DISABLED: "1"
-    depends_on:
-      db:
-        condition: service_healthy
-        required: true
     volumes:
       - ./data:/app/data
     healthcheck:
@@ -40,7 +17,3 @@
       timeout: 5s
       retries: 5
       start_period: 40s
-
-volumes:
-  db_data:
-    name: sap-academy_db_data
