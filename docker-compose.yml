@@ -1,42 +1,59 @@
 ﻿services:
   db:
-    image: mysql:8.4
-    container_name: sap-elearning-db
+    image: mysql:8.3
     restart: unless-stopped
     environment:
-      MYSQL_DATABASE: ${MYSQL_DATABASE:-sap_academy}
-      MYSQL_USER: ${MYSQL_USER:-sap_user}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci"]
+      MYSQL_DATABASE: sap_academy
+      MYSQL_USER: sap_user
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?set MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?set MYSQL_ROOT_PASSWORD}
+    ports:
+      - "3307:3306"
     volumes:
-      - mysql_data:/var/lib/mysql
+      - db_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
       interval: 10s
       timeout: 5s
       retries: 10
       start_period: 30s
 
-  app:
+  migrate:
     build:
       context: .
-      dockerfile: Dockerfile
-    container_name: sap-elearning-app
-    restart: unless-stopped
+      target: migrator
+    restart: "no"
+    environment:
+      DATABASE_URL: mysql://sap_user:${MYSQL_PASSWORD}@db:3306/sap_academy
     depends_on:
       db:
         condition: service_healthy
-    environment:
-      NODE_ENV: production
-      PORT: 3000
-      HOSTNAME: 0.0.0.0
-      DATABASE_URL: mysql://${MYSQL_USER:-sap_user}:${MYSQL_PASSWORD}@db:3306/${MYSQL_DATABASE:-sap_academy}
-      APP_ORIGIN: ${APP_ORIGIN:-http://localhost:3000}
+        required: true
+
+  app:
+    build: .
+    restart: unless-stopped
     ports:
-      - "3000:3000"
-    volumes:
-      - ./data:/app/data
+      - "${APP_PORT:-3000}:3000"
+    environment:
+      DATABASE_URL: mysql://sap_user:${MYSQL_PASSWORD}@db:3306/sap_academy
+      SESSION_SECRET: ${SESSION_SECRET:?set SESSION_SECRET}
+      APP_ORIGIN: ${APP_ORIGIN:-http://localhost:3000}
+      NEXT_TELEMETRY_DISABLED: "1"
+    depends_on:
+      db:
+        condition: service_healthy
+        required: true
+      migrate:
+        condition: service_completed_successfully
+        required: true
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/login"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
 volumes:
-  mysql_data:
+  db_data:
+    name: sap-academy_db_data

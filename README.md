@@ -27,7 +27,40 @@ If `src/data/local-database.json` exists, keep it as a backup and run `npm run d
 
 MySQL is the application's only persistent source of truth. If the database is unavailable, authenticated operations fail explicitly instead of switching to temporary in-memory or browser-owned records.
 
-## Checks
+## Docker (déploiement local)
+
+1. Copier le fichier d'exemple et remplir les valeurs réelles :
+
+   ```bash
+   cp .env.example .env
+   # puis éditer .env : MYSQL_PASSWORD, MYSQL_ROOT_PASSWORD, SESSION_SECRET, APP_PORT, APP_ORIGIN
+   ```
+
+   `.env` n'est jamais commité (voir `.gitignore`). Ne jamais réutiliser les valeurs d'exemple en production.
+
+2. Lancer la stack :
+
+   ```bash
+   docker compose up -d --build
+   ```
+
+   Services : `db` (MySQL 8.3, base `sap_academy`, utilisateur `sap_user`), `migrate` (Prisma), `app` (port `${APP_PORT:-3000}`).
+
+3. Vérifier :
+
+   ```bash
+   docker compose config   # doit afficher les variables sans erreur
+   docker compose ps       # tous les services "healthy"/"exited (0)"
+   ```
+
+4. Arrêter :
+
+   ```bash
+   docker compose down        # conserve les données
+   docker compose down -v     # supprime aussi le volume de données
+   ```
+
+Les variables obligatoires sont `MYSQL_PASSWORD`, `MYSQL_ROOT_PASSWORD` et `SESSION_SECRET` (voir `docker-compose.yml` avec `${VAR:?...}`). `APP_PORT` et `APP_ORIGIN` ont des valeurs par défaut.
 
 ```bash
 npm test
