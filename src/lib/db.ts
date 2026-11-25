@@ -1,69 +1,24 @@
-import mysql, {
-  type Pool,
-  type ResultSetHeader,
-  type RowDataPacket,
-} from "mysql2/promise";
+import { PrismaClient } from "@prisma/client";
 
-type DatabaseEnvironment = { DATABASE_URL?: string };
-export type SqlParameter = string | number | bigint | boolean | Date | null | Buffer | Uint8Array;
+const globalForPrisma = globalThis as unknown as {
+  prisma: PrismaClient | undefined;
+};
 
-export function getDatabaseConfig(env: DatabaseEnvironment): string {
-  const databaseUrl = env.DATABASE_URL?.trim();
-  if (!databaseUrl) {
-    throw new Error("DATABASE_URL must be configured before using the database.");
-  }
+export const prisma =
+  globalForPrisma.prisma ??
+  new PrismaClient({
+    log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
+  });
 
-  try {
-    const parsedUrl = new URL(databaseUrl);
-    if (parsedUrl.protocol !== "mysql:" || !parsedUrl.hostname || parsedUrl.pathname.length < 2) {
-      throw new Error();
-    }
-  } catch {
-    throw new Error("DATABASE_URL must be a valid MySQL connection URL.");
-  }
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
-  return databaseUrl;
+export async function query<T>(sql: string, params: unknown[] = []): Promise<T[]> {
+  return prisma.$queryRawUnsafe(sql, ...params) as Promise<T[]>;
 }
 
-let pool: Pool | undefined;
-
-function getPool(): Pool | undefined {
-  if (!pool) {
-    try {
-      pool = mysql.createPool(getDatabaseConfig({ DATABASE_URL: process.env.DATABASE_URL }));
-    } catch {
-      return undefined;
-    }
-  }
-  return pool;
+export async function execute(sql: string, params: unknown[] = []): Promise<{ affectedRows: number; insertId: number }> {
+  const result = await prisma.$executeRawUnsafe(sql, ...params);
+  return { affectedRows: result, insertId: 0 };
 }
 
-export async function query<T extends RowDataPacket = RowDataPacket>(
-  sql: string,
-  params: SqlParameter[] = [],
-): Promise<T[]> {
-  const p = getPool();
-  if (!p) return [] as T[];
-  try {
-    const [rows] = await p.execute<T[]>(sql, params);
-    return rows;
-  } catch (error: unknown) {
-    console.error("[db] query failed:", error instanceof Error ? error.message : String(error));
-    return [] as T[];
-  }
-}
-
-export async function execute(
-  sql: string,
-  params: SqlParameter[] = [],
-): Promise<ResultSetHeader> {
-  const p = getPool();
-  if (!p) return { affectedRows: 0, insertId: 0, warningStatus: 0 } as unknown as ResultSetHeader;
-  try {
-    const [result] = await p.execute<ResultSetHeader>(sql, params);
-    return result;
-  } catch (error: unknown) {
-    console.error("[db] execute failed:", error instanceof Error ? error.message : String(error));
-    return { affectedRows: 0, insertId: 0, warningStatus: 0 } as unknown as ResultSetHeader;
-  }
-}
+export default prisma;

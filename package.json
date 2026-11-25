@@ -11,9 +11,9 @@
     "db:import-local": "tsx scripts/import-local-database.ts"
   },
   "dependencies": {
+    "@prisma/client": "^5.22.0",
     "bcryptjs": "^3.0.3",
     "lucide-react": "^1.69.0",
-    "mysql2": "^3.24.6",
     "next": "16.4.5",
     "react": "19.3.0",
     "react-dom": "19.3.0"
@@ -28,6 +28,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.4.5",
     "jsdom": "^29.1.1",
+    "prisma": "^5.22.0",
     "tailwindcss": "^4",
     "tsx": "^4.23.15",
     "typescript": "^5",

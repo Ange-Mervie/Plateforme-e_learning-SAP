@@ -1,12 +1,11 @@
 import { NextResponse } from "next/server";
-import { query } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 
 export async function GET() {
   try {
-    const rows = await query("SELECT 1 AS ok");
-    return NextResponse.json({ ok: true, db: rows });
-  } catch (e: unknown) {
-    const message = e instanceof Error ? e.message : "unknown";
-    return NextResponse.json({ ok: false, error: message }, { status: 500 });
+    await prisma.$queryRaw`SELECT 1`;
+    return NextResponse.json({ status: "ok", timestamp: new Date().toISOString() });
+  } catch (error) {
+    return NextResponse.json({ status: "error", timestamp: new Date().toISOString() }, { status: 500 });
   }
 }
