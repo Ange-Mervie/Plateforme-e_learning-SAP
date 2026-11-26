@@ -2,13 +2,26 @@
 
 ## Prérequis
 1. Compte [Vercel](https://vercel.com) (gratuit)
-2. Base de données PostgreSQL serverless (recommandé : [Neon](https://neon.tech) — gratuit, 0.5 Go)
+2. Base de données PostgreSQL serverless gratuite (choisir UN des services ci-dessous)
 3. Repository GitHub/GitLab/Bitbucket
 
-## 1. Créer la base de données (Neon)
-1. Allez sur https://neon.tech et créez un compte
-2. Créez un projet → nommez-le `sap-academy`
-3. Copiez la **Connection String** (format : `postgresql://user:pass@ep-xxx.region.aws.neon.tech/dbname?sslmode=require`)
+## 1. Créer la base de données (gratuite, au choix)
+### Option A — Vercel Postgres (le plus simple, intégré à Vercel)
+1. Sur Vercel : **Storage → Create Database → Postgres**
+2. Nommez-la `sap-academy` → Vercel crée la DB et injecte automatiquement `DATABASE_URL`
+3. Aucun compte séparé requis.
+
+### Option B — Supabase (gratuit, 500 Mo, interface simple)
+1. Allez sur https://supabase.com et créez un compte (GitHub suffit)
+2. **New Project** → nommez-le `sap-academy` → choisissez une région proche
+3. **Settings → Database → Connection string → URI** → copiez-la (format `postgresql://postgres:...@db.xxx.supabase.co:5432/postgres`)
+4. Ajoutez `?sslmode=require` à la fin si absent.
+
+### Option C — Neon (gratuit, 0.5 Go)
+1. Allez sur https://neon.tech → créez un projet `sap-academy`
+2. Copiez la **Connection String** (`postgresql://user:pass@ep-xxx.region.aws.neon.tech/dbname?sslmode=require`)
+
+> Note : le stockage JSON local (`data/*.json`) ne persiste PAS sur Vercel (système de fichiers éphémère). Une base PostgreSQL est obligatoire en production.
 
 ## 2. Importer le projet sur Vercel
 1. Poussez ce code sur GitHub
@@ -35,8 +48,7 @@ openssl rand -base64 32
 ```
 
 ## 4. Déployer
-- Cliquez **Deploy** — Vercel lance `prisma generate && next build`
-- La première migration se fait automatiquement via `prisma migrate deploy` (configuré dans `package.json`)
+- Cliquez **Deploy** — Vercel lance `prisma generate && prisma db push && next build` (crée les tables automatiquement)
 
 ## 5. Après le déploiement
 1. Allez sur votre URL Vercel
@@ -47,7 +59,7 @@ UPDATE "User" SET role = 'admin' WHERE email = 'votre@email.com';
 ```
 
 ## Sécurité incluse
-- Headers CSP, HSTS, X-Frame-Options, etc. (`src/middleware.ts`)
+- Headers CSP, HSTS, X-Frame-Options, etc. (`src/proxy.ts`)
 - Rate limiting API (100 req/min/IP)
 - Cookies sécurisés (SameSite=Strict, HttpOnly, Secure en prod)
 - CSRF protection sur les mutations
