@@ -8,23 +8,24 @@ datasource db {
 }
 
 model User {
-  id             Int            @id @default(autoincrement())
-  email          String         @unique
-  name           String
-  password       String
-  role           String         @default("apprenant")
-  subscriptionStatus String      @default("free")
-  subscriptionPlan   String?     @default(null)
-  emailVerified  Boolean        @default(false)
+  id                 Int            @id @default(autoincrement())
+  email              String         @unique
+  name               String
+  password           String
+  role               String         @default("apprenant")
+  subscriptionStatus String         @default("free")
+  subscriptionPlan   String?
+  emailVerified      Boolean        @default(false)
   emailVerificationCode String?
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
-  sessions       Session[]
-  progress       Progress[]
-  assessments    Assessment[]
-  certificates   Certificate[]
-  projects       Project[]
-  defenses       Defense[]
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+  sessions           Session[]
+  progress           Progress[]
+  assessments        Assessment[]
+  certificates       Certificate[]
+  projects           Project[]
+  defenses           Defense[]
+  subscriptions      Subscription[]
 }
 
 model Session {
@@ -35,8 +36,8 @@ model Session {
   expiresAt DateTime
   createdAt DateTime @default(now())
 
-  @@index [userId]
-  @@index [tokenHash]
+  @@index([userId])
+  @@index([tokenHash])
 }
 
 model Progress {
@@ -48,9 +49,9 @@ model Progress {
   completed   Boolean  @default(false)
   updatedAt   DateTime @updatedAt
 
-  @@unique [userId, courseSlug, lessonTitle]
-  @@index [userId]
-  @@index [courseSlug]
+  @@unique([userId, courseSlug, lessonTitle])
+  @@index([userId])
+  @@index([courseSlug])
 }
 
 model Assessment {
@@ -62,8 +63,8 @@ model Assessment {
   passed     Boolean  @default(false)
   createdAt  DateTime @default(now())
 
-  @@index [userId]
-  @@index [courseSlug]
+  @@index([userId])
+  @@index([courseSlug])
 }
 
 model Certificate {
@@ -73,8 +74,8 @@ model Certificate {
   courseSlug String
   issuedAt   DateTime @default(now())
 
-  @@unique [userId, courseSlug]
-  @@index [userId]
+  @@unique([userId, courseSlug])
+  @@index([userId])
 }
 
 model Project {
@@ -86,8 +87,9 @@ model Project {
   status      String   @default("draft")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  defenses    Defense[]
 
-  @@index [userId]
+  @@index([userId])
 }
 
 model Defense {
@@ -101,8 +103,8 @@ model Defense {
   status    String   @default("scheduled")
   createdAt DateTime @default(now())
 
-  @@index [userId]
-  @@index [projectId]
+  @@index([userId])
+  @@index([projectId])
 }
 
 model ContactRequest {
@@ -111,14 +113,12 @@ model ContactRequest {
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
   status            String   @default("nouvelle")
-  // Informations personnelles
   nom               String
   email             String
   telephone         String
   ville             String
   pays              String
   situation         String
-  // Informations formation
   formation         String
   module            String
   formateur         String
@@ -127,13 +127,11 @@ model ContactRequest {
   mode              String
   disponibilite     String
   dateDebut         String
-  // Complémentaires
   dejaUtiliseSAP    String
   dejaFormationSAP  String
   attentes          String
   message           String
   consentement      Boolean
-  // Admin & suivi pédagogique
   formateurAssigne  String?
   commentaireInterne String?
   formationCommencee Boolean  @default(false)
@@ -142,12 +140,11 @@ model ContactRequest {
   evaluationScore   Int      @default(0)
   attestationValidee Boolean  @default(false)
   motifRefusAttestation String?
-  // Historique (JSON)
   historique        Json     @default("[]")
 
-  @@index [status]
-  @@index [formateurAssigne]
-  @@index [email]
+  @@index([status])
+  @@index([formateurAssigne])
+  @@index([email])
 }
 
 model CourseDocument {
@@ -159,7 +156,7 @@ model CourseDocument {
   fileType    String
   createdAt   DateTime @default(now())
 
-  @@index [courseSlug]
+  @@index([courseSlug])
 }
 
 model IBNGroupContent {
@@ -179,6 +176,6 @@ model Subscription {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique [userId, planId]
-  @@index [userId]
+  @@unique([userId, planId])
+  @@index([userId])
 }

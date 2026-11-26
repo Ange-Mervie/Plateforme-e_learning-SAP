@@ -442,8 +442,8 @@ export function toImportSqlParameters(values: readonly unknown[]): SqlParameter[
       Buffer.isBuffer(value) ||
       value instanceof Uint8Array
     ) {
-      return value;
+      return value as SqlParameter;
     }
     throw new Error("Unsupported local import database parameter.");
-  });
+  }) as SqlParameter[];
 }

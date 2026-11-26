@@ -1,8 +1,57 @@
 import { randomBytes } from "node:crypto";
 import { prisma } from "@/lib/prisma";
-import type { ContactRequest, UpdateContactRequestData } from "./contact-store";
+import type { Prisma } from "@prisma/client";
 
-export async function createContactRequest(data: Omit<ContactRequest, "id" | "requestNumber" | "createdAt" | "status" | "formateurAssigne" | "commentaireInterne" | "formationCommencee" | "progression" | "evaluationPassee" | "evaluationScore" | "attestationValidee" | "motifRefusAttestation" | "historique">): Promise<ContactRequest> {
+export interface ContactRequest {
+  id: string;
+  requestNumber: string;
+  createdAt: Date;
+  updatedAt: Date;
+  status: string;
+  nom: string;
+  email: string;
+  telephone: string;
+  ville: string;
+  pays: string;
+  situation: string;
+  formation: string;
+  module: string;
+  formateur: string;
+  niveau: string;
+  objectif: string;
+  mode: string;
+  disponibilite: string;
+  dateDebut: string;
+  dejaUtiliseSAP: string;
+  dejaFormationSAP: string;
+  attentes: string;
+  message: string;
+  consentement: boolean;
+  formateurAssigne: string | null;
+  commentaireInterne: string | null;
+  formationCommencee: boolean;
+  progression: number;
+  evaluationPassee: boolean;
+  evaluationScore: number;
+  attestationValidee: boolean;
+  motifRefusAttestation: string | null;
+  historique: unknown[];
+}
+
+export interface UpdateContactRequestData {
+  status?: string;
+  commentaire?: string;
+  formateurAssigne?: string;
+  formationCommencee?: boolean;
+  progression?: number;
+  evaluationPassee?: boolean;
+  evaluationScore?: number;
+  attestationValidee?: boolean;
+  motifRefusAttestation?: string;
+  historiqueAuteur?: string;
+}
+
+export async function createContactRequest(data: Omit<ContactRequest, "id" | "requestNumber" | "createdAt" | "updatedAt" | "status" | "formateurAssigne" | "commentaireInterne" | "formationCommencee" | "progression" | "evaluationPassee" | "evaluationScore" | "attestationValidee" | "motifRefusAttestation" | "historique">): Promise<ContactRequest> {
   const requestNumber = generateRequestNumber();
   const request = await prisma.contactRequest.create({
     data: {
@@ -105,7 +154,7 @@ async function addHistorique(requestId: string, action: string, auteur: string, 
 
   await prisma.contactRequest.update({
     where: { id: requestId },
-    data: { historique: historique as unknown as import("@prisma/client").InputJsonValue },
+    data: { historique: historique as Prisma.InputJsonValue },
   });
 }
 
@@ -115,5 +164,3 @@ function generateRequestNumber(): string {
   const date = new Date().toISOString().slice(2, 10).replace(/-/g, "");
   return `${prefix}-${date}-${random}`;
 }
-
-export type { ContactRequest };

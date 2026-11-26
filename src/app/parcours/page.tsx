@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { PARCOURS } from "@/data/parcours";
@@ -8,6 +9,14 @@ import { useLanguage } from "@/context/language-context";
 import { Clock, Award, ArrowRight } from "lucide-react";
 
 export default function Parcours() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><p className="text-slate-500">Chargement...</p></div>}>
+      <ParcoursContent />
+    </Suspense>
+  );
+}
+
+function ParcoursContent() {
   const { t, lang } = useLanguage();
   const searchParams = useSearchParams();
   const track = (searchParams.get("track") === "odoo" ? "odoo" : "sap") as "sap" | "odoo";
@@ -83,3 +92,4 @@ export default function Parcours() {
     </main>
   );
 }
+

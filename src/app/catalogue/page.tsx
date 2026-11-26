@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Suspense, useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { COURSES } from "@/data/courses";
@@ -29,6 +29,14 @@ const DURATION_BANDS = [
 ];
 
 export default function Catalogue() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><p className="text-slate-500">Chargement...</p></div>}>
+      <CatalogueContent />
+    </Suspense>
+  );
+}
+
+function CatalogueContent() {
   const { t, lang } = useLanguage();
   const searchParams = useSearchParams();
   const track = (searchParams.get("track") === "odoo" ? "odoo" : "sap") as "sap" | "odoo";

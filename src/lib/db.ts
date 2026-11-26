@@ -12,7 +12,17 @@ export const prisma =
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
-export async function query<T>(sql: string, params: unknown[] = []): Promise<T[]> {
+export type SqlParameter = string | number | bigint | boolean | Date | null;
+
+export function getDatabaseConfig(env: { DATABASE_URL?: string }): string {
+  const databaseUrl = env.DATABASE_URL?.trim();
+  if (!databaseUrl) {
+    throw new Error("DATABASE_URL must be configured before using the database.");
+  }
+  return databaseUrl;
+}
+
+export async function query<T = any>(sql: string, params: unknown[] = []): Promise<T[]> {
   return prisma.$queryRawUnsafe(sql, ...params) as Promise<T[]>;
 }
 

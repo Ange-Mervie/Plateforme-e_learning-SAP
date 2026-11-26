@@ -10,6 +10,32 @@ const PROTECTED_PREFIXES = [
   "/cours",
 ];
 
+const securityHeaders = {
+  "X-Content-Type-Options": "nosniff",
+  "X-Frame-Options": "DENY",
+  "X-XSS-Protection": "1; mode=block",
+  "Referrer-Policy": "strict-origin-when-cross-origin",
+  "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+};
+
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+const RATE_LIMIT_WINDOW_MS = 60 * 1000;
+const RATE_LIMIT_MAX_REQUESTS = 100;
+
+function checkRateLimit(ip: string): boolean {
+  const now = Date.now();
+  const record = rateLimitMap.get(ip);
+  if (!record || now > record.resetAt) {
+    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
+    return true;
+  }
+  if (record.count >= RATE_LIMIT_MAX_REQUESTS) {
+    return false;
+  }
+  record.count++;
+  return true;
+}
+
 function isProtected(pathname: string) {
   if (
     pathname === "/apprenant" ||
@@ -25,39 +51,22 @@ function isProtected(pathname: string) {
 }
 
 function addSecurityHeaders(response: NextResponse): NextResponse {
-  const csp =
-    "default-src 'self'; " +
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com; " +
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
-    "font-src 'self' https://fonts.gstatic.com data:; " +
-    "img-src 'self' data: https: blob:; " +
-    "connect-src 'self' https://api.stripe.com https://www.google-analytics.com; " +
-    "frame-ancestors 'none'; " +
-    "base-uri 'self'; " +
-    "form-action 'self';";
-
-  response.headers.set("Content-Security-Policy", csp);
-  response.headers.set("X-Frame-Options", "DENY");
-  response.headers.set("X-Content-Type-Options", "nosniff");
-  response.headers.set(
-    "Referrer-Policy",
-    "strict-origin-when-cross-origin",
-  );
-  response.headers.set(
-    "Permissions-Policy",
-    "camera=(), microphone=(), geolocation=(), payment=(), usb=()",
-  );
-  // HSTS uniquement en production (HTTPS)
-  if (process.env.NODE_ENV === "production") {
-    response.headers.set(
-      "Strict-Transport-Security",
-      "max-age=31536000; includeSubDomains; preload",
-    );
-  }
+  Object.entries(securityHeaders).forEach(([key, value]) => {
+    response.headers.set(key, value);
+  });
   return response;
 }
 
 export function proxy(request: NextRequest) {
+  const ip = request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "unknown";
+
+  if (!checkRateLimit(ip)) {
+    return new NextResponse("Too Many Requests", {
+      status: 429,
+      headers: { "Retry-After": "60" },
+    });
+  }
+
   const { pathname } = request.nextUrl;
   const isProtectedRoute = isProtected(pathname);
   const isLoggedIn = !!request.cookies.get("sap_academy_session")?.value;

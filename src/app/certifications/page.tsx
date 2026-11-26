@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useLanguage } from "@/context/language-context";
@@ -33,6 +34,14 @@ const ETAPES_FR = ["Contactez ELEVATE By IBN via le formulaire", "Échangez avec
 const ETAPES_EN = ["Contact ELEVATE By IBN via the form", "Talk with a trainer", "Define your training path", "Follow the agreed training", "Complete exercises and practical work", "Take the final assessment", "Receive your ELEVATE By IBN certificate"];
 
 export default function CertificationsPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><p className="text-slate-500">Chargement...</p></div>}>
+      <CertificationsPageContent />
+    </Suspense>
+  );
+}
+
+function CertificationsPageContent() {
   const { lang } = useLanguage();
   const searchParams = useSearchParams();
   const track = (searchParams.get("track") === "odoo" ? "odoo" : "sap") as "sap" | "odoo";
@@ -98,3 +107,4 @@ export default function CertificationsPage() {
     </div>
   );
 }
+

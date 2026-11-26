@@ -47,10 +47,10 @@ export async function POST(req: Request) {
         name: user.name,
         email: user.email,
         role: user.role === "learner" ? "apprenant" : user.role,
-        subscription: { status: user.subscription_status === "active" ? "active" : "free", planId: null },
-        emailVerified: user.email_verified,
+        subscription: { status: user.subscriptionStatus === "active" ? "active" : "free", planId: null },
+        emailVerified: user.emailVerified,
       },
-      emailVerificationRequired: !user.email_verified,
+        emailVerificationRequired: !user.emailVerified,
     });
     response.cookies.set("sap_academy_session", token, getSessionCookieOptions());
 
